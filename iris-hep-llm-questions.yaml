@@ -65,7 +65,7 @@ model: gpt-5.6-luna:medium
 copy_back:
   - plot_*.png
   - script.py
-output: .\results\iris-hep-llm-questions\iris-hep-
+output: .\results\iris-hep-llm-questions\iris-hep
 repeat: 1
 threads: 3
 marketplaces:
