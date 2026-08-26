@@ -1,0 +1,77 @@
+# These are the standard questions used to measure LLM performance on the iris-hep stack
+prompt_template: |
+  Please write a stand-alone Python file that uv can run and auto-install
+  dependencies for. It must do the following:
+
+  {{ question }}
+
+  Save plots as plot_<n>.png. Put all Python code in a single script.py file.
+  You must successfully run it on one input file from the dataset specified in the question above,
+  and produce a plot before declaring success.
+
+questions:
+  - id: q1
+    question: "Plot the ETmiss of all events in the rucio dataset user.zmarshal:user.zmarshal.364702_OpenData_v1_p6026_2024-04-23."
+  - id: q2
+    question: "Plot the pT of all jets in the rucio dataset user.zmarshal:user.zmarshal.364702_OpenData_v1_p6026_2024-04-23."
+  - id: q3
+    question: "Plot the pT of jets with |η| < 1 in the rucio dataset user.zmarshal:user.zmarshal.364702_OpenData_v1_p6026_2024-04-23."
+  - id: q4
+    question: "Plot the ETmiss of events that have at least two jets with pT > 40 GeV in the rucio dataset user.zmarshal:user.zmarshal.364702_OpenData_v1_p6026_2024-04-23."
+  - id: q5
+    question: |
+      Plot the ETmiss of events that have an opposite-charge muon pair with an invariant mass between 60 and 120 GeV in the rucio dataset opendata:mc20_13TeV.700325.Sh_2211_Zmumu_maxHTpTV2_CVetoBVeto.deriv.DAOD_PHYSLITE.e8351_s3681_r13167_p6026.
+  - id: q6
+    question: |
+      For events with at least three jets, plot the pT of the trijet four-momentum that has the invariant mass closest to 172.5 GeV in each event and plot the maximum b-tagging discriminant value among the jets in this trijet in the rucio dataset opendata:mc20_13TeV.410471.PhPy8EG_A14_ttbar_hdamp258p75_allhad.deriv.DAOD_PHYSLITE.e6337_s3681_r13167_p6026.
+  - id: q7
+    question: |
+      Plot the scalar sum in each event of the pT of jets with pT > 30 GeV that are not within 0.4 in ΔR of any light lepton with pT > 10 GeV in the rucio dataset opendata:mc20_13TeV.410471.PhPy8EG_A14_ttbar_hdamp258p75_allhad.deriv.DAOD_PHYSLITE.e6337_s3681_r13167_p6026.
+  - id: q8
+    question: |
+      For events with at least three light leptons and a same-flavor opposite-charge light lepton pair, find such a pair that has the invariant mass closest to 91.2 GeV in each event and plot the transverse mass of the system consisting of the missing transverse momentum and the highest-pT light lepton not in this pair in the rucio dataset user.zmarshal:user.zmarshal.700588_OpenData_v0_p6026_2024-04-16.
+  - id: q9
+    question: "Plot the number of jets per event in the rucio dataset user.zmarshal:user.zmarshal.364702_OpenData_v1_p6026_2024-04-23."
+  - id: q10
+    question: |
+      Plot the electron transverse momentum for electrons with p_T > 25 GeV in the first 20000 events of the rucio dataset opendata:mc20_13TeV.410471.PhPy8EG_A14_ttbar_hdamp258p75_allhad.deriv.DAOD_PHYSLITE.e6337_s3681_r13167_p6026.
+  - id: q11
+    question: "Plot the leading jet p_T (highest p_T jet per event) in the rucio dataset user.zmarshal:user.zmarshal.364702_OpenData_v1_p6026_2024-04-23."
+  - id: q12
+    question: |
+      Plot the invariant mass of all muon pairs with the same charge in the opendata:mc20_13TeV.700325.Sh_2211_Zmumu_maxHTpTV2_CVetoBVeto.deriv.DAOD_PHYSLITE.e8351_s3681_r13167_p6026.
+  - id: q13
+    question: |
+      Plot the missing transverse energy for events with no jets in the opendata:mc20_13TeV.700325.Sh_2211_Zmumu_maxHTpTV2_CVetoBVeto.deriv.DAOD_PHYSLITE.e8351_s3681_r13167_p6026.
+  - id: q14
+    question: "Plot delta-R between the two leading jets for events with at least two jets in the rucio dataset user.zmarshal:user.zmarshal.364702_OpenData_v1_p6026_2024-04-23."
+  - id: q15
+    question: |
+      Make stacked histogram of the pT of the highest pT jet in each event in
+      user.zmarshal:user.zmarshal.364702_OpenData_v1_p6026_2024-04-23 and
+      user.zmarshal:user.zmarshal.364703_OpenData_v1_p6026_2024-04-23 between 100 and 200 GeV.
+  - id: q16
+    question: |
+      Plot the reconstructed top quark pair mass near 3 TeV in events with one charged lepton in the rucio dataset user.zmarshal:user.zmarshal.301333_OpenData_v1_p6026_2024-04-23.
+      Baseline object cuts: jets pT > 30 GeV, electrons pT > 25 GeV, muons pT > 25 GeV. Require exactly one charged lepton and at least four jets. Do not add extra shaping cuts.
+  - id: q17
+    question: |
+      Plot the b-tagging discriminant value for all jets the dataset opendata:mc20_13TeV.410471.PhPy8EG_A14_ttbar_hdamp258p75_allhad.deriv.DAOD_PHYSLITE.e6337_s3681_r13167_p6026.
+  - id: q18
+    question: |
+      Plot the b-tagging discriminant value for all jets with pT>45 and eta<2.4 for events that have at least 2 of those jets in the dataset opendata:mc20_13TeV.410471.PhPy8EG_A14_ttbar_hdamp258p75_allhad.deriv.DAOD_PHYSLITE.e6337_s3681_r13167_p6026.
+
+model: gpt-5.6-luna:medium
+copy_back:
+  - plot_*.png
+  - script.py
+output: .\results\iris-hep-llm-questions\iris-hep-
+repeat: 1
+threads: 3
+marketplaces:
+  - https://github.com/iris-hep/marketplace.git
+plugins:
+  - iris-hep@iris-hep-tools
+copy_files:
+  - C:\Users\gordo\servicex.yaml
+distro: Ubuntu
