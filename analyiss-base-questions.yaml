@@ -12,8 +12,14 @@ prompt_template: |
   network connectivity.
 questions:
   - id: q1-jet-kinematics
-    question: Run on 100 events from the tutorial physlite file and dump out only the jet pt, eta, and phi.
-
+    question: |
+      Run on 100 events from the tutorial physlite file and dump out only the jet pt, eta, and phi.
+      Time how long it takes to run the 100 events.
+  - id: q2-ele-sys-kinematics
+    question: |
+      Run on 100 events from the tutorial physlite file and dump out only the electron pt, eta, and phi.
+      Run the full systematics for electrons so the output file contains all ele related systematic variations
+      of pt, eta, and phi. Time how long it takes to run teh 100 events.
 model: gpt-5.6-luna:high
 marketplaces:
   - https://github.com/gordonwatts/atlas-analysisbase-marketplace.git
