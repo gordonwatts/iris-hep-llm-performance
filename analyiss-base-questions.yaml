@@ -9,7 +9,7 @@ prompt_template: |
   file (in bytes).
 
   Note that running the analysis-base image can take a great deal of time depending on
-  network connectivity.
+  network connectivity - allow upwards of 20 minutes (or even longer).
 questions:
   - id: q1-jet-kinematics
     question: |
