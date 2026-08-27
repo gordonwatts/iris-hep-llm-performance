@@ -30,5 +30,5 @@ copy_back:
   - ab-output.root
 output: .\results\analyiss-base-questions\ab
 repeat: 1
-threads: 2
+threads: 1
 distro: atlas_al9
