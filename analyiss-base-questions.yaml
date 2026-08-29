@@ -21,7 +21,10 @@ questions:
   - id: q1-jet-kinematics
     question: |
       Run on 100 events from the tutorial physlite file and dump out only the jet pt, eta, and phi.
-  - id: q2-ele-sys-kinematics
+  - id: q2-sys-names
+    question: |
+      List the full list of systematics that are run on PHYSLITE.
+  - id: q3-ele-sys-kinematics
     question: |
       Run on 100 events from the tutorial physlite file and dump out only the electron pt, eta, and phi.
       Run the full systematics for electrons so the output file contains all ele related systematic variations
