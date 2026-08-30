@@ -33,11 +33,17 @@ questions:
       Run on 100 events from the tutorial physlite file and dump out only the electron pt, eta, and phi.
       Run the full systematics for electrons so the output file contains all ele related systematic variations
       of pt, eta, and phi.
-  - id: q3-z-jets
+  - id: q4-z-jets
     question: |
       Run on 100 events from the tutorial physlite file plot the dijet mass for Z to 2 jets. Do all
       combinations for jets about 30 GeV. Dump dijet mass, and the pT of the invariant particle
       to the output root file in GeV.
+  - id: q5-z-jets-sys
+    question: |
+      Run on 100 events from the tutorial physlite file plot the dijet mass for Z to 2 jets. Do all
+      combinations for jets about 30 GeV. Dump dijet mass, and the pT of the invariant particle
+      to the output root file in GeV. Do this for all electron systematics and make sure to propagate
+      the systematics through the Z calculation.
 model: gpt-5.6-luna:high
 marketplaces:
   - https://github.com/gordonwatts/atlas-analysisbase-marketplace.git
