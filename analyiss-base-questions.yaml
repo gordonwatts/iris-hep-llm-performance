@@ -5,45 +5,45 @@ prompt_template: |
 
   {{ question }}
 
-  The output root-tuple file should be called `run/ab-output.root``. Report back the size of the
-  file (in bytes). The analysisbase configuration file should be `source/ab-config.yaml``. Finally, create
-  a bash script called `source/ab-run.sh` that runs everything, including doing the `asetup` command.`
+  The output ROOT tuple file should be called `run/ab-output.root` (if requested). Report the size of the
+  file in bytes. The AnalysisBase configuration file should be `source/ab-config.yaml`. Finally, create
+  a Bash script called `source/ab-run.sh` that runs everything, including the `asetup` command.
 
-  Time how long it takes to run the analysis base image. `bash` built in `time` command works well for this.
+  Time how long it takes to run the AnalysisBase image. Bash's built-in `time` command works well for this.
 
-  List at the end of the prompt three things that should have been included in the skill
-  that would have doing this work faster and cost less tokens. Modify the original skill files
-  to fix these three problems, and generate a diff file leaving it `run/improvements.diff`.
+  At the end of the response, list three things that should have been included in the skill
+  to make this work faster and use fewer tokens. Modify the original skill files
+  to fix these three problems, and generate a diff file at `run/improvements.diff`.
 
   Note that running the analysis-base image can take a great deal of time depending on
   network connectivity - allow upwards of 20 minutes (or even longer).
 questions:
   - id: q1-jet-kinematics
     question: |
-      Run on 100 events from the tutorial physlite file and dump out only the jet pt, eta, and phi.
+      Run on 100 events from the tutorial PHYSLITE file and output only the jet pT, eta, and phi.
   - id: q2-sys-names
     question: |
-      Put the full list of systematics that are run on PHYSLITE in the file run/systematics.txt. Give
-      the number in the final summary of the run.
+      Write the full list of systematics run on PHYSLITE to the file run/systematics.txt. Report
+      the number of systematics in the final summary of the run.
     copy_back:
       - -run/ab-output.root
       - run/systematics.txt
   - id: q3-ele-sys-kinematics
     question: |
-      Run on 100 events from the tutorial physlite file and dump out only the electron pt, eta, and phi.
-      Run the full systematics for electrons so the output file contains all ele related systematic variations
-      of pt, eta, and phi.
+      Run on 100 events from the tutorial PHYSLITE file and output only the electron pT, eta, and phi.
+      Run the full set of electron systematics so the output file contains all electron-related systematic
+      variations of pT, eta, and phi.
   - id: q4-z-jets
     question: |
-      Run on 100 events from the tutorial physlite file plot the dijet mass for Z to 2 jets. Do all
-      combinations for jets about 30 GeV. Dump dijet mass, and the pT of the invariant particle
-      to the output root file in GeV.
+      Run on 100 events from the tutorial PHYSLITE file. Select jets with pT > 30 GeV and |eta| < 2.4.
+      For every combination of selected jets, calculate the dijet invariant mass for Z -> 2 jets and the
+      pT of the dijet system. Store both values in the output ROOT file in GeV.
   - id: q5-z-jets-sys
     question: |
-      Run on 100 events from the tutorial physlite file plot the dijet mass for Z to 2 jets. Do all
-      combinations for jets about 30 GeV. Dump dijet mass, and the pT of the invariant particle
-      to the output root file in GeV. Do this for all electron systematics and make sure to propagate
-      the systematics through the Z calculation.
+      Run on 100 events from the tutorial PHYSLITE file. Select jets with pT > 30 GeV and |eta| < 2.4.
+      For every combination of selected jets, calculate the dijet invariant mass for Z -> 2 jets and the
+      pT of the dijet system. Store both values in the output ROOT file in GeV. Do this for all electron
+      systematics, and make sure to propagate the systematics through the Z calculation.
 model: gpt-5.6-luna:high
 marketplaces:
   - https://github.com/gordonwatts/atlas-analysisbase-marketplace.git
