@@ -1,0 +1,75 @@
+# Template-driven WSL2 Codex batch configuration
+prompt_template: |
+  {{ question }}
+
+questions:
+  - id: q1-full
+    question: |-
+      Implement a complete H->ZZ->4l analysis pipeline in the template file `analysis.py`.
+      Make sure `analysis.py` is PEP 723 compliant, and use the `uv` tools to run and
+      test it. Use the appropriate `agc-skills` skills for further instructions.
+
+      Create a new code block (separated by an empty line) for each major step. The pipeline
+      consists of four main stages, to be implemented in order:
+
+      Dataset retrieval - Retrieve the input columns from the input_files dictionary (Data,
+      Background Z ttbar, Background ZZ*, Signal). Tree name: mini. Event selection: exactly
+      four leptons (lep_n == 4). Columns needed downstream: lepton pt, eta, phi, energy,
+      charge, type, mcWeight, and the scale factors scaleFactor_ELE, scaleFactor_MUON,
+      scaleFactor_LepTRIGGER, scaleFactor_PILEUP. Compute a scale factor variation systematic
+      at query stage (product of the four scale factors above, scaled up by 1.1 and down
+      by 0.9). Support both a func_adl (FuncADL_Uproot) query and an UprootRaw alternative,
+      selectable via a USE_SERVICEX_UPROOT_RAW flag, and respect an IGNORE_CACHE flag.
+
+      Event processing - Process the retrieved columns to build the discriminating variable
+      m4l (invariant mass of the four-lepton system). Select events with exactly two same-flavor
+      opposite-charge lepton pairs (electrons or muons). Produce histograms of m4l for
+      one signal region, for each sample (Data, Signal MC, Background ZZ*, Background
+      Z ttbar), including variations for the following systematics: scale factor variation,
+      4l mass variation, and ZZ normalization. Also account for a signal normalization
+      factor.
+
+      Plotting - Plot the m4l histograms for the signal region, showing all samples and
+      the systematic variations listed above. Create a figures directory as a sub-directory
+      of the working sandbox directory if one does not already exist, and save each plot
+      as both a .pdf and a .png file in that directory.
+
+      Statistical analysis - Using the histograms produced above, build a cabinetry configuration,
+      collect and postprocess the templates, build a workspace, and perform the fit. The
+      parameter of interest is the signal normalization. Produce and save (as .pdf and
+      .png in the figures directory) a pull plot (name: pull_plot.pdf/.png), a correlation
+      matrix plot (name: matrix.pdf/.png), and a post-fit data/model comparison plot (name:
+      model-comp.pdf/.png) for the signal region with a meaningful x-axis label. Finally,
+      write a results.json file containing the POI value and error, formatted as:
+
+      {
+
+      "poi_val" : x,
+
+      "poi_err" : y
+
+      }
+
+      After each stage, run the Analysis.py file and capture any error output. If there
+      is an error, examine the message and correct it to the best of your ability, then
+      re-run until the file executes without errors and the output looks as expected.
+
+model: gpt-5.6-luna:medium
+marketplaces:
+  - https://github.com/gordonwatts/agc_marketplace
+plugins:
+  - agc-skills@agc_marketplace
+copy_files:
+  - C:\Users\gordo\servicex.yaml
+  - C:\Users\gordo\Code\llms\iris-hep-llm-performance\agc\analysis.py
+copy_back:
+  - analysis.py
+  - figures/*.png
+max_copy_back_files: 100
+output: .\results\agc-tests\agc
+repeat: 1
+threads: 1
+title: "# Analysis Grand Challenge Related Tests"
+distro: Ubuntu
+wsl_parent: /home/gwatts/llm-testing
+timeout_seconds: 2500.0
