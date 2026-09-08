@@ -24,7 +24,13 @@ questions:
       All this will be done on the UChicago AF (use the uchicago-af mcp server), and use the
       IRIS-HEP ServiceX, awkward array, etc, skills for the workflow. The notebook should be written
       as a "narrative", with plots and code inline so the user can read it and understand what is
-      going on. When finished, please copy a notebook converted to markdown (with images inline put
+      going on.
+
+      Please run on a single file before running on all requested files so as not to waste resources.
+      The final notebook should not show this smoke test - just the final run of 100. And parameterize
+      the notebook in a cell with `n_files=100` that one can change later to run on more (or less) files.
+
+      When finished, please copy a notebook converted to markdown (with images inline put
       inline - check this is done properly, it easy to add base64 that is a mess) back
       and call it "result.md". If you have to spin up a Jupyter server (if one isn't already running)
       make sure to use an image with the `latest` tag, otherwise mcp access won't work. Make sure to
