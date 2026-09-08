@@ -1,0 +1,50 @@
+# Template-driven WSL2 Codex batch configuration
+prompt_template: |
+  Use the uchicago-af mcp server to help answer for the following:
+
+  {{ question }}
+
+  Please also add to your final report a list of the skills and the MCP tools you used/called.
+
+questions:
+  - id: q1-jz-cuts
+    question: |
+      Please tell me what the leading jet cuts are for the qcd dijet JZ samples 
+      (please list the Run 3 DSID's for each one).
+  - id: q2-find-datasets
+    question: |
+      Please find the official Run 3 jz2 dijet PHYSLITE datasets.
+      This should be the base-line data sets. Please also list the MC campaigns for each of them (and what they represent).
+  - id: q3-sx-jz-plot
+    question: |
+      Please make the following histograms from 100 files of the current Run 3 JZ dijet MC dataset
+      (use JZ2 slice): jet pt, eta, and number of jets. For the first two, please overlay three
+      histograms - one for the leading jet (pt), the second leading, and the third leading.
+
+      All this will be done on the UChicago AF (use the uchicago-af mcp server), and use the
+      IRIS-HEP ServiceX, awkward array, etc, skills for the workflow. The notebook should be written
+      as a "narrative", with plots and code inline so the user can read it and understand what is
+      going on. When finished, please copy a notebook converted to markdown (with images inline put
+      inline - check this is done properly, it easy to add base64 that is a mess) back
+      and call it "result.md". If you have to spin up a Jupyter server (if one isn't already running)
+      make sure to use an image with the `latest` tag, otherwise mcp access won't work. Make sure to
+      copy over the servicex.yaml file in the base directory to the jupyter server. Always test out the
+      code/notebook on a single data file before running on everything.
+
+      In the final status, please report:
+        * Data set name, along with PMG tag info, number of files, and what MC campaign it is associated with.
+        * What MCP tools you used
+        * What skills you used.
+    copy_back:
+      - "result.md"
+model: gpt-5.6-luna:high
+marketplaces: []
+plugins: []
+mcp_servers:
+  - uchicago-af
+copy_files: []
+copy_back: []
+output: .\results\uchicago-mcp\umcp
+distro: Ubuntu
+wsl_parent: /home/gwatts/llm-testing
+timeout_seconds: 3600
