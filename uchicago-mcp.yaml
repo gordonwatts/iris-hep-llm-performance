@@ -1,12 +1,14 @@
 # Template-driven WSL2 Codex batch configuration
 prompt_template: |
-  Use the uchicago-af mcp server to help answer for the following:
+  Do your best to answer the following questions. Use skills (like the atlas-sf and AnalysisBase) to help.
 
   {{ question }}
 
   Please also add to your final report a list of the skills and the MCP tools you used/called.
 
 questions:
+  - id: q0-skills
+    question: "Print out the list of /skills in the status."
   - id: q1-jz-cuts
     question: |
       Please tell me what the leading jet cuts are for the qcd dijet JZ samples 
@@ -43,14 +45,37 @@ questions:
         * What skills you used.
     copy_back:
       - "result.md"
+  - id: q4-ab-jets
+    question: |
+      Please make the following histograms from 100 files of the current Run 3 JZ dijet MC dataset
+      (use JZ2 slice): jet pt, eta, and number of jets. For the first two, please overlay three
+      histograms - one for the leading jet (pt), the second leading, and the third leading.
+
+      Do this using the following work following:
+        1. Use analysis base to dump the required information.
+          * Run this as a set of jobs on htcondor.
+          * Write the data to /data/gwatts/xxx (some unique directory).
+        2. Create a jupyter notebook that will load the files, and make the plots.
+          * Use the jupyterlab server.
+          * If you have to start up a kernel, use the `latest` version of the ml kernel
+        3. Convert the final notebook to markdown
+          * Inline the images in the markdown so only one file has to come back.
+          * Double check the formatting of the inline - it is easy to get that wrong.
+        4. Copy the file back as `results.md`.
+    copy_back:
+      - "result.md"
 model: gpt-5.6-luna:high
-marketplaces: []
-plugins: []
+marketplaces:
+  - https://github.com/usatlas/marketplace.git
+  - https://github.com/gordonwatts/atlas-analysisbase-marketplace.git
+plugins:
+  - af-uchicago@usatlas-marketplace
+  - atlas-analysisbase@atlas-analysisbase-marketplace
 mcp_servers:
-  - uchicago-af
+  - atlas-af
 copy_files: []
 copy_back: []
 output: .\results\uchicago-mcp\umcp
 distro: Ubuntu
 wsl_parent: /home/gwatts/llm-testing
-timeout_seconds: 3600
+timeout_seconds: 14400
