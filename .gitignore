@@ -1,1 +1,11 @@
 results/*
+
+# pixi environments
+.pixi/*
+!.pixi/config.toml
+
+# staging dir the linkcheck task symlinks site/dist/ into, so lychee's
+# --root-dir can resolve absolute /iris-hep-llm-performance/... links
+# against the real build output (see pixi.toml's `linkcheck` task)
+.linkcheck-root/
+

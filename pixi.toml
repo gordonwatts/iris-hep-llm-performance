@@ -1,0 +1,34 @@
+[workspace]
+authors = ["Giordon Stark <kratsg@gmail.com>"]
+channels = ["conda-forge"]
+exclude-newer = "7d"
+name = "iris-hep-llm-performance"
+platforms = ["linux-64", "linux-aarch64", "osx-64", "osx-arm64", "win-64"]
+version = "0.1.0"
+
+[tasks]
+install = { cmd = "npm install", cwd = "site", description = "Install site npm dependencies", inputs = ["site/package.json", "site/package-lock.json"], outputs = ["site/node_modules/.package-lock.json"] }
+e2e-install = { cmd = "npm run e2e-install", cwd = "site", depends-on = ["install"], description = "Install the Playwright chromium browser" }
+dev = { cmd = "npm run dev", cwd = "site", depends-on = ["install"], description = "Start development server at http://localhost:4321/iris-hep-llm-performance/" }
+build = { cmd = "npm run build", cwd = "site", depends-on = ["install"], description = "Build static site to site/dist/", inputs = ["site/src/**", "site/public/**", "site/astro.config.mjs", "site/tsconfig.json", "*.yaml"], outputs = ["site/dist/"] }
+preview = { cmd = "npm run preview", cwd = "site", depends-on = ["build"], description = "Serve production build locally for inspection" }
+astro-check = { cmd = "npm run check", cwd = "site", depends-on = ["install"], description = "Run `astro check` (types + template diagnostics)" }
+format = { cmd = "npx prettier --write {{ path }}", args = [{ arg = "path", default = "." }], cwd = "site", depends-on = ["install"], description = "Auto-format files (Astro + Tailwind plugins); defaults to `.`" }
+format-check = { cmd = "npx prettier --check .", cwd = "site", depends-on = ["install"], description = "Check formatting without writing changes (CI-safe)" }
+lint = { cmd = "npx eslint .", cwd = "site", depends-on = ["install"], description = "Lint Astro components with eslint-plugin-astro" }
+test = { cmd = "npx vitest run", cwd = "site", depends-on = ["install"], description = "Run unit and integration tests" }
+e2e = { cmd = "npx playwright test", cwd = "site", depends-on = ["install", "e2e-install"], description = "Run the Playwright end-to-end suite against a real build" }
+
+# lychee's --root-dir resolves an absolute link (e.g. the base-prefixed
+# /iris-hep-llm-performance/... hrefs every page uses) by prefixing it onto
+# --root-dir, but Astro's static build writes site/dist/ with no such prefix
+# directory (only the HTML's own hrefs carry `base`) — so a plain
+# `--root-dir site/dist` would look for a directory that doesn't exist. This
+# stages a symlink that makes it exist, exactly like scripts/e2e-static-server.ts
+# does per-request for Playwright.
+linkcheck = { cmd = "mkdir -p .linkcheck-root && ln -sfn \"$PIXI_PROJECT_ROOT/site/dist\" .linkcheck-root/iris-hep-llm-performance && lychee --root-dir \"$PIXI_PROJECT_ROOT/.linkcheck-root\" .linkcheck-root/iris-hep-llm-performance/", depends-on = ["build"], description = "Check for broken links in the built site" }
+check = { depends-on = ["format-check", "lint", "astro-check", "test", "build", "e2e", "linkcheck"], description = "Full CI gate: format, lint, types, tests, build, e2e, link check" }
+
+[dependencies]
+nodejs = ">=26,<27"
+lychee = ">=0.23.0,<0.24"
