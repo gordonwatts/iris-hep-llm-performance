@@ -1,0 +1,238 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import EmptyResultsPanel from "../../../components/EmptyResultsPanel.astro";
+import { loadSuites, type Suite } from "../../../lib/suites";
+import { href } from "../../../lib/url";
+
+export function getStaticPaths() {
+  return loadSuites().map((suite) => ({
+    params: { suite: suite.id },
+    props: { suite },
+  }));
+}
+
+interface Props {
+  suite: Suite;
+}
+
+const { suite } = Astro.props;
+---
+
+<Layout title={suite.title}>
+  <section class="suite">
+    <p class="suite__eyebrow font-mono">{suite.file}</p>
+    <h1 class="suite__title">{suite.title}</h1>
+
+    <dl class="suite__config">
+      <div>
+        <dt>Models</dt>
+        <dd class="font-mono">
+          {suite.models
+            .map((m) => (m.effort ? `${m.name}:${m.effort}` : m.name))
+            .join(", ")}
+        </dd>
+      </div>
+      <div>
+        <dt>Distro</dt>
+        <dd class="font-mono">{suite.distro ?? "—"}</dd>
+      </div>
+      <div>
+        <dt>Repeat / threads</dt>
+        <dd>
+          {suite.repeat} / {suite.threads}
+        </dd>
+      </div>
+      <div>
+        <dt>Timeout</dt>
+        <dd>{suite.timeoutSeconds ? `${suite.timeoutSeconds}s` : "—"}</dd>
+      </div>
+      <div>
+        <dt>Marketplaces</dt>
+        <dd class="font-mono">
+          {suite.marketplaces.length ? suite.marketplaces.join(", ") : "—"}
+        </dd>
+      </div>
+      <div>
+        <dt>Plugins</dt>
+        <dd class="font-mono">
+          {suite.plugins.length ? suite.plugins.join(", ") : "—"}
+        </dd>
+      </div>
+      {suite.mcpServers.length > 0 && (
+        <div>
+          <dt>MCP servers</dt>
+          <dd class="font-mono">{suite.mcpServers.join(", ")}</dd>
+        </div>
+      )}
+      {suite.copyBack.length > 0 && (
+        <div>
+          <dt>Copy back</dt>
+          <dd class="font-mono">{suite.copyBack.join(", ")}</dd>
+        </div>
+      )}
+    </dl>
+
+    <div class="suite__template">
+      <h2 class="suite__section-heading">Prompt template</h2>
+      <pre class="suite__template-body font-mono"><code>{suite.promptTemplate}</code></pre>
+    </div>
+  </section>
+
+  <section class="suite__questions">
+    <h2 class="suite__section-heading">Questions</h2>
+    <div class="suite__table-wrap">
+      <table class="suite__table">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Question</th>
+            <th scope="col">Result</th>
+          </tr>
+        </thead>
+        <tbody>
+          {suite.questions.map((question) => (
+            <tr>
+              <td class="font-mono suite__table-id">
+                <a href={href(`/suites/${suite.id}/${question.id}/`)}>
+                  {question.id}
+                </a>
+              </td>
+              <td class="suite__table-question">{question.question}</td>
+              <td class="suite__table-status">No data</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="suite__results">
+    <h2 class="suite__section-heading">Results</h2>
+    <EmptyResultsPanel scope={`the "${suite.title}" suite`} />
+  </section>
+</Layout>
+
+<style>
+  .suite,
+  .suite__questions,
+  .suite__results {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 1.5rem;
+  }
+
+  .suite {
+    padding-top: 2.5rem;
+  }
+
+  .suite__eyebrow {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin: 0 0 0.375rem;
+  }
+
+  .suite__title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    margin: 0 0 1.5rem;
+  }
+
+  .suite__config {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+    gap: 1rem 1.5rem;
+    padding: 1rem 0;
+    margin: 0 0 2rem;
+    border-top: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .suite__config dt {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin: 0 0 0.25rem;
+  }
+
+  .suite__config dd {
+    font-size: 0.8125rem;
+    color: var(--text-primary);
+    margin: 0;
+    word-break: break-word;
+  }
+
+  .suite__section-heading {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 1rem;
+  }
+
+  .suite__template-body {
+    padding: 1rem;
+    background: var(--surface-sunken);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-card);
+    font-size: 0.8125rem;
+    white-space: pre-wrap;
+    overflow-x: auto;
+  }
+
+  .suite__table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-card);
+    background: var(--surface-card);
+  }
+
+  .suite__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8125rem;
+  }
+
+  .suite__table th {
+    text-align: left;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 0.625rem 1rem;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .suite__table td {
+    padding: 0.625rem 1rem;
+    border-bottom: 1px solid var(--border-subtle);
+    vertical-align: top;
+  }
+
+  .suite__table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .suite__table-id a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .suite__table-id a:hover,
+  .suite__table-id a:focus-visible {
+    text-decoration: underline;
+  }
+
+  .suite__table-question {
+    color: var(--text-primary);
+    max-width: 36rem;
+  }
+
+  .suite__table-status {
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+</style>
