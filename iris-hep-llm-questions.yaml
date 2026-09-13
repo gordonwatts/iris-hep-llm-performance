@@ -1,4 +1,5 @@
 # These are the standard questions used to measure LLM performance on the iris-hep stack
+title: "IRIS-HEP analysis stack"
 prompt_template: |
   Please write a stand-alone Python file that uv can run and auto-install
   dependencies for. It must do the following:
