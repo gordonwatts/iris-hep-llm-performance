@@ -37,8 +37,10 @@ test("a suite page lists every one of its questions and each link resolves", asy
 }) => {
   await page.goto("suites/iris-hep-llm-questions/");
 
+  // Each row has two links to the same question (id cell + excerpt), so
+  // scope to the id column specifically for an exact per-question count.
   const questionLinks = page.locator(
-    'a[href*="/suites/iris-hep-llm-questions/q"]',
+    'td.suite__table-id a[href*="/suites/iris-hep-llm-questions/q"]',
   );
   await expect(questionLinks).toHaveCount(18);
 

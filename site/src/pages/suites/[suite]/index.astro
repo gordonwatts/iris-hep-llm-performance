@@ -1,8 +1,16 @@
 ---
 import Layout from "../../../layouts/Layout.astro";
 import EmptyResultsPanel from "../../../components/EmptyResultsPanel.astro";
+import {
+  formatMarketplaceLabel,
+  parseMarketplaceUrl,
+} from "../../../lib/marketplaces";
 import { loadSuites, type Suite } from "../../../lib/suites";
+import { truncateText } from "../../../lib/text";
 import { href } from "../../../lib/url";
+
+/** Question table rows stay scannable; the full text lives on its own page. */
+const QUESTION_EXCERPT_LENGTH = 140;
 
 export function getStaticPaths() {
   return loadSuites().map((suite) => ({
@@ -49,7 +57,21 @@ const { suite } = Astro.props;
       <div>
         <dt>Marketplaces</dt>
         <dd class="font-mono">
-          {suite.marketplaces.length ? suite.marketplaces.join(", ") : "—"}
+          {suite.marketplaces.length ? (
+            <ul class="suite__marketplace-list">
+              {suite.marketplaces.map((spec) => {
+                const { url, ref } = parseMarketplaceUrl(spec);
+                return (
+                  <li>
+                    <a href={url}>{formatMarketplaceLabel(url)}</a>
+                    {ref && <span class="suite__marketplace-ref">@{ref}</span>}
+                  </li>
+                );
+              })}
+            </ul>
+          ) : (
+            "—"
+          )}
         </dd>
       </div>
       <div>
@@ -90,17 +112,29 @@ const { suite } = Astro.props;
           </tr>
         </thead>
         <tbody>
-          {suite.questions.map((question) => (
-            <tr>
-              <td class="font-mono suite__table-id">
-                <a href={href(`/suites/${suite.id}/${question.id}/`)}>
-                  {question.id}
-                </a>
-              </td>
-              <td class="suite__table-question">{question.question}</td>
-              <td class="suite__table-status">No data</td>
-            </tr>
-          ))}
+          {suite.questions.map((question) => {
+            const questionHref = href(`/suites/${suite.id}/${question.id}/`);
+            const { excerpt, truncated } = truncateText(
+              question.question,
+              QUESTION_EXCERPT_LENGTH,
+            );
+            return (
+              <tr>
+                <td class="font-mono suite__table-id">
+                  <a href={questionHref}>{question.id}</a>
+                </td>
+                <td class="suite__table-question">
+                  <a href={questionHref} class="suite__table-question-link">
+                    {excerpt}
+                  </a>
+                  {truncated && (
+                    <span class="suite__table-more"> Read more →</span>
+                  )}
+                </td>
+                <td class="suite__table-status">No data</td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
@@ -226,9 +260,47 @@ const { suite } = Astro.props;
     text-decoration: underline;
   }
 
+  .suite__marketplace-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .suite__marketplace-list a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .suite__marketplace-list a:hover,
+  .suite__marketplace-list a:focus-visible {
+    text-decoration: underline;
+  }
+
+  .suite__marketplace-ref {
+    color: var(--text-muted);
+  }
+
   .suite__table-question {
     color: var(--text-primary);
     max-width: 36rem;
+  }
+
+  .suite__table-question-link {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .suite__table-question-link:hover,
+  .suite__table-question-link:focus-visible {
+    text-decoration: underline;
+  }
+
+  .suite__table-more {
+    color: var(--text-muted);
+    white-space: nowrap;
   }
 
   .suite__table-status {
