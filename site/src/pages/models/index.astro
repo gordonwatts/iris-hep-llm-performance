@@ -1,0 +1,120 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import EmptyResultsPanel from "../../components/EmptyResultsPanel.astro";
+import { summarizeModelUsage } from "../../lib/modelUsage";
+import { loadSuites } from "../../lib/suites";
+import { href } from "../../lib/url";
+
+const usage = summarizeModelUsage(loadSuites());
+---
+
+<Layout title="Models">
+  <section class="models">
+    <h1 class="models__title">Models</h1>
+    <p class="models__lede">
+      Every model selector currently configured across the benchmark suites, and
+      which suites run it.
+    </p>
+
+    <div class="models__list">
+      {usage.map((entry) => (
+        <div class="models__card">
+          <p class="models__selector font-mono">
+            {entry.name}
+            {entry.effort ? `:${entry.effort}` : ""}
+          </p>
+          <div class="models__suites">
+            {entry.suites.map((suite) => (
+              <a
+                href={href(`/suites/${suite.suiteId}/`)}
+                class="models__suite-link"
+              >
+                {suite.suiteTitle}
+              </a>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="models__results">
+    <h2 class="models__section-heading">Results</h2>
+    <EmptyResultsPanel scope="any model" />
+  </section>
+</Layout>
+
+<style>
+  .models,
+  .models__results {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 1.5rem;
+  }
+
+  .models {
+    padding-top: 2.5rem;
+  }
+
+  .models__title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    margin: 0 0 0.75rem;
+  }
+
+  .models__lede {
+    font-size: 0.9375rem;
+    color: var(--text-muted);
+    max-width: 42rem;
+    margin: 0 0 1.5rem;
+  }
+
+  .models__list {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .models__card {
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-card);
+    background: var(--surface-card);
+    box-shadow: var(--shadow-card);
+  }
+
+  .models__selector {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 0.5rem;
+  }
+
+  .models__suites {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .models__suite-link {
+    font-size: 0.75rem;
+    padding: 0.1875rem 0.5rem;
+    border-radius: 9999px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .models__suite-link:hover,
+  .models__suite-link:focus-visible {
+    text-decoration: underline;
+  }
+
+  .models__section-heading {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 1rem;
+  }
+</style>

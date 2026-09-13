@@ -1,4 +1,5 @@
 # Template-driven WSL2 Codex batch configuration
+title: "AnalysisBase configuration"
 prompt_template: |
   Using the atlas-analysisbase skill, please build from scratch an AnalysisBase config file
   and any required components so that it can accomplish the following:

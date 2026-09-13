@@ -1,0 +1,119 @@
+---
+import Layout from "../layouts/Layout.astro";
+import SuiteCard from "../components/SuiteCard.astro";
+import EmptyResultsPanel from "../components/EmptyResultsPanel.astro";
+import { loadSuites } from "../lib/suites";
+
+const suites = loadSuites();
+const totalQuestions = suites.reduce(
+  (sum, suite) => sum + suite.questions.length,
+  0,
+);
+
+const invocation =
+  "uvx --from git+https://github.com/gordonwatts/test-wsl2-llm.git test-wsl2-llm template run .\\iris-hep-llm-questions.yaml q1";
+---
+
+<Layout title="Suites">
+  <section class="intro">
+    <h1 class="intro__title">IRIS-HEP LLM Performance</h1>
+    <p class="intro__lede">
+      {suites.length} benchmark suites, {totalQuestions} questions total,
+      probing how well an LLM agent can operate the IRIS-HEP analysis stack —
+      ServiceX, awkward array, coffea, cabinetry, AnalysisBase, and the UChicago
+      Analysis Facility.
+    </p>
+    <p class="intro__lede">
+      Each question is posed as a stand-alone task and run via{" "}
+      <a href="https://github.com/gordonwatts/test-wsl2-llm">test-wsl2-llm</a>{" "}
+      inside an isolated WSL2 environment:
+    </p>
+    <pre class="intro__invocation font-mono"><code>{invocation}</code></pre>
+  </section>
+
+  <section class="suites">
+    <h2 class="suites__heading">Suites</h2>
+    <div class="suites__grid">
+      {suites.map((suite) => (
+        <SuiteCard suite={suite} />
+      ))}
+    </div>
+  </section>
+
+  <section class="results-status">
+    <h2 class="results-status__heading">Results</h2>
+    <EmptyResultsPanel scope="any suite" />
+  </section>
+</Layout>
+
+<style>
+  .intro {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 1.5rem;
+  }
+
+  .intro__title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    margin: 0 0 1rem;
+  }
+
+  .intro__lede {
+    font-size: 0.9375rem;
+    line-height: 1.65;
+    color: var(--text-muted);
+    margin: 0 0 0.75rem;
+  }
+
+  .intro__lede a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .intro__invocation {
+    margin: 1rem 0 0;
+    padding: 0.875rem 1rem;
+    background: var(--surface-sunken);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-card);
+    font-size: 0.75rem;
+    color: var(--text-primary);
+    overflow-x: auto;
+  }
+
+  .suites {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 1.5rem;
+  }
+
+  .suites__heading {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 1rem;
+  }
+
+  .suites__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    gap: 1rem;
+  }
+
+  .results-status {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 1.5rem;
+  }
+
+  .results-status__heading {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 1rem;
+  }
+</style>

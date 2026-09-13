@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=template.schema.json
 # Template-driven WSL2 Codex batch configuration
+title: "Analysis specification builder"
 prompt_template: |
   {{ question }}
 

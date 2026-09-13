@@ -1,0 +1,48 @@
+---
+export interface Props {
+  /** What this panel would show once results exist, e.g. "this suite". */
+  scope: string;
+}
+
+const { scope } = Astro.props;
+---
+
+<div class="empty-results" role="status">
+  <svg
+    class="empty-results__icon"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="1.5"
+    aria-hidden="true"
+  >
+    <path d="M4 19.5V10" />
+    <path d="M10 19.5V4.5" />
+    <path d="M16 19.5v-8" />
+    <path d="M4 19.5h16" />
+  </svg>
+  <p class="empty-results__text">No runs recorded yet for {scope}.</p>
+</div>
+
+<style>
+  .empty-results {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.875rem 1rem;
+    border: 1px dashed var(--border-subtle);
+    border-radius: var(--radius-card);
+    background: var(--surface-sunken);
+    color: var(--text-muted);
+  }
+
+  .empty-results__icon {
+    width: 1.125rem;
+    height: 1.125rem;
+    flex-shrink: 0;
+  }
+
+  .empty-results__text {
+    font-size: 0.8125rem;
+  }
+</style>
