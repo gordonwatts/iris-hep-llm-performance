@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=template.schema.json
+# Template-driven WSL2 Codex batch configuration
+prompt_template: |
+  {{ question }}
+
+questions:
+  - id: example
+    question: |
+      Use the -hep:analysis-spec-builder  skill, please read this old Run 1 analysis 
+      pdf. I want to build a analysis specification that is follows this analysis, except
+      (!!) the background method for QCD - lets use the ABCD method, because the one used
+      in this analysis failed. Output the file in specification.md
+
+model: gpt-5.6-luna:high
+marketplaces:
+  - https://github.com/iris-hep/marketplace.git@spec-updates
+plugins:
+  - iris-hep@iris-hep-tools
+mcp_servers: []
+copy_files:
+  - .\spec\1501.04020v2.pdf
+copy_back:
+  - specification.md
+distro: Ubuntu
+max_copy_back_files: 100
+timeout_seconds: 1800
+output: .\results\spec-tests\sc
