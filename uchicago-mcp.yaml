@@ -4,7 +4,10 @@ prompt_template: |
 
   {{ question }}
 
-  Please also add to your final report a list of the skills and the MCP tools you used/called.
+  Please also 
+    * All ai generated files on the jupyter server should be in a directory called `ai_gen` to keep them separated.
+    * add to your final report a list of the skills and the MCP tools you used/called
+    * List the three things that took you longest to figure out
 
 questions:
   - id: q0-skills
@@ -21,12 +24,15 @@ questions:
     question: |
       Please make the following histograms from 100 files of the current Run 3 JZ dijet MC dataset
       (use JZ2 slice): jet pt, eta, and number of jets. For the first two, please overlay three
-      histograms - one for the leading jet (pt), the second leading, and the third leading.
+      histograms - one for the leading jet (pt), the second leading, and the third leading. Please draw
+      a line on the pT plot at the JZ2 pt boundaries.
 
-      All this will be done on the UChicago AF (use the uchicago-af mcp server), and use the
-      IRIS-HEP ServiceX, awkward array, etc, skills for the workflow. The notebook should be written
+      All this will be done on the UChicago AF (use the uchicago skills), and use the
+      IRIS-HEP ServiceX, awkward array, etc, skills for the workflow (use the iris-hep skills).
+      The notebook should be written
       as a "narrative", with plots and code inline so the user can read it and understand what is
-      going on.
+      going on. Use the jupyterlab server. Always create a new instance (with at least 4 GB) and delete it
+      when you are done. Use the `latest` version of the ml kernel
 
       Please run on a single file before running on all requested files so as not to waste resources.
       The final notebook should not show this smoke test - just the final run of 100. And parameterize
@@ -34,7 +40,8 @@ questions:
 
       When finished, please copy a notebook converted to markdown (with images inline put
       inline - check this is done properly, it easy to add base64 that is a mess) back
-      and call it "result.md". If you have to spin up a Jupyter server (if one isn't already running)
+      and call it "results.md" (it must be at `./results.md` in the codex workspace). If you have to
+      spin up a Jupyter server (if one isn't already running)
       make sure to use an image with the `latest` tag, otherwise mcp access won't work. Make sure to
       copy over the servicex.yaml file in the base directory to the jupyter server. Always test out the
       code/notebook on a single data file before running on everything.
@@ -44,33 +51,48 @@ questions:
         * What MCP tools you used
         * What skills you used.
     copy_back:
-      - "result.md"
+      - "results.md"
   - id: q4-ab-jets
     question: |
       Please make the following histograms from 100 files of the current Run 3 JZ dijet MC dataset
       (use JZ2 slice): jet pt, eta, and number of jets. For the first two, please overlay three
-      histograms - one for the leading jet (pt), the second leading, and the third leading.
+      histograms - one for the leading jet (pt), the second leading, and the third leading. Please draw
+      a line on the pT plot at the JZ2 pt boundaries. In the notebook that comes back with the plots, please
+      include any config scripts that you used to run analysis base as text so the user can see how the ntuples
+      were generated.
 
       Do this using the following work following:
         1. Use analysis base to dump the required information.
           * Run this as a set of jobs on htcondor.
-          * Write the data to /data/gwatts/xxx (some unique directory).
-        2. Create a jupyter notebook that will load the files, and make the plots.
-          * Use the jupyterlab server.
-          * If you have to start up a kernel, use the `latest` version of the ml kernel
-        3. Convert the final notebook to markdown
+          * Write the data to /data/gwatts/xxx (some unique directory) on the chicago AF.
+          * This will be accessible from the jupyter-lab instance.
+          * Remember to uniquely name every output root file, otherwise your tests and
+            the final run will get confused.
+        2. When using HTCondor always use files you upload - in the end everything should
+           be reproducible. This includes submission files/request.
+          * Always do a smoke test (say 5 events?) to make sure things run before running
+            on everything.
+          * Use the atlas-af MCP to submit the job in the end.
+        3. Create a jupyter notebook that will load the files, and make the plots.
+          * Use the jupyterlab server. Always create a new instance (with at least 4 GB)
+            and delete it when you are done.
+          * Use the `latest` version of the ml kernel
+        4. Convert the final notebook to markdown
           * Inline the images in the markdown so only one file has to come back.
           * Double check the formatting of the inline - it is easy to get that wrong.
-        4. Copy the file back as `results.md`.
+        5. Copy the markdown file back from the notebook server locally to the workspace as `results.md`.
     copy_back:
-      - "result.md"
+      - "results.md"
 model: gpt-5.6-luna:high
 marketplaces:
   - https://github.com/usatlas/marketplace.git
   - https://github.com/gordonwatts/atlas-analysisbase-marketplace.git
+  - https://github.com/iris-hep/marketplace.git
 plugins:
   - af-uchicago@usatlas-marketplace
+  - atlas@usatlas-marketplace
   - atlas-analysisbase@atlas-analysisbase-marketplace
+  - iris-hep@iris-hep-tools
 mcp_servers:
   - atlas-af
 copy_files: []
