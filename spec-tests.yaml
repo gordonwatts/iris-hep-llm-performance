@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=template.schema.json
+# yaml-language-server: $schema=test-wsl2-llm-template.schema.json
 # Template-driven WSL2 Codex batch configuration
 prompt_template: |
   {{ question }}
@@ -11,7 +11,7 @@ questions:
       (!!) the background method for QCD - lets use the ABCD method, because the one used
       in this analysis failed. Output the file in specification.md
 
-model: gpt-5.6-luna:high
+model: gpt-5.6-sol:medium
 marketplaces:
   - https://github.com/iris-hep/marketplace.git@spec-updates
 plugins:
