@@ -1,26 +1,42 @@
-# yaml-language-server: $schema=test-wsl2-llm-template.schema.json
+# yaml-language-server: $schema=C:\Users\gordo\Code\llms\iris-hep-llm-performance\test-wsl2-llm-template.schema.json
 # Template-driven WSL2 Codex batch configuration
 prompt_template: |
   {{ question }}
 
 questions:
-  - id: example
+  - id: spec-from-old-analysis-modified
     question: |
-      Use the -hep:analysis-spec-builder  skill, please read this old Run 1 analysis 
+      Use the $iris-hep:analysis-spec-builder skill, please read this old Run 1 analysis 
       pdf. I want to build a analysis specification that is follows this analysis, except
       (!!) the background method for QCD - lets use the ABCD method, because the one used
       in this analysis failed. Output the file in specification.md
+    copy_files:
+      - .\spec\1501.04020v2.pdf
+    copy_back:
+      - specification.md
+  - id: datasets-from-spec
+    question: |
+      Use the $iris-hep:data-selection skill to find the datasets and derivation
+      for the analysis described in the calratio-abcd-spec.md file. The analysis will
+      Run 1 be implemented as a Run 3 analysis.
 
+      If you create any jupyter notebooks copy them back to the root directory of this
+      workspace.
+    plugins:
+      - af-uchicago@usatlas-marketplace
+      - atlas@usatlas-marketplace
+    copy_files:
+      - .\spec\calratio-abcd-spec.md
+    copy_back:
+      - datasets.yaml
+      - "*.ipynb"
 model: gpt-5.6-sol:medium
 marketplaces:
   - https://github.com/iris-hep/marketplace.git@spec-updates
+  - https://github.com/usatlas/marketplace.git
 plugins:
   - iris-hep@iris-hep-tools
 mcp_servers: []
-copy_files:
-  - .\spec\1501.04020v2.pdf
-copy_back:
-  - specification.md
 distro: Ubuntu
 max_copy_back_files: 100
 timeout_seconds: 1800
