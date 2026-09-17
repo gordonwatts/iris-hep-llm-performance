@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=C:\Users\gordo\Code\llms\iris-hep-llm-performance\test-wsl2-llm-template.schema.json
+# Template-driven WSL2 Codex batch configuration
+prompt_template: |
+  Using the find-atlas-datasets skill, please find the following described datasets:
+
+  {{ question }}
+
+  At the end of the response, list three things that should have been included in the skill
+  to make this work faster and use fewer tokens. Modify the original skill files
+  to fix these three problems, and generate a diff file at `run/improvements.diff`run/improvements.diff
+
+  And list all the skills and MCP servers you used.
+questions:
+  - id: q1-jet-dataset
+    question: |
+      The default Run 3 JZ3 dijet MC.
+    validators:
+      - name: require_string
+        arguments:
+          string: "mc23_13p6TeV.801168.Py8EG_A14NNPDF23LO_jj_JZ3.evgen.EVNT.e8514"
+model: gpt-5.6-terra:medium
+marketplaces:
+  - https://github.com/gordonwatts/atlas-analysisbase-marketplace.git@data-for-analysis
+plugins:
+  - atlas-analysis@atlas-analysis-marketplace
+mcp_servers:
+  - atlas-af
+copy_files: []
+copy_back: []
+output: .\results\atlas-data-tests\data
+repeat: 1
+threads: 1
+distro: atlas_al9
+remote_workspace_parent: /home/gwatts/llm-testing
