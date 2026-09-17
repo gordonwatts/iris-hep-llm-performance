@@ -54,7 +54,7 @@ copy_back:
   - run/ab-output.root
   - source/ab-config.yaml
   - source/ab-run.sh
-output: .\results\analyiss-base-questions\ab
+output: .\results\analysis-base-questions\ab
 repeat: 1
 threads: 1
 distro: atlas_al9
