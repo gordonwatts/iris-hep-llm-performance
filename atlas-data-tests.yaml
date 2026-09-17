@@ -18,6 +18,10 @@ questions:
       - name: require_string
         arguments:
           string: "mc23_13p6TeV.801168.Py8EG_A14NNPDF23LO_jj_JZ3.evgen.EVNT.e8514"
+  - id: q2-hss-llp
+    question: |
+      Run 3 Hidden Sector (HSS) with long lived particles (LLP). The decays should be to jets, with the LLPs decaying
+      in the calorimeter.
 model: gpt-5.6-terra:medium
 marketplaces:
   - https://github.com/gordonwatts/atlas-analysisbase-marketplace.git@data-for-analysis
@@ -30,5 +34,5 @@ copy_back: []
 output: .\results\atlas-data-tests\data
 repeat: 1
 threads: 1
-distro: atlas_al9
-remote_workspace_parent: /home/gwatts/llm-testing
+distro: Ubuntu
+wsl_parent: /home/gwatts/llm-testing
