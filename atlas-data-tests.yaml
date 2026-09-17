@@ -22,6 +22,17 @@ questions:
     question: |
       Run 3 Hidden Sector (HSS) with long lived particles (LLP). The decays should be to jets, with the LLPs decaying
       in the calorimeter.
+    validators:
+      - name: require_string
+        arguments:
+          string: "mc23_13p6TeV.537565.MGPy8EG_A14NNPDF23_NNPDF31ME_mH600_mS150_ct3309.evgen.EVNT.e8549"
+  - id: q3-ttbar-all-jets
+    question: |
+      Run 3 base line ttbar decaying to just jets.
+    validators:
+      - name: require_string
+        arguments:
+          string: "mc23_13p6TeV.601237.PhPy8EG_A14_ttbar_hdamp258p75_allhad.evgen.EVNT.e8514"
 model: gpt-5.6-terra:medium
 marketplaces:
   - https://github.com/gordonwatts/atlas-analysisbase-marketplace.git@data-for-analysis
