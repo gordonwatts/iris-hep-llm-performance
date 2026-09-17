@@ -1,6 +1,6 @@
 # Template-driven WSL2 Codex batch configuration
 prompt_template: |
-  Do your best to answer the following questions. Use skills (like the atlas-sf and AnalysisBase) to help.
+  Do your best to answer the following questions. Use skills (like the atlas-af and AnalysisBase) to help.
 
   {{ question }}
 
