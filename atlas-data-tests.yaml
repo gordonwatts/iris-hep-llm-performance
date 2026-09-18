@@ -33,7 +33,7 @@ questions:
       - name: require_string
         arguments:
           string: "mc23_13p6TeV.601237.PhPy8EG_A14_ttbar_hdamp258p75_allhad.evgen.EVNT.e8514"
-model: gpt-5.6-terra:medium
+model: gpt-5.6-luna:high
 marketplaces:
   - https://github.com/gordonwatts/atlas-analysisbase-marketplace.git@data-for-analysis
 plugins:
