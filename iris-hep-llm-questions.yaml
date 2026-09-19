@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=C:\Users\gordo\Code\llms\iris-hep-llm-performance\test-wsl2-llm-template.schema.json
+# yaml-language-server: $schema=C:\Users\gwatts\Code\iris-hep\iris-hep-llm-performance\test-wsl2-llm-template.schema.json
 # These are the standard questions used to measure LLM performance on the iris-hep stack
 prompt_template: |
   Please write a stand-alone Python file that uv can run and auto-install
@@ -231,5 +231,5 @@ marketplaces:
 plugins:
   - iris-hep@iris-hep-tools
 copy_files:
-  - C:\Users\gordo\servicex.yaml
+  - ~\servicex.yaml
 distro: Ubuntu
