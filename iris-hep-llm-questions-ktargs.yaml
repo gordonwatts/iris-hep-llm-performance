@@ -1,0 +1,235 @@
+# yaml-language-server: $schema=test-wsl2-llm-template.schema.json
+# These are the standard questions used to measure LLM performance on the iris-hep stack
+prompt_template: |
+  Please write a stand-alone Python file that uv can run and auto-install
+  dependencies for. It must do the following:
+
+  {{ question }}
+
+  Save plots as plot_<n>.png. Put all Python code in a single script.py file.
+  You must successfully run it on one input file from the dataset specified in the question above,
+  and produce a plot before declaring success.
+
+  For each plot, compute the unweighted mean from the raw values used to fill the histogram and
+  the unweighted average number of entries per event (entries divided by the number of events
+  after all filtering). Immediately print exactly one line per plot in this format:
+  METRIC: avg_entries_per_event=<N> mean=<M>
+  Do not use histogram APIs to compute these metrics, and do not apply weights.
+
+questions:
+  - id: q1
+    question: "Plot the ETmiss of all events in the rucio dataset user.zmarshal:user.zmarshal.364702_OpenData_v1_p6026_2024-04-23."
+    validators:
+      - name: num_compare
+        arguments:
+          { var_name: avg_entries_per_event, number: 1.0, tolerance: "2%" }
+      - name: num_compare
+        arguments: { var_name: mean, number: 16.451025, tolerance: "2%" }
+  - id: q2
+    question: "Plot the pT of all jets in the rucio dataset user.zmarshal:user.zmarshal.364702_OpenData_v1_p6026_2024-04-23."
+    validators:
+      - name: num_compare
+        arguments:
+          {
+            var_name: avg_entries_per_event,
+            number: 5.952221428571429,
+            tolerance: "2%",
+          }
+      - name: num_compare
+        arguments:
+          { var_name: mean, number: 42.283766438052844, tolerance: "2%" }
+  - id: q3
+    question: "Plot the pT of jets with |η| < 1 in the rucio dataset user.zmarshal:user.zmarshal.364702_OpenData_v1_p6026_2024-04-23."
+    validators:
+      - name: num_compare
+        arguments:
+          {
+            var_name: avg_entries_per_event,
+            number: 2.102733333333333,
+            tolerance: "2%",
+          }
+      - name: num_compare
+        arguments: { var_name: mean, number: 43.2706, tolerance: "2%" }
+  - id: q4
+    question: "Plot the ETmiss of events that have at least two jets with pT > 40 GeV in the rucio dataset user.zmarshal:user.zmarshal.364702_OpenData_v1_p6026_2024-04-23."
+    validators:
+      - name: num_compare
+        arguments:
+          { var_name: avg_entries_per_event, number: 1.0, tolerance: "2%" }
+      - name: num_compare
+        arguments:
+          { var_name: mean, number: 16.416875226836318, tolerance: "2%" }
+  - id: q5
+    question: |
+      Plot the ETmiss of events that have an opposite-charge muon pair with an invariant mass between 60 and 120 GeV in the rucio dataset opendata:mc20_13TeV.700325.Sh_2211_Zmumu_maxHTpTV2_CVetoBVeto.deriv.DAOD_PHYSLITE.e8351_s3681_r13167_p6026.
+    validators:
+      - name: num_compare
+        arguments:
+          { var_name: avg_entries_per_event, number: 0.58882, tolerance: "2%" }
+      - name: num_compare
+        arguments: { var_name: mean, number: 15.683123, tolerance: "2%" }
+  - id: q6
+    question: |
+      For events with at least three jets, plot the pT of the trijet four-momentum that has the invariant mass closest to 172.5 GeV in each event and plot the maximum b-tagging discriminant value among the jets in this trijet in the rucio dataset opendata:mc20_13TeV.410471.PhPy8EG_A14_ttbar_hdamp258p75_allhad.deriv.DAOD_PHYSLITE.e6337_s3681_r13167_p6026.
+    validators:
+      - name: num_compare
+        arguments:
+          { var_name: avg_entries_per_event, number: 1.0, tolerance: "2%" }
+      - name: num_compare
+        arguments:
+          { var_name: mean, number: 89.41223411598033, tolerance: "2%" }
+      - name: num_compare
+        arguments:
+          { var_name: avg_entries_per_event, number: 1.0, tolerance: "2%" }
+      - name: num_compare
+        arguments:
+          { var_name: mean, number: 3.368289347252713, tolerance: "2%" }
+  - id: q7
+    question: |
+      Plot the scalar sum in each event of the pT of jets with pT > 30 GeV that are not within 0.4 in ΔR of any light lepton with pT > 10 GeV in the rucio dataset opendata:mc20_13TeV.410471.PhPy8EG_A14_ttbar_hdamp258p75_allhad.deriv.DAOD_PHYSLITE.e6337_s3681_r13167_p6026.
+    validators:
+      - name: num_compare
+        arguments:
+          { var_name: avg_entries_per_event, number: 1.0, tolerance: "2%" }
+      - name: num_compare
+        arguments:
+          { var_name: mean, number: 374.9925018049479, tolerance: "2%" }
+  - id: q8
+    question: |
+      For events with at least three light leptons and a same-flavor opposite-charge light lepton pair, find such a pair that has the invariant mass closest to 91.2 GeV in each event and plot the transverse mass of the system consisting of the missing transverse momentum and the highest-pT light lepton not in this pair in the rucio dataset user.zmarshal:user.zmarshal.700588_OpenData_v0_p6026_2024-04-16.
+    validators:
+      - name: num_compare
+        arguments:
+          { var_name: avg_entries_per_event, number: 1.0, tolerance: "2%" }
+      - name: num_compare
+        arguments:
+          { var_name: mean, number: 28.276235709105766, tolerance: "2%" }
+  - id: q9
+    question: "Plot the number of jets per event in the rucio dataset user.zmarshal:user.zmarshal.364702_OpenData_v1_p6026_2024-04-23."
+    validators:
+      - name: num_compare
+        arguments:
+          { var_name: avg_entries_per_event, number: 1.0, tolerance: "2%" }
+      - name: num_compare
+        arguments:
+          { var_name: mean, number: 5.949533333333333, tolerance: "2%" }
+  - id: q10
+    question: |
+      Plot the electron transverse momentum for electrons with p_T > 25 GeV in the first 20000 events of the rucio dataset opendata:mc20_13TeV.410471.PhPy8EG_A14_ttbar_hdamp258p75_allhad.deriv.DAOD_PHYSLITE.e6337_s3681_r13167_p6026.
+    validators:
+      - name: num_compare
+        arguments:
+          { var_name: avg_entries_per_event, number: 0.0242, tolerance: "2%" }
+      - name: num_compare
+        arguments: { var_name: mean, number: 46.9943, tolerance: "2%" }
+  - id: q11
+    question: "Plot the leading jet p_T (highest p_T jet per event) in the rucio dataset user.zmarshal:user.zmarshal.364702_OpenData_v1_p6026_2024-04-23."
+    validators:
+      - name: num_compare
+        arguments:
+          { var_name: avg_entries_per_event, number: 1.0, tolerance: "2%" }
+      - name: num_compare
+        arguments:
+          { var_name: mean, number: 95.56720793303572, tolerance: "2%" }
+  - id: q12
+    question: |
+      Plot the invariant mass of all muon pairs with the same charge in the opendata:mc20_13TeV.700325.Sh_2211_Zmumu_maxHTpTV2_CVetoBVeto.deriv.DAOD_PHYSLITE.e8351_s3681_r13167_p6026.
+    validators:
+      - name: num_compare
+        arguments:
+          {
+            var_name: avg_entries_per_event,
+            number: 0.07761878213467137,
+            tolerance: "2%",
+          }
+      - name: num_compare
+        arguments:
+          { var_name: mean, number: 42.759276772353566, tolerance: "2%" }
+  - id: q13
+    question: |
+      Plot the missing transverse energy for events with no jets in the opendata:mc20_13TeV.700325.Sh_2211_Zmumu_maxHTpTV2_CVetoBVeto.deriv.DAOD_PHYSLITE.e8351_s3681_r13167_p6026.
+    validators:
+      - name: num_compare
+        arguments:
+          { var_name: avg_entries_per_event, number: 1.0, tolerance: "2%" }
+      - name: num_compare
+        arguments:
+          { var_name: mean, number: 11.608278261856293, tolerance: "2%" }
+  - id: q14
+    question: "Plot delta-R between the two leading jets for events with at least two jets in the rucio dataset user.zmarshal:user.zmarshal.364702_OpenData_v1_p6026_2024-04-23."
+    validators:
+      - name: num_compare
+        arguments:
+          { var_name: avg_entries_per_event, number: 1.0, tolerance: "2%" }
+      - name: num_compare
+        arguments:
+          { var_name: mean, number: 3.488992983252726, tolerance: "2%" }
+  - id: q15
+    question: |
+      Make a stacked histogram of the pT of the highest-pT jet in each event in
+      user.zmarshal:user.zmarshal.364702_OpenData_v1_p6026_2024-04-23 and
+      user.zmarshal:user.zmarshal.364703_OpenData_v1_p6026_2024-04-23 between 100 and 200 GeV.
+    validators:
+      - name: num_compare
+        arguments:
+          {
+            var_name: avg_entries_per_event,
+            number: 0.3639636363636364,
+            tolerance: "2%",
+          }
+      - name: num_compare
+        arguments:
+          { var_name: mean, number: 153.3879517301616, tolerance: "2%" }
+  - id: q16
+    question: |
+      Plot the reconstructed top-quark pair mass around 3 TeV in events with one charged lepton in the rucio dataset user.zmarshal:user.zmarshal.301333_OpenData_v1_p6026_2024-04-23.
+      Baseline object cuts: jets pT > 30 GeV, electrons pT > 25 GeV, muons pT > 25 GeV. Require exactly one charged lepton and at least four jets. Do not add extra shaping cuts.
+    validators:
+      - name: num_compare
+        arguments:
+          { var_name: avg_entries_per_event, number: 1.0, tolerance: "2%" }
+      - name: num_compare
+        arguments: { var_name: mean, number: 2477.62050435838, tolerance: "2%" }
+  - id: q17
+    question: |
+      Plot the b-tagging discriminant value for all jets in the dataset opendata:mc20_13TeV.410471.PhPy8EG_A14_ttbar_hdamp258p75_allhad.deriv.DAOD_PHYSLITE.e6337_s3681_r13167_p6026.
+    validators:
+      - name: num_compare
+        arguments:
+          {
+            var_name: avg_entries_per_event,
+            number: 9.481926666666666,
+            tolerance: "2%",
+          }
+      - name: num_compare
+        arguments:
+          { var_name: mean, number: -0.39139301073134114, tolerance: "2%" }
+  - id: q18
+    question: |
+      Plot the b-tagging discriminant value for all jets with pT > 45 GeV and eta < 2.4 in events that have at least two such jets in the dataset opendata:mc20_13TeV.410471.PhPy8EG_A14_ttbar_hdamp258p75_allhad.deriv.DAOD_PHYSLITE.e6337_s3681_r13167_p6026.
+    validators:
+      - name: num_compare
+        arguments:
+          {
+            var_name: avg_entries_per_event,
+            number: 3.5913997840949983,
+            tolerance: "2%",
+          }
+      - name: num_compare
+        arguments:
+          { var_name: mean, number: 0.49067073993096993, tolerance: "2%" }
+
+model: gpt-5.6-luna:medium
+copy_back:
+  - plot_*.png
+  - script.py
+output: .\results\iris-hep-llm-questions\iris-hep
+repeat: 1
+threads: 3
+marketplaces:
+  - https://github.com/kratsg/marketplace.git@sync-atlas-skills-upstream
+plugins:
+  - iris-hep@iris-hep-tools
+copy_files:
+  - ~\servicex.yaml
+distro: Ubuntu
