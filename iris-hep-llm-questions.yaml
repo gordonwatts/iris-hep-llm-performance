@@ -218,7 +218,26 @@ questions:
       - name: num_compare
         arguments:
           { var_name: mean, number: 0.49067073993096993, tolerance: "2%" }
+  - id: q19
+    question: |
+      Count the number of single jet triggers that fired in this rucio dataset
+      opendata:mc20_13TeV.410471.PhPy8EG_A14_ttbar_hdamp258p75_allhad.deriv.DAOD_PHYSLITE.e6337_s3681_r13167_p6026.
+      1) Print out a markdown table to stdout so it is part of the final result. Each line should
+         contain a column with the trigger name and count. List total number of events at the top.
+         The output file must be called triggers.md
+      2) And make a plot where the x-axis is the trigger name and the y-axis is the # of times it fired.
 
+      Finally, as part of your final report, include "HLT_j460=<n>" where `<n>` is the
+      number of times that j460 fired in the file.
+    distro: atlas_al9
+    copy_back:
+      - triggers.md
+    validators:
+      - name: num_compare
+        arguments:
+          var_name: HLT_j460
+          number: 902
+          tolerance: 1%
 model: gpt-5.6-luna:medium
 copy_back:
   - plot_*.png
