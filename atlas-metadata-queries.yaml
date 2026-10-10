@@ -1,0 +1,62 @@
+# yaml-language-server: $schema=test-wsl2-llm-template.schema.json
+# Template-driven WSL2 Codex batch configuration
+prompt_template: |
+  Using the skills you have access to and the atlas-af MCP, please answer the following question:
+
+  {{ question }}
+
+  At the end of the response:
+    1. List the steps you took that led to the success (no need to list things that were dead ends)
+    2. What MCP's (if any) did you use? What skills? Please name them.
+    3. What changes to the skills (or a new skill) would have helped you?
+questions:
+  - id: q1-find-paper
+    question: |
+      Please find the arxiv link for the first LLP paper published by ATLAS that concentrates on decays in the Calorimeter.
+    validators:
+      - name: require_string
+        arguments:
+          string: "1501.04020"
+  - id: q2-find-analysis-reference-code
+    question: |
+      Please find the ATLAS analysis reference code LLP paper published by ATLAS that concentrates on
+      decays in the Calorimeter (the reference codes are in the form `<group>-<year>-<index>`, or sometimes start
+      with `ANA-xxx`). The paper is in the archive under 1501.04020.
+    validators:
+      - name: require_string
+        arguments:
+          string: "EXOT-2012-28"
+  - id: q3-find-internal-note
+    question: |
+      Please find the cds record link for the internal note for the analysis ANA-EXOT-2019-23.
+    validators:
+      - name: require_string
+        arguments:
+          string: "2712171"
+  - id: q4-internal-abstract
+    question: |
+      Please quote me the abstract for the internal note for the analysis EXOT-2012-28.
+    validators:
+      - name: require_string
+        arguments:
+          string: "These long-lived neutral particles may provide a novel path to a Higgs rare-decay discovery at the Large Hadron Collider"
+  - id: q5-download-internal-note
+    question: |
+      Please download the PDF of the internal note found at https://cds.cern.ch/record/2712171. Call the file `paper.pdf`.
+    copy_back:
+      - paper.pdf
+model: gpt-6-luna:high
+marketplaces:
+  - https://github.com/usatlas/marketplace.git
+plugins:
+  - af-uchicago@usatlas-marketplace
+  - atlas@usatlas-marketplace
+mcp_servers:
+  - atlas-af
+copy_files: []
+copy_back: []
+output: .\results\atlas-metadata-queries\query
+repeat: 1
+threads: 1
+distro: Ubuntu
+wsl_parent: /home/gwatts/llm-testing
