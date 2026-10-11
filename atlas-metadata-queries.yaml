@@ -35,7 +35,8 @@ questions:
           string: "2712171"
   - id: q4-internal-abstract
     question: |
-      Please quote me the abstract for the internal note for the analysis EXOT-2012-28.
+      Please quote me the *full* abstract for the internal note for the analysis EXOT-2012-28.
+      Use math mode so that it appears correctly in markdown.
     validators:
       - name: require_string
         arguments:
