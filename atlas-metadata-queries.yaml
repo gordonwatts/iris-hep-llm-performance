@@ -46,6 +46,14 @@ questions:
       Please download the PDF of the internal note found at https://cds.cern.ch/record/2712171. Call the file `paper.pdf`.
     copy_back:
       - paper.pdf
+  - id: q6-cds-comments
+    question: |
+      Flavia Dias left a comment on the internal note, https://cds.cern.ch/record/2712171, summarizing the first approval meeting. Please find the
+      comment and repeat it here.
+    validators:
+      - name: require_string
+        arguments:
+          string: "modelling of L1 trigger efficiency"
 model: gpt-6-luna:high
 marketplaces:
   - https://github.com/usatlas/marketplace.git
