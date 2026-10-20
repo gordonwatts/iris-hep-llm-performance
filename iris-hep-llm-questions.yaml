@@ -256,7 +256,6 @@ questions:
     question: |
       Plot the number of valid ghost-associated tracks for every jet in the rucio dataset
       opendata:mc20_13TeV.410471.PhPy8EG_A14_ttbar_hdamp258p75_allhad.deriv.DAOD_PHYSLITE.e6337_s3681_r13167_p6026.
-      Use the jet's typed associated-object accessor for the GhostTrack association.
       Count only non-null track pointers, since thinning can invalidate links.
       Include jets with zero valid associated tracks and do not apply object or event cuts.
       Keep events with no jets in the event count used for avg_entries_per_event.
