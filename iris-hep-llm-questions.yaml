@@ -238,7 +238,39 @@ questions:
           var_name: HLT_j460
           number: 902
           tolerance: 1%
-model: gpt-5.6-luna:medium
+  # Numeric reference values for q20/q21 need a successful one-file reference run.
+  - id: q20
+    question: |
+      Plot the number of precision layers for every muon in the rucio dataset
+      opendata:mc20_13TeV.700325.Sh_2211_Zmumu_maxHTpTV2_CVetoBVeto.deriv.DAOD_PHYSLITE.e8351_s3681_r13167_p6026.
+      Include muons with zero precision layers and do not apply object or event cuts.
+      Keep events with no muons in the event count used for avg_entries_per_event.
+    validators:
+      - name: num_compare
+        arguments:
+          { var_name: avg_entries_per_event, number: 1.599725, tolerance: "2%" }
+      - name: num_compare
+        arguments:
+          { var_name: mean, number: 2.897998093422307, tolerance: "2%" }
+  - id: q21
+    question: |
+      Plot the number of valid ghost-associated tracks for every jet in the rucio dataset
+      opendata:mc20_13TeV.410471.PhPy8EG_A14_ttbar_hdamp258p75_allhad.deriv.DAOD_PHYSLITE.e6337_s3681_r13167_p6026.
+      Count only non-null track pointers, since thinning can invalidate links.
+      Include jets with zero valid associated tracks and do not apply object or event cuts.
+      Keep events with no jets in the event count used for avg_entries_per_event.
+    validators:
+      - name: num_compare
+        arguments:
+          {
+            var_name: avg_entries_per_event,
+            number: 9.481926666666666,
+            tolerance: "2%",
+          }
+      - name: num_compare
+        arguments:
+          { var_name: mean, number: 3.0272384866929296, tolerance: "2%" }
+model: gpt-6-luna:medium
 copy_back:
   - plot_*.png
   - script.py
