@@ -260,6 +260,17 @@ questions:
       Count only non-null track pointers, since thinning can invalidate links.
       Include jets with zero valid associated tracks and do not apply object or event cuts.
       Keep events with no jets in the event count used for avg_entries_per_event.
+    validators:
+      - name: num_compare
+        arguments:
+          {
+            var_name: avg_entries_per_event,
+            number: 9.481926666666666,
+            tolerance: "2%",
+          }
+      - name: num_compare
+        arguments:
+          { var_name: mean, number: 3.0272384866929296, tolerance: "2%" }
 model: gpt-6-luna:medium
 copy_back:
   - plot_*.png
