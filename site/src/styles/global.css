@@ -1,0 +1,130 @@
+/*
+ * global.css — Tailwind v4 entrypoint and the single source of truth for
+ * this site's design tokens. Tailwind 4 is CSS-first: there is no
+ * tailwind.config file. Semantic tokens are declared once as plain CSS
+ * custom properties on :root (light — the default) and re-declared for
+ * dark, then re-exported through @theme inline so Tailwind's generated
+ * utilities (bg-surface-card, text-accent, ...) reference the same
+ * variables and therefore follow a theme change automatically.
+ */
+
+@import "tailwindcss";
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
+
+/* A `dark:` variant keyed on data-theme rather than prefers-color-scheme,
+   so the explicit toggle (ToggleTheme.astro) can override the OS setting. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+:root {
+  /* Surfaces */
+  --surface-page: #fafafa;
+  --surface-card: #ffffff;
+  --surface-sunken: #f4f4f4;
+  --border-subtle: #e5e5e5;
+
+  /* Text */
+  --text-primary: #0a0a0a;
+  --text-muted: #666666;
+
+  /* Accent — reserved for interactive affordances only (links, focus, the
+     active nav item, primary buttons), never for large decorative fills. */
+  --accent: #3b6ea5;
+  --accent-soft: #eaf1f8;
+
+  /* Status — used for pass/fail/pending once results land */
+  --status-pass: #16a34a;
+  --status-fail: #dc2626;
+  --status-wait: #a16207;
+
+  /* Exactly two shadow steps: resting and hover/raised. No third step. */
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.04);
+  --shadow-card-raised:
+    0 1px 2px rgb(0 0 0 / 0.04), 0 8px 24px -14px rgb(0 0 0 / 0.16);
+
+  --radius-card: 0.75rem;
+}
+
+/* Explicit dark choice, from ToggleTheme.astro's inline no-flash script. */
+:root[data-theme="dark"] {
+  --surface-page: #0c0c0d;
+  --surface-card: #171718;
+  --surface-sunken: #131314;
+  --border-subtle: #272728;
+
+  --text-primary: #fafafa;
+  --text-muted: #a1a1a1;
+
+  --accent: #6fa3d8;
+  --accent-soft: #1c2b38;
+
+  --status-pass: #4ade80;
+  --status-fail: #f87171;
+  --status-wait: #eab308;
+
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.3);
+  --shadow-card-raised:
+    0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px -14px rgb(0 0 0 / 0.5);
+}
+
+/* System preference, only when nothing has been explicitly chosen — this
+   block intentionally duplicates the one above so the explicit toggle wins
+   in both directions regardless of which rule the browser saw last. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --surface-page: #0c0c0d;
+    --surface-card: #171718;
+    --surface-sunken: #131314;
+    --border-subtle: #272728;
+
+    --text-primary: #fafafa;
+    --text-muted: #a1a1a1;
+
+    --accent: #6fa3d8;
+    --accent-soft: #1c2b38;
+
+    --status-pass: #4ade80;
+    --status-fail: #f87171;
+    --status-wait: #eab308;
+
+    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.3);
+    --shadow-card-raised:
+      0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px -14px rgb(0 0 0 / 0.5);
+  }
+}
+
+@theme inline {
+  --color-surface-page: var(--surface-page);
+  --color-surface-card: var(--surface-card);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-border-subtle: var(--border-subtle);
+  --color-text-primary: var(--text-primary);
+  --color-text-muted: var(--text-muted);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-status-pass: var(--status-pass);
+  --color-status-fail: var(--status-fail);
+  --color-status-wait: var(--status-wait);
+
+  --font-sans: "Geist Variable", system-ui, sans-serif;
+  --font-mono: "Geist Mono Variable", ui-monospace, "SF Mono", monospace;
+}
+
+@layer base {
+  html {
+    color-scheme: light dark;
+  }
+
+  body {
+    background-color: var(--surface-page);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+  }
+
+  /* Every dataset/model identifier in this repo lives in a monospace run —
+     rucio dataset names, MODEL:effort selectors, question ids. */
+  code,
+  .font-mono {
+    font-family: var(--font-mono);
+  }
+}

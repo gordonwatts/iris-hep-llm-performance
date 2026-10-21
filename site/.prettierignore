@@ -1,0 +1,4 @@
+public/
+dist/
+pixi.lock
+.astro/

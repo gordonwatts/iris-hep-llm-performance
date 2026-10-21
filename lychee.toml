@@ -1,0 +1,5 @@
+# Configuration for the `linkcheck` pixi task (see pixi.toml).
+
+# GitHub's unauthenticated rate limit can return 429 for a burst of checks;
+# treat it as acceptable rather than a broken-link false positive in CI.
+accept = ["100..=103", "200..=299", "429"]
