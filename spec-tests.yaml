@@ -7,7 +7,8 @@ questions:
   - id: spec-from-old-analysis-modified
     question: |
       Use the $iris-hep:analysis-spec-builder skill, please read this old Run 1 analysis 
-      pdf. I want to build a analysis specification that is follows this analysis, except
+      pdf. This analysis will target Run 3. I want to build an analysis specification
+      that follows the physics intent of this analysis, except
       (!!) the background method for QCD - lets use the ABCD method, because the one used
       in this analysis failed. Output the file in specification.md
     copy_files:
@@ -17,8 +18,7 @@ questions:
   - id: datasets-from-spec
     question: |
       Use the $iris-hep:data-selection skill to find the datasets and derivation
-      for the analysis described in the calratio-abcd-spec.md file. The analysis will
-      Run 1 be implemented as a Run 3 analysis.
+      for the Run 3 analysis described in the calratio-abcd-spec.md file.
 
       If you create any jupyter notebooks copy them back to the root directory of this
       workspace.
@@ -30,13 +30,60 @@ questions:
     copy_back:
       - datasets.yaml
       - "*.ipynb"
+  - id: data-sources-from-spec
+    question: |
+      Use $atlas-analysis:analysis-data-sources to map calratio-abcd-spec.md
+      to data-sources.md, using calratio-probe-samples.yaml for an available
+      positive-control sample. Cover every input needed to implement and validate
+      the analysis, and verify extraction with ServiceX, starting with PHYSLITE.
+      Map the requirements to Run 3 data and simulation. The supplied sample is
+      an extraction positive control, not evidence that it covers every analysis
+      role. Keep historical Run 1 choices separate from Run 3 requirements.
+      Preserve all ABCD fail regions and sidebands. Prepare missing Python
+      dependencies with uv; submitting the one-file ServiceX read probes needed
+      for this task is authorized. servicex.yaml is supplied for the client;
+      never print or return its token.
+
+      Save data-source-evidence.json and runnable probes, dependency versions,
+      inspections and failure logs directly under probes/. Distinguish tested sources,
+      external metadata, unverified inputs and PHYSLITE-only backups. Use luna
+      workers for bounded ServiceX coding when model-selectable delegation is
+      available; report actual model roles and any fallback.
+
+      For inspection, also save servicex-smoke.root with a nonempty events
+      tree containing event_number and jet_pt (GeV) from a successful PHYSLITE
+      ServiceX delivery. You may repackage returned columns locally, but keep
+      the original delivery provenance and inspection in the evidence ledger.
+      Do not manufacture a smoke file if delivery fails. Finish by reporting
+      nominal requirement counts by evidence status and all remaining blockers.
+    plugins:
+      - atlas-analysis@atlas-analysis-marketplace
+      - af-uchicago@usatlas-marketplace
+      - atlas@usatlas-marketplace
+    copy_files:
+      - .\spec\calratio-abcd-spec.md
+      - .\spec\calratio-probe-samples.yaml
+      - C:\Users\gordo\servicex.yaml
+    copy_back:
+      - data-sources.md
+      - data-source-evidence.json
+      - servicex-smoke.root
+      - probes/*
+    validators:
+      - name: root_tree
+        arguments:
+          file: servicex-smoke.root
+          tree: events
+          must_have: [event_number, jet_pt]
 model: gpt-6.1-sol:medium
 marketplaces:
-  - https://github.com/iris-hep/marketplace.git@spec-updates
+  - https://github.com/iris-hep/marketplace.git@codex/run3-specification
   - https://github.com/usatlas/marketplace.git
+  - https://github.com/gordonwatts/atlas-analysisbase-marketplace.git@codex/analysis-data-sources
 plugins:
   - iris-hep@iris-hep-tools
-mcp_servers: []
+mcp_servers:
+  - atlas-af
 distro: Ubuntu
 max_copy_back_files: 100
 timeout_seconds: 1800

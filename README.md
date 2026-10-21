@@ -14,6 +14,42 @@ The following will execute question `q1` in the `iris-hep-llm-questions.yaml` fi
 uvx --from git+https://github.com/gordonwatts/test-wsl2-llm.git test-wsl2-llm template run .\iris-hep-llm-questions.yaml q1
 ```
 
+## Specification-to-data benchmark (issue #5)
+
+The `data-sources-from-spec` question exercises the `analysis-data-sources`
+skill in the ATLAS Analysis marketplace. It uses the existing CalRatio
+Run 3 specification and asks for a verified extraction map, including gaps and
+PHYSLITE-only backups. The small `calratio-probe-samples.yaml` manifest supplies
+a Run 3 PHYSLITE collision sample, separating accessor testing
+from the preceding dataset-discovery stage. A successful positive control does
+not establish trigger acceptance or coverage of all analysis sample roles.
+
+Prepare Ubuntu with Codex signed in and `uv` on its login-shell PATH. The
+selected AF MCP server must be authenticated. ServiceX's Python client also
+needs its own configuration; MCP catalog access does not supply that client
+configuration. This question copies the existing Windows-side
+`C:\Users\gordo\servicex.yaml` using the established `copy_files` convention.
+Update that path for another machine. The configuration is excluded from
+`copy_back`; keep its token out of Git and published artifacts.
+
+```powershell
+uvx --from git+https://github.com/gordonwatts/test-wsl2-llm.git test-wsl2-llm template run .\spec-tests.yaml data-sources-from-spec --model gpt-6-astra:medium --timeout 3600 --output .\results\issue5\run3\sources
+```
+
+The run returns `data-sources.md`, `data-source-evidence.json`, runnable probe
+code and logs, and `servicex-smoke.root` when delivery succeeds. The ROOT
+validator checks the smoke tree and required branches. Review nonzero counts,
+ServiceX provenance, requirement coverage, units and physics equivalence
+separately: passing the smoke check does not mean every analysis input is ready.
+The first question, `spec-from-old-analysis-modified`, explicitly targets Run 3
+and uses the IRIS-HEP specification skill, whose ATLAS default is also Run 3.
+Generate it separately with `--model gpt-6-astra:medium`, review the returned
+`specification.md`, then copy its exact bytes to `spec/calratio-abcd-spec.md`
+before running `data-sources-from-spec`. Check run, energy, triggers,
+normalization and ABCD sidebands at the handoff. The marketplace URLs currently
+pin review branches containing the tested skills.
+
+
 ## Website and performance results
 
 Giordon's catalogue and the existing interactive performance report are built together:

@@ -9,3 +9,6 @@ results/*
 # --root-dir can resolve absolute /iris-hep-llm-performance/... links
 # against the real build output (see pixi.toml's `linkcheck` task)
 .linkcheck-root/
+
+# Local investigation output is not part of the benchmark source.
+/evaluations/issue5/

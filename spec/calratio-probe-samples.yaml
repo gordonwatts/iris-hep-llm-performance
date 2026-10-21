@@ -1,0 +1,8 @@
+# Extraction positive control only; analysis-role coverage must be established separately.
+schema_version: 1
+samples:
+  - role: run3-collision-data-positive-control
+    did: data23_13p6TeV:data23_13p6TeV.00451094.physics_Main.deriv.DAOD_PHYSLITE.r15774_p6304_p6700_tid43636932_00
+    derivation: DAOD_PHYSLITE
+    purpose: Check extraction accessors on Run 3 collision data with NFiles=1 and no cuts.
+    limitation: Does not establish Run 3 CalRatio trigger acceptance, displaced-object content, control-stream coverage, or signal suitability.
