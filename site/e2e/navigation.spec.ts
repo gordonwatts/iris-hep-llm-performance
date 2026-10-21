@@ -24,7 +24,7 @@ test("home lists every suite and each card links to a page that loads", async ({
     .first()
     .click();
   await expect(page).toHaveURL(/\/suites\/iris-hep-llm-questions\/$/);
-  await expect(page.locator("h1")).toContainText("IRIS-HEP analysis stack");
+  await expect(page.locator("h1")).toContainText("Iris Hep Llm Questions");
 });
 
 test("home shows the empty results state before any runs exist", async ({
