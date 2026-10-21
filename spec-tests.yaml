@@ -44,8 +44,12 @@ questions:
       for this task is authorized. servicex.yaml is supplied for the client;
       never print or return its token.
 
-      Save data-source-evidence.json and runnable probes, dependency versions,
-      inspections and failure logs directly under probes/. Distinguish tested sources,
+      Write data-sources.md and data-source-evidence.json in the workspace root,
+      beside calratio-abcd-spec.md. The JSON must contain compact, self-contained
+      probe evidence: executed queries, versions, request/sample provenance,
+      observations and concise failure summaries. Keep scripts, intermediate
+      files and full logs local; do not return the probes directory.
+      Distinguish tested sources,
       external metadata, unverified inputs and PHYSLITE-only backups. Use luna
       workers for bounded ServiceX coding when model-selectable delegation is
       available; report actual model roles and any fallback.
@@ -56,6 +60,7 @@ questions:
       the original delivery provenance and inspection in the evidence ledger.
       Do not manufacture a smoke file if delivery fails. Finish by reporting
       nominal requirement counts by evidence status and all remaining blockers.
+      Run the skill delivery validator against the workspace root before finishing.
     plugins:
       - atlas-analysis@atlas-analysis-marketplace
       - af-uchicago@usatlas-marketplace
@@ -68,7 +73,6 @@ questions:
       - data-sources.md
       - data-source-evidence.json
       - servicex-smoke.root
-      - probes/*
     validators:
       - name: root_tree
         arguments:
