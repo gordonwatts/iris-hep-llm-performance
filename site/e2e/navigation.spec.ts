@@ -2,7 +2,9 @@ import { expect, test } from "@playwright/test";
 
 const SUITE_IDS = [
   "agc-tests",
-  "analyiss-base-questions",
+  "analysis-base-questions",
+  "atlas-data-tests",
+  "atlas-metadata-queries",
   "iris-hep-llm-questions",
   "spec-tests",
   "uchicago-mcp",
@@ -29,7 +31,9 @@ test("home shows the empty results state before any runs exist", async ({
   page,
 }) => {
   await page.goto("");
-  await expect(page.getByRole("status")).toContainText("No runs recorded yet");
+  await expect(page.getByRole("status").first()).toContainText(
+    "No runs recorded yet",
+  );
 });
 
 test("a suite page lists every one of its questions and each link resolves", async ({
@@ -42,7 +46,7 @@ test("a suite page lists every one of its questions and each link resolves", asy
   const questionLinks = page.locator(
     'td.suite__table-id a[href*="/suites/iris-hep-llm-questions/q"]',
   );
-  await expect(questionLinks).toHaveCount(18);
+  await expect(questionLinks).toHaveCount(21);
 
   const firstHref = await questionLinks.first().getAttribute("href");
   const response = await page.request.get(firstHref!);
@@ -66,5 +70,7 @@ test("the models page groups suites under each model selector", async ({
 }) => {
   await page.goto("models/");
   await expect(page.locator("h1")).toContainText("Models");
-  await expect(page.getByRole("status")).toContainText("No runs recorded yet");
+  await expect(page.getByRole("status").first()).toContainText(
+    "No runs recorded yet",
+  );
 });

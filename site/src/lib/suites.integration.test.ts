@@ -10,10 +10,12 @@ import { loadSuites } from "./suites";
 const suites = loadSuites();
 
 describe("loadSuites against the real repo specs", () => {
-  it("discovers exactly the five known suites", () => {
+  it("discovers exactly the seven known suites", () => {
     expect(suites.map((s) => s.id)).toEqual([
       "agc-tests",
-      "analyiss-base-questions",
+      "analysis-base-questions",
+      "atlas-data-tests",
+      "atlas-metadata-queries",
       "iris-hep-llm-questions",
       "spec-tests",
       "uchicago-mcp",
@@ -21,11 +23,13 @@ describe("loadSuites against the real repo specs", () => {
   });
 
   it.each([
-    ["iris-hep-llm-questions", 18],
-    ["analyiss-base-questions", 5],
+    ["iris-hep-llm-questions", 21],
+    ["analysis-base-questions", 5],
     ["uchicago-mcp", 5],
     ["agc-tests", 1],
-    ["spec-tests", 1],
+    ["atlas-data-tests", 3],
+    ["atlas-metadata-queries", 6],
+    ["spec-tests", 2],
   ])("%s has %i questions", (id, count) => {
     const suite = suites.find((s) => s.id === id);
     expect(suite?.questions).toHaveLength(count);
