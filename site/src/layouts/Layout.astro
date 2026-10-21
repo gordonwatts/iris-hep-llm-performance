@@ -1,0 +1,81 @@
+---
+import "../styles/global.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { href } from "../lib/url";
+
+export interface Props {
+  title: string;
+  description?: string;
+}
+
+const {
+  title,
+  description = "LLM benchmark suites for the IRIS-HEP software stack.",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" href={href("/favicon.svg")} type="image/svg+xml" />
+    <title>{title} · IRIS-HEP LLM Performance</title>
+
+    <!--
+      Applies a previously stored theme choice before first paint. This
+      must run here, in <head>, rather than as a script on ToggleTheme's
+      button in <body> — waiting until the body parses would show the
+      wrong theme for a frame first. With nothing stored, no data-theme
+      attribute is set and global.css's prefers-color-scheme block decides.
+    -->
+    <script is:inline>
+      (function () {
+        try {
+          var stored = localStorage.getItem("theme");
+          if (stored === "light" || stored === "dark") {
+            document.documentElement.setAttribute("data-theme", stored);
+          }
+        } catch (_e) {
+          // localStorage can throw in a locked-down browsing context (e.g.
+          // some private-browsing modes); falling through to
+          // prefers-color-scheme is a fine default in that case.
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <a href="#main-content" class="skip-link">
+      Skip to content
+    </a>
+    <Header />
+    <main id="main-content">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style is:global>
+  .skip-link {
+    position: absolute;
+    top: -3rem;
+    left: 1rem;
+    z-index: 50;
+    background: var(--surface-card);
+    color: var(--text-primary);
+    border: 1px solid var(--border-subtle);
+    border-radius: 0.375rem;
+    padding: 0.5rem 0.875rem;
+    font-size: 0.875rem;
+    text-decoration: none;
+    transition: top 150ms;
+  }
+
+  .skip-link:focus {
+    top: 1rem;
+  }
+</style>

@@ -1,0 +1,25 @@
+---
+import EmptyResultsPanel from "./EmptyResultsPanel.astro";
+import { performanceLink, type ResultFilters } from "../lib/performance";
+interface Props {
+  scope: string;
+  filters?: ResultFilters;
+}
+const { scope, filters = {} } = Astro.props;
+const url = performanceLink(filters);
+---
+
+{url ? (
+  <p>
+    <a href={url}>View results &rarr;</a>
+  </p>
+) : (
+  <EmptyResultsPanel scope={scope} />
+)}
+<style>
+  a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>

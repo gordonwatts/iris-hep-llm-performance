@@ -1,0 +1,104 @@
+---
+import ToggleTheme from "./ToggleTheme.astro";
+import { href } from "../lib/url";
+
+const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
+
+const navItems = [
+  { label: "Suites", path: "/" },
+  { label: "Models", path: "/models/" },
+];
+
+function isCurrent(path: string): boolean {
+  const normalized = path.replace(/\/$/, "") || "/";
+  return currentPath === normalized;
+}
+---
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <a href={href("/")} class="site-header__brand">
+      <span class="site-header__brand-title">IRIS-HEP LLM Performance</span>
+    </a>
+
+    <nav class="site-header__nav" aria-label="Primary">
+      {navItems.map((item) => (
+        <a
+          href={href(item.path)}
+          class="site-header__link"
+          aria-current={isCurrent(item.path) ? "page" : undefined}
+        >
+          {item.label}
+        </a>
+      ))}
+    </nav>
+
+    <ToggleTheme />
+  </div>
+</header>
+
+<style>
+  .site-header {
+    border-bottom: 1px solid var(--border-subtle);
+    background: var(--surface-card);
+  }
+
+  .site-header__inner {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 0.875rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .site-header__brand {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: var(--text-primary);
+  }
+
+  .site-header__brand-title {
+    font-weight: 600;
+    font-size: 0.9375rem;
+    letter-spacing: -0.01em;
+  }
+
+  .site-header__nav {
+    display: flex;
+    gap: 1.25rem;
+    flex: 1;
+  }
+
+  .site-header__link {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    text-decoration: none;
+    padding: 0.25rem 0;
+    border-bottom: 2px solid transparent;
+    transition:
+      color 150ms,
+      border-color 150ms;
+  }
+
+  .site-header__link:hover,
+  .site-header__link:focus-visible {
+    color: var(--text-primary);
+  }
+
+  .site-header__link[aria-current="page"] {
+    color: var(--text-primary);
+    border-bottom-color: var(--accent);
+  }
+
+  @media (max-width: 640px) {
+    .site-header__brand-title {
+      font-size: 0.8125rem;
+    }
+    .site-header__nav {
+      gap: 0.875rem;
+    }
+  }
+</style>
