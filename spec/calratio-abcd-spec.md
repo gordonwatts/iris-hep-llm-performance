@@ -1,259 +1,205 @@
-# Run 1 CalRatio Search for Pair-Produced Long-Lived Neutral Particles with an ABCD QCD Estimate
+# Run 1 CalRatio displaced-jet search with an ABCD QCD estimate
 
-Search for a scalar boson decaying to two long-lived neutral valley pions, each reconstructed as a narrow, trackless, hadronic-calorimeter-dominated jet. Reproduce the Run 1 ATLAS analysis selection and signal interpretation while replacing its multijet (QCD) estimate with an ABCD method.
+Search for gg -> Phi -> pi_v pi_v, with both long-lived neutral particles decaying near the outer electromagnetic calorimeter or in the hadronic calorimeter.
+Retain the published 8 TeV analysis and replace only its QCD estimate and the statistical treatment needed to support that replacement.
 
 ## Source and Scope
 
-* Analysis mode: Source-derived analysis with requested changes.
-* Source: ATLAS Collaboration, *Search for pair-produced long-lived neutral particles decaying to jets in the ATLAS hadronic calorimeter in pp collisions at sqrt(s) = 8 TeV*, arXiv:1501.04020v2, Phys. Lett. B 743 (2015) 15-34; local source `1501.04020v2.pdf`.
-* Analysis intent: Select pair-produced neutral long-lived particles (LLPs) that decay near the outer electromagnetic calorimeter or in the hadronic calorimeter, producing two narrow jets with high hadronic-to-electromagnetic energy ratio and no associated inner-detector tracks. Set limits on scalar production times branching ratio as a function of LLP proper lifetime.
-* Source realization: Use 2012 ATLAS 8 TeV collision data, the dedicated CalRatio trigger, Run 1 anti-kt R=0.4 calorimeter jets, and the source object/event selections below.
-* Requested deviation from the source: Replace only the source multijet probability-and-correlation-correction method with the ABCD estimate defined here. Do not use the source raw prediction, fitted correlation scale factor, or quoted multijet yield as the new prediction.
-* Added or modernized elements: A simultaneous four-region ABCD likelihood, an explicit ABCD correlation parameter kappa, signal/non-QCD contamination treatment in all four regions, and ABCD closure and stability tests. These are consequences of the requested background-method change and are not claims about the source analysis.
+* Analysis mode: Source-derived with requested changes.
+* Authoritative source: ATLAS, "Search for pair-produced long-lived neutral particles decaying to jets in the ATLAS hadronic calorimeter in pp collisions at sqrt(s) = 8 TeV", arXiv:1501.04020v2, supplied as [1501.04020v2.pdf](1501.04020v2.pdf). Section references below refer to this version.
+* Analysis intent: identify two displaced, narrow, trackless, hadronic-energy-dominated jets and constrain scalar production times branching fraction versus LLP proper decay length.
+* Source realization: 2012 ATLAS data, 20.3 fb^-1, sqrt(s) = 8 TeV, dedicated CalRatio trigger and Run 1 calorimeter/tracking reconstruction.
+* Requested deviation: replace the single-jet P/Q fake-probability prediction and its extrapolated correlation correction with a data-driven ABCD estimate. The user's report that the previous method failed motivates the replacement; the paper itself reports closure and agreement with data.
+* Added elements: explicit tag/probe sidebands, ABCD closure requirements, correlation nuisance and simultaneous region-count likelihood. These are proposed analysis choices, not results from the source. Their validity must be established with control data before producing limits.
+* Technique context: a later [ATLAS CalRatio search](https://cds.cern.ch/record/2657638/files/1902.03094.pdf?version=1) also uses a data-driven ABCD method. Its Run 2 selections and discriminants are not imported here; it does not establish closure for the proposed Run 1 axes.
 
 ## Data Samples
 
 | Data Sample | Role(s) In Analysis |
 | --- | --- |
-| 2012 ATLAS pp collision data at sqrt(s) = 8 TeV, 20.3 fb^-1 after data-quality requirements, selected with the unprescaled CalRatio trigger | Signal region and ABCD regions A-D |
-| Empty-crossing data selected with the empty-crossing CalRatio-like trigger | Cosmic-ray background estimate and timing template |
-| Random-collision-trigger data | Pile-up/underlying-event track-overlap correction for the cosmic-ray estimate |
-| Unpaired-isolated-crossing data selected with the corresponding CalRatio trigger | Beam-halo estimate and non-collision validation |
-| Hidden Valley signal MC generated with PYTHIA 8.165 and MSTW2008, followed by detailed GEANT4 detector simulation and standard data reconstruction | Signal acceptance, region contamination, trigger studies, and lifetime extrapolation |
-| Run 1 multijet data and MC control samples | Signal-systematic studies and ABCD closure diagnostics only; the source prescaled-single-jet probability method is not used for the nominal QCD yield |
+| 2012 pp collision data at 8 TeV, 20.3 fb^-1 after quality requirements | CalRatio-triggered signal and ABCD control regions |
+| 2012 prescaled single-jet data, thresholds of 15 GeV or higher | Independent QCD characterization, trigger studies and closure validation; source effective luminosities 14.8-454.1 nb^-1 |
+| Empty-crossing data with a CalRatio-like trigger | Cosmic-ray estimate |
+| Unpaired isolated-crossing data with a CalRatio-like trigger | Beam-halo estimate |
+| Random collision-trigger data | Probability for incidental tracks to spoil cosmic-jet isolation |
+| Source Hidden Valley signal simulations listed below | Acceptance, trigger efficiency, lifetime dependence and signal contamination in ABCD regions |
+| Inclusive multijet simulation used for detector-performance studies | Data/MC response and pile-up checks; not the nominal QCD normalization |
+| Additional electroweak/top simulation or control data, if needed by the audit | Bound non-QCD collision contamination in all four regions; no fixed yield assumed |
 
-Generated signal benchmarks are the actual `(m_Phi, m_pi_v)` tuples below; masses are in GeV. The quoted source gluon-fusion cross section for each parent mass is shown in pb.
+Concrete dataset/derivation identifiers and generated sample lifetimes are not given in the paper. No modern data-format default is imposed.
 
-| Parent mass and cross section | Generated LLP masses | Benchmark tuples |
+Source signal generation: PYTHIA 8.165 with MSTW2008, gluon fusion only, GEANT4 detector simulation, data-equivalent reconstruction and pile-up reweighting. The scalar has SM-Higgs-like production at each mass and 100% generated branching fraction to pi_v pi_v. Preserve these actual benchmark combinations:
+
+| Parent mass [GeV] | pi_v mass [GeV] | Source ggF cross section [pb] |
 | --- | --- | --- |
-| 100, 29.7 pb | 10, 25 | (100, 10), (100, 25) |
-| 126, 19.0 pb | 10, 25, 40 | (126, 10), (126, 25), (126, 40) |
-| 140, 15.4 pb | 10, 20, 40 | (140, 10), (140, 20), (140, 40) |
-| 300, 3.59 pb | 50 | (300, 50) |
-| 600, 0.52 pb | 50, 150 | (600, 50), (600, 150) |
-| 900, 0.06 pb | 50, 150 | (900, 50), (900, 150) |
+| 100 | 10, 25 | 29.7 |
+| 126 (Higgs) | 10, 25, 40 | 19.0 |
+| 140 | 10, 20, 40 | 15.4 |
+| 300 | 50 | 3.59 |
+| 600 | 50, 150 | 0.52 |
+| 900 | 50, 150 | 0.06 |
 
-The source simulates `gg -> Phi`, with `BR(Phi -> pi_v pi_v) = 100%`. The pi_v decays preferentially to heavy fermions. Its simulated branching fractions `(bb, tau tau, cc)` in percent are: 10 GeV `(70.0, 16.4, 13.4)`, 20 GeV `(86.3, 8.0, 5.6)`, 25 GeV `(86.6, 8.1, 5.3)`, 40 GeV `(86.5, 8.5, 5.0)`, 50 GeV `(86.2, 8.8, 4.9)`, and 150 GeV `(84.8, 10.2, 4.8)`. Each generated sample has a fixed lifetime chosen to populate decays throughout ATLAS. Samples are pile-up reweighted to data.
+Each comma-separated entry denotes a separate benchmark at that row's parent mass, not a Cartesian product across rows. Low-mass samples have parent mass below 300 GeV; the remainder are high-mass samples. Source pi_v branching fractions are:
+
+| pi_v mass [GeV] | bb [%] | tau+ tau- [%] | cc [%] |
+| --- | --- | --- | --- |
+| 10 | 70.0 | 16.4 | 13.4 |
+| 20 | 86.3 | 8.0 | 5.6 |
+| 25 | 86.6 | 8.1 | 5.3 |
+| 40 | 86.5 | 8.5 | 5.0 |
+| 50 | 86.2 | 8.8 | 4.9 |
+| 150 | 84.8 | 10.2 | 4.8 |
+
+Small deficits from 100% in the displayed source fractions must not be silently renormalized.
 
 ## Backgrounds
 
-* Standard Model multijet (QCD) production
-    * Importance: Dominant.
-    * Estimation method: Data-driven ABCD method in the CalRatio-triggered collision sample. The two axes are the probe jet's calorimeter energy ratio and track multiplicity.
-    * Control/validation samples: Regions B-D and the validation subdivisions specified below. Prescaled single-jet data may be used only for closure diagnostics, not nominal normalization.
-* Cosmic-ray showers
-    * Importance: Subdominant; the source predicted 0.3 +/- 0.2 events in its signal region.
-    * Estimation method: Preserve the source empty-crossing method, including trigger live-time scaling, timing-window extrapolation, and track-overlap weights from random collision events.
-    * Control/validation samples: Empty crossings and timing sidebands.
-* Beam-halo interactions
-    * Importance: Negligible after the timing and beam-halo vetoes; the source cross-check predicted 0.07 +/- 0.07 events and included cosmic contamination.
-    * Estimation method: Preserve the source artificial-event method using pairs of jets from unpaired isolated crossings.
-    * Control/validation samples: Unpaired isolated crossings and the beam-halo tag/veto sideband.
-* Other collision backgrounds
-    * Importance: Included in the data-driven QCD component unless a demonstrably non-QCD process is separately modeled. Avoid double counting.
-
-The source result of `23.2 +/- 8.0` multijet events must not be used as the ABCD prediction; new A-D yields must be measured from the selected data.
+* QCD multijets: dominant; infer from CalRatio collision-data regions B, C and D using the ABCD relation below. Do not reuse the source 23.2 +/- 8.0 prediction, the P/Q fits, or their 1.8 +/- 0.5 correction as a prior, normalization or ABCD correlation factor.
+* Cosmic rays: retain the source empty-crossing method (Section 5). Apply the selection except primary-vertex and timing requirements, then account for timing acceptance, trigger exposure and incidental collision tracks. Source reference values: about 5% double-jet timing acceptance, 2.9 exposure scaling, isolation weights 0.55-0.63, and 0.3 +/- 0.2 events in the signal region. Estimate contamination separately in B/C/D using their actual pass/fail definitions; the signal-region isolation correction cannot simply be copied to track-fail regions.
+* Beam halo: retain timing rejection and the veto on endcap muon segments aligned in phi with jets. Use unpaired isolated crossings and artificial jet pairs as in Section 5, applying the missing-momentum requirement and correcting cosmic contamination. The source estimates 0.07 +/- 0.07 signal-region events and treats this as negligible. Retain that source treatment in A only if reproduced; reassess in sidebands.
+* Mixed noncollision/collision events: the source found combinations such as halo plus multijet or halo plus cosmic negligible. Check this conclusion in the newly introduced sidebands.
+* Background audit additions: check W/Z+jets, top, prompt photons/electrons, heavy-flavor jets, instrumental noise and calorimeter pathologies. Heavy-flavor and prompt-QCD components belong in the inclusive multijet estimate, not a second additive QCD component. Other collision processes must be bounded or modeled separately if significant. The source does not provide their individual yields. Low missing momentum and jet quality suppress several of these contributions but are not proof of negligible contamination.
 
 ## Data Required
 
-### CalRatio-triggered collision data
+### Collision data and background control samples
 
-* Run and luminosity-block data-quality status; trigger decision and trigger-object matching.
-* Primary-vertex track multiplicity and track pT.
-* Anti-kt R=0.4 calorimeter-jet four-vectors, local-cluster inputs/calibration state, modified good-jet decision, and beam-halo jet flag.
-* Per-jet electromagnetic and hadronic calorimeter energies, `log10(E_H/E_EM)`, EMF, eta, phi, transverse energy, and energy-weighted cell time.
-* Good-track multiplicity for tracks with pT > 1 GeV within DeltaR < 0.2 of each jet; the source good-track definition requires at least two pixel hits and at least nine total pixel-plus-SCT hits.
-* Missing transverse momentum and the information needed to apply its source selection and variations.
-* Deterministic tag/probe role, extra nominal LLP-jet count, and A-D region flag.
+* Event identity, data quality, luminosity/exposure, bunch category, trigger decisions and prescales, trigger-object matching, pile-up indicators, primary-vertex tracks and missing transverse momentum.
+* All relevant jets, not just two leading jets: calibrated ET, eta, phi, hadronic and electromagnetic energies or EMF, modified jet-quality flags, energy-weighted cell timing and beam-halo rejection information.
+* Tracks: pT, eta, phi, pixel hits and combined pixel/SCT hits; retain tracks needed for the offline cone and trigger comparisons.
+* Empty/unpaired/random-crossing exposures and timing/track information needed for the noncollision corrections.
 
-### Empty-, random-, and unpaired-crossing data
+### Signal and performance simulation
 
-* Bunch-crossing category, trigger live time or exposure, jet quantities listed above, event timing, missing transverse momentum, and beam-halo tags.
-* For random collision events, the probability versus eta of a pT > 1 GeV track falling in a DeltaR < 0.2 cone.
-
-### Hidden Valley signal MC
-
-* Reconstructed quantities matching collision data, event weights, pile-up information, and generated `(m_Phi, m_pi_v, tau_pi_v)`.
-* Truth LLP four-vector, boost, and decay position in cylindrical radius and z.
-* Nominal production cross section and branching fractions, generator weights, and systematic variations.
+* The corresponding reconstructed quantities, trigger emulation, event weights, generated cross sections, generated proper lifetime and normalization metadata.
+* LLP identities, decay modes, four-momenta/boosts and truth decay positions; parent kinematics and ISR information for source systematic studies.
+* Acceptance and uncertainty information in A/B/C/D for every benchmark and lifetime considered.
+* No specific container names, calibration releases or missing metadata values are assumed.
 
 ## Triggers
 
-* Dedicated Run 1 CalRatio trigger
-    * Role: Select signal-region and ABCD-region collision events.
-    * Selection: Level 1 requires at least one narrow calorimeter jet with ET > 40 GeV in a 0.2 x 0.2 `(Delta eta x Delta phi)` region. Level 2 requires `log10(E_H/E_EM) > 1.2` and no pT > 1 GeV tracks in a 0.2 x 0.2 region around the jet axis. Level 3 reconstructs anti-kt R=0.4 jets and requires ET > 35 GeV.
-    * Offline requirement: The trigger-matched tag jet has ET > 60 GeV, where the source reports the Level-1 threshold as fully efficient. A second jet has ET > 40 GeV.
-    * Interaction with analysis variables: The trigger directly sculpts calorimeter ratio and track isolation for the tag jet. Therefore the ABCD axes are defined only from the independently reconstructed probe jet; no ABCD fail region is defined by failing the tag's trigger-level requirements.
-* Empty-crossing CalRatio-like trigger
-    * Role: Cosmic-ray control sample.
-    * Selection: Source-equivalent CalRatio logic active in empty crossings; preserve recorded trigger configuration.
-* Unpaired-isolated-crossing CalRatio trigger
-    * Role: Beam-halo control sample.
-    * Selection: Preserve the source trigger configuration.
-* Prescaled single-jet triggers with thresholds of 15 GeV or higher
-    * Role: Optional closure diagnostics only.
-    * Interaction with analysis variables: Their effective luminosities and prescales must be retained if used; they do not determine the nominal ABCD normalization.
+* CalRatio, signal and nominal ABCD sample (source Section 4): first level requires at least 40 GeV ET in a 0.2 x 0.2 region using topological jets; this threshold is fully efficient at offline jet ET = 60 GeV. Second level requires log10(EH/EEM) > 1.2 and no tracks with pT > 1 GeV in a 0.2 x 0.2 window. Third level reconstructs anti-kt R = 0.4 jets with minimum ET of 35 GeV.
+* Require a qualified offline jet that fired CalRatio with ET > 60 GeV. The companion jet requires ET > 40 GeV. If multiple selected jets fired, the leading such jet supplies the >60 GeV requirement. Do not assume the matched jet is the leading reconstructed jet.
+* The ET plateau statement does not establish full-chain efficiency for track or energy-ratio requirements.
+* Prescaled single-jet triggers provide independent diagnostic data; account for exposure and trigger bias. The source's DeltaPhi > 2.0 requirement belongs to its probability-measurement sample, not to the nominal event or ABCD selection.
+* Apply ABCD variables to the companion probe, not the trigger tag. Do not require the probe to fail trigger matching: that would remove valid double-trigger signal events. Residual trigger-OR and tag-choice biases must be included in closure studies.
 
 ## Object Definitions and Roles
 
-* Baseline jet
-    * Analysis intent: A reconstructed calorimeter jet eligible to define the two-jet topology without applying either ABCD discriminant.
-    * Source realization: Anti-kt R=0.4 jet built from locally calibrated calorimeter clusters and subsequently calibrated with the source energy- and eta-dependent scheme.
-    * Requirements: ET > 40 GeV, |eta| < 2.5, modified ATLAS good-jet criteria that omit the normal rejection of small-EMF jets, and energy-weighted time `-1 < t < 5 ns`.
-* Nominal LLP-jet candidate
-    * Requirements: A baseline jet with `log10(E_H/E_EM) > 1.2` and zero source-defined good tracks with pT > 1 GeV in DeltaR < 0.2.
-* Tag jet
-    * Role: The CalRatio-trigger-matched jet. It must be a nominal LLP-jet candidate and have ET > 60 GeV.
-    * Assignment: If more than one jet is trigger matched, choose the leading-ET matched jet as the tag; this implements the source statement that only the leading jet is subject to ET > 60 GeV when multiple jets fire the trigger.
-* Probe jet
-    * Role: Supplies both ABCD variables and is the second jet in the LLP pair.
-    * Assignment: The highest-ET non-tag baseline jet. It must have ET > 40 GeV. This rule is fixed before examining its calorimeter ratio or track multiplicity.
-* Additional jets
-    * Other reconstructed jets are allowed, but events containing an additional nominal LLP-jet candidate beyond the tag and probe are vetoed in every A-D region. This keeps region A aligned with the source requirement of exactly two jets satisfying the complete LLP-jet selection.
+* Jets: anti-kt R = 0.4 from locally weighted calorimeter clusters, followed by the source energy/eta-dependent simulation calibration. Apply standard source good-jet criteria with the low-EMF-rejecting requirements removed. Do not add an offline narrowness cut absent from the paper.
+* Base jet: ET > 40 GeV, |eta| < 2.5, modified good-jet criteria and -1 < t < 5 ns. Time is the energy-weighted calorimeter-cell time relative to a beta = 1 particle from the interaction point.
+* Define h = log10(EH/EEM), equivalently log10((1-EMF)/EMF) when defined, and n = number of good tracks within DeltaR < 0.2 of the jet axis. A good track has pT > 1 GeV, at least two pixel hits and at least nine combined pixel/SCT hits. No additional primary-vertex association cut is introduced. The superscript footnote after 0.2 in the PDF is not a cone size of 0.22.
+* Full candidate: base jet with h > 1.2 and n = 0.
+* Tag: the highest-ET full candidate matched to a fired CalRatio object with ET > 60 GeV. This deterministic assignment is a new bookkeeping choice; it does not require that tag to lead all jets.
+* Probe pool: all other base jets. To preserve the original inclusive treatment of extra ordinary jets, choose a single probe by smallest n, then largest h, then largest ET, with a stable final tie-break. Undefined calorimeter ratios need the source reconstruction convention before this ordering can be used; do not substitute arbitrary numerical ratios.
+* This proposed ordering deliberately ensures that a full candidate, if present, is chosen as probe. It can create correlations and must be validated as part of the ABCD method. Choosing the two leading reconstructed jets or requiring exactly two base jets instead would change the source signal region.
 
 ## Analysis Regions
 
-Common preselection:
+Common preselection, applied identically in A/B/C/D:
 
-* Pass 2012 data-quality requirements and the unprescaled CalRatio trigger.
-* Require a reconstructed primary vertex with at least three tracks having pT > 1 GeV.
-* Reject the event if any reconstructed jet is tagged as beam halo.
-* Require missing transverse momentum < 50 GeV.
-* Assign the tag and probe as specified above. Require the tag to pass the full nominal LLP-jet definition and the trigger-matched ET > 60 GeV condition.
-* Apply the same `-1 < t < 5 ns` timing requirement to the tag and probe.
-* Veto any additional nominal LLP-jet candidate beyond the tag and probe.
+* Good-quality collision data with a primary vertex having at least three tracks with pT > 1 GeV.
+* Reject events with any reconstructed jet identified as beam halo; require missing transverse momentum < 50 GeV.
+* Require a tag and at least one other base jet, and assign the probe as above.
+* Require no more than two full candidates in the event. This common veto preserves the published rejection of three or more full candidates. Additional jets failing full-candidate requirements are allowed.
 
-Define the ABCD axes on the probe jet:
+Proposed ABCD axes are X = h(probe) and Y = n(probe). Initial sidebands use the complete complement of each pass requirement; no unsupported numerical lower h cut or upper track-count cut is invented.
 
-* `X` (CalRatio): pass if `log10(E_H/E_EM) > 1.2`; fail if `log10(E_H/E_EM) <= 1.2`.
-* `Y` (track isolation): pass if `n_track = 0`; fail if `n_track >= 1`, where tracks use the source good-track and cone definitions.
-
-| Region | Purpose | Additional requirements |
+| Region | Purpose | Requirements beyond common preselection |
 | --- | --- | --- |
-| A (signal region) | Final source-equivalent two-LLP-jet selection | Probe passes X and Y. Thus tag and probe are both nominal LLP-jet candidates, and exactly two jets satisfy that definition. Keep blinded while finalizing the ABCD procedure. |
-| B | QCD control region | Probe passes X and fails Y. |
-| C | QCD control region | Probe fails X and passes Y. |
-| D | QCD control region | Probe fails X and Y. |
+| A / signal region | Signal count; pass/pass | X > 1.2 and Y = 0 |
+| B | Hadronic-energy-pass, track-fail | X > 1.2 and Y >= 1 |
+| C | Hadronic-energy-fail, track-pass | X <= 1.2 and Y = 0 |
+| D | Double fail | X <= 1.2 and Y >= 1 |
+| Validation families | Test transfer without using A | Auxiliary rectangles within X <= 1.2 or Y >= 1, defined before examining A; examples below |
 
-For expected QCD yields `q_i`, define `kappa = (q_A q_D)/(q_B q_C)` and therefore `q_A = kappa q_B q_C/q_D`. The nominal factorization hypothesis is `kappa = 1`. Non-QCD contributions and signal contamination are modeled in all regions rather than silently included in the QCD transfer relation.
+Equivalence check: an original selected event has exactly two full candidates and an eligible trigger-matched >60 GeV candidate. The tag is one of them; the minimum-n/maximum-h probe ordering selects the other even when additional ordinary jets are present. Conversely, A contains a tag and a full-candidate probe, and the common multiplicity veto excludes a third full candidate. Thus A is the published signal selection, with no added DeltaPhi or reconstructed-jet-multiplicity restriction.
+
+All events contribute once. B/C/D contain one full candidate, the tag. That multiplicity change, the ranking, and the trigger requirement can generate nonfactorization; the ABCD formula is a hypothesis to validate, not a consequence of the region definitions.
 
 ## Histograms
 
-1. Probe-jet ABCD plane
-    * Purpose: Region definition, population diagnostics, and correlation assessment.
-    * x axis: Probe `log10(E_H/E_EM)`, with the boundary at 1.2.
-    * y axis: Probe good-track multiplicity in DeltaR < 0.2, with the boundary between zero and at least one track.
-    * Entries: One per selected event, before applying the X/Y region requirement.
-2. Event yields in A-D
-    * Purpose: Inputs to the simultaneous ABCD likelihood.
-    * Output: Observed counts and predicted QCD, cosmic, beam-halo, and signal contributions for each region. Do not inspect the A count until the method and uncertainties are frozen.
-3. ABCD closure and kappa
-    * Purpose: Validate factorization.
-    * Output: Predicted-to-observed closure and fitted kappa in validation subdivisions, versus probe ET, eta, pile-up, run period, and tag/probe Delta phi.
-4. Source signal-discrimination distributions
-    * Purpose: Source-comparison and signal-model validation.
-    * Output: Probe and tag track multiplicity, `log10(E_H/E_EM)`, ET, eta, timing, and missing transverse momentum for data control regions and signal MC.
-5. Trigger probability versus truth decay position
-    * Purpose: Reproduce the source trigger acceptance diagnostic.
-    * x axis: pi_v radial decay position in the barrel or |z| in the endcaps.
-    * y axis: Single-pi_v probability to fire the CalRatio trigger.
-6. Expected selected signal yield and observed limits versus proper lifetime
-    * Purpose: Final interpretation.
-    * x axis: pi_v proper decay length in metres.
-    * y axis: Expected signal events; observed 95% CL `sigma/sigma_SM` for the 126 GeV parent, or `sigma x BR` in pb for other parent masses.
+1. Source-comparison cutflow: counts after collision quality/vertex, trigger, missing momentum/halo rejection, base jets, candidate identification and exactly-two full candidates. One entry per event per cut stage.
+2. ABCD occupancy: two-dimensional X versus Y and the four event counts; X is dimensionless, Y is an integer. Include the 1.2 and zero-track boundaries and preserve the high-track tail.
+3. Tag and probe diagnostic distributions: ET [GeV], eta, h, n and time [ns], plus event missing momentum [GeV], DeltaPhi [rad], base-jet multiplicity and pile-up. One entry per named object or event, split by region and trigger multiplicity.
+4. Closure summaries: measured/predicted validation yields, pulls and kappa versus probe ET/eta, pile-up, tag kinematics and jet multiplicity.
+5. Signal acceptance and yield versus c*tau [m], per actual benchmark, with the c*tau = 1.5 m reference table and uncertainty components.
+6. Observed 95% CL upper limits versus c*tau: sigma(gg -> Phi) times BR(Phi -> pi_v pi_v) [pb], and the Higgs normalized quantity divided by 19.0 pb. Include the 10% and 30% branching-fraction interpretations.
+
+Diagnostic histogram binning is not fixed by the paper; choose it to resolve selection boundaries and permit meaningful uncertainties. The final inference is a counting analysis, not a histogram-shape fit.
 
 ## Analysis Steps
 
-1. Apply event cleaning and common event selection
-    * Apply data quality, CalRatio trigger, primary-vertex, beam-halo veto, and missing-transverse-momentum requirements in that order.
-2. Reconstruct jets and assign roles
-    * Build and calibrate source-realization anti-kt R=0.4 jets, apply modified jet quality and timing, then assign tag and probe deterministically without using the probe ABCD variables.
-3. Construct A-D regions
-    * Apply the full nominal LLP selection to the tag, classify the probe using X and Y, and apply the additional-candidate veto identically in A-D.
-4. Estimate QCD with ABCD
-    * Obtain the QCD expectations in B-D from collision data after accounting for cosmic-ray, beam-halo, and signal contributions.
-    * Relate A to B-D through `q_A = kappa q_B q_C/q_D`. Use a simultaneous Poisson likelihood for A-D so low counts and denominator uncertainty are treated correctly.
-    * Set nominal kappa to one and constrain its nuisance parameter using the closure program below. Do not derive kappa by extrapolating the source's failed per-jet probability correction.
-5. Estimate non-collision backgrounds
-    * Preserve the source empty-crossing cosmic estimate: remove the timing and good-vertex requirements in the control sample, extrapolate the uniform cosmic arrival time into the two-jet timing window, scale by relative live time, and weight for collision-induced track overlaps versus eta.
-    * Preserve the unpaired-crossing beam-halo cross-check using artificial jet pairs and the missing-transverse-momentum efficiency.
-6. Model the signal and extrapolate lifetime
-    * Evaluate acceptance for every generated `(m_Phi, m_pi_v)` tuple.
-    * Preserve the source lifetime method: generate pi_v decays over 0-50 m and use an efficiency map as a function of pi_v boost to obtain efficiency and expected yield at other proper lifetimes. Do not imply interpolation to ungenerated mass combinations.
-7. Validate and freeze
-    * Complete trigger, object, ABCD closure, non-collision, and source-reproduction checks. Freeze region definitions and nuisance treatment before unblinding region A.
+1. Apply event requirements and build base jets, good-track counts and full candidates without discarding jets needed for sidebands or multiplicity counting.
+2. Assign tag/probe once, apply the common candidate veto and classify A/B/C/D.
+3. Estimate cosmic, halo and any significant additional non-QCD contributions in each region. Define q_R as the underlying QCD yield, not the total observed count N_R.
+4. Use the ABCD transfer relation q_A = kappa * q_B * q_C / q_D. For exact conditional factorization kappa = 1. Non-QCD-subtracted control counts provide a diagnostic estimate, but the nominal inference uses Poisson counts with additive contamination components.
+5. Determine whether kappa = 1 is supported by independent validation. Any correction and its uncertainty require a justified extrapolation from control data; never determine kappa by forcing agreement with A or by borrowing the old P/Q correction. If nonclosure cannot be bounded, the proposed ABCD axes do not support a reliable limit and must be revised within the requested ABCD method.
+6. Preserve the source lifetime procedure (Section 7): generate a large ensemble of pi_v decays spanning 0-50 m and use an efficiency map dependent on LLP boost to evaluate efficiencies at different proper decay lengths. Retain the decay-position, geometry, kinematic and timing acceptance. The paper does not specify the full map binning or sampling implementation; obtain or reconstruct these and validate against the generated samples. Do not silently substitute mass interpolation or pure event lifetime reweighting for the stated procedure.
+7. Normalize signal using luminosity, the appropriate row's production cross section and branching fraction, and evaluate leakage in all four regions at each lifetime.
+8. Validate and freeze the background construction before using A to obtain the observed result.
 
 ## Workflow
 
 1. Data Extraction and NTuple Skimming
-    * Filtering: Retain every event passing the common event requirements with a valid tag and a non-tag baseline probe. Do not require the probe to pass either ABCD discriminant during skimming, and retain extra-jet information needed for the nominal-candidate veto.
-    * Variables: Persist the event, trigger, jet, track, timing, missing-momentum, beam-condition, exposure, truth, and weight information listed in Data Required.
+   * Preserve all base jets and their track/energy information, trigger matching and event metadata. Do not skim on probe h, zero tracks, exactly two reconstructed jets or a back-to-back requirement. Noncollision streams need separate skims that retain events failing vertex/timing cuts.
 2. Data Analysis and Histogramming
-    * Apply calibrated object definitions, deterministic tag/probe assignment, common vetoes, and A-D flags.
-    * Produce region counts, two-dimensional ABCD diagnostics, validation subdivisions, and signal acceptance inputs.
+   * Construct derived quantities, count full candidates, assign roles and fill region flags, cutflows and diagnostics consistently.
 3. Background Estimation
-    * Build the simultaneous A-D QCD model and the independent cosmic/beam-halo estimates. Evaluate closure and derive the kappa uncertainty without using signal-region data to tune the method.
-4. Signal Modeling
-    * Calculate benchmark acceptance, lifetime-reweighted yields, and all source-analysis signal variations.
-5. Statistical Model Construction
-    * Combine A-D Poisson counts, the ABCD transfer relation, non-QCD components, signal contamination, and signal systematic constraints. Produce the source-style counting-experiment limits as a function of lifetime.
+   * Derive noncollision corrections, audit other contamination, test ABCD closure and produce control yields and the justified kappa constraint.
+4. Statistical Model Construction
+   * Construct the four-region counting model including signal in controls, correlated detector uncertainties and the non-QCD constraints. Propagate lifetime-dependent acceptance to limits.
 
 ## Validation and Cross-checks
 
-* Validate that region A is exactly the nominal published event selection under the deterministic tag/probe interpretation; compare yields cut-by-cut against a direct implementation of the source wording.
-* Before unblinding A, test ABCD closure in non-overlapping validation subdivisions formed by splitting the X-fail range into near/far sidebands and the Y-fail range into `n_track = 1` and `n_track >= 2`. Do not alter the nominal A-D boundaries after inspecting A.
-* Measure closure versus probe ET, eta, timing, pile-up, run period, and tag/probe Delta phi. Where statistics permit, repeat the ABCD prediction in corresponding bins and combine them.
-* Quantify X-Y dependence using the two-dimensional control-region distribution and a correlation measure appropriate for one continuous and one discrete observable. Translate significant non-closure into the kappa constraint.
-* Perform signal-injection tests across all benchmark masses and lifetimes to verify unbiased signal recovery when B-D contain signal.
-* Verify robustness to alternative deterministic probe definitions and to the extra nominal-candidate veto. Treat differences as closure/modeling uncertainty if they expose QCD composition dependence.
-* Reproduce the source's trigger-performance checks and the stated qualitative decay-position dependence; pay particular attention to reduced endcap efficiency from pile-up track isolation.
-* Validate cosmic timing uniformity, live-time scaling, and eta-dependent track-overlap weights. Validate beam-halo suppression in unpaired crossings.
-* Compare source cut-flow quantities where available, including 24 events in the published signal region. This is a source-fidelity check only and must not be used to tune the ABCD estimate.
+* Source fidelity: reproduce the signal-region selection and compare the published 24 selected events if the identical dataset/reconstruction is available. This number is a historical reference, not a new measurement or a target for background tuning.
+* At c*tau = 1.5 m the source expected signal yields are 536, 941, 365 for (126,10/25/40); 440, 424 for (100,10/25); 525, 900, 641 for (140,10/20/40); 444 for (300,50); 35, 41 for (600,50/150); and 3.5, 4.6 for (900,50/150), at 100% branching fraction. Validate statistical precision against source Table 3.
+* Test ABCD with auxiliary four-bin rectangles wholly outside A. Proposed examples: in X <= 1.2 split X at 0 and Y into 0 versus >=1; in Y >=1 split X at 1.2 and Y into 1 versus >=2. Apply the same tag/probe algorithm and common selection. These are new validation choices, not published regions. Assess signal leakage before calling them signal depleted.
+* Test additional adjacent sideband splits, not just the broad tails. Compare closure versus kinematics, detector region, pile-up, run period, base-jet multiplicity and number of trigger-matched jets. A small linear correlation alone is insufficient evidence of tail factorization.
+* Use independent single-jet data to examine trigger bias and selection-induced correlations, with prescale/exposure accounting. Its lower luminosity may limit this check. Ensure validation samples overlapping B/C/D are not counted as statistically independent constraints without accounting for overlap.
+* Test signal injection and contamination for each benchmark/lifetime; model signal in controls even when it is small.
+* Validate the efficiency map at generated lifetimes and across barrel/endcap and LLP boosts. Preserve the loss from delayed timing and missing momentum; the source quotes at most 1.5% timing inefficiency for its considered samples.
+* No closure result, numerical kappa, background yield or new exclusion is claimed by this specification. If available controls cannot constrain the extrapolation to A, document that limitation before inference.
 
 ## Systematic Uncertainties
 
 ### Source-analysis uncertainties
 
-* Integrated luminosity normalization: 2.8%.
-* Parent scalar/Higgs production cross section: approximately 10%, with the benchmark-dependent source values retained in the statistical model.
-* Signal PDF acceptance: 2.1%, obtained in the source from MSTW2008nlo68cl, CT10, and NNPDF2.3 sets and their errors.
-* Signal pile-up acceptance: 10%, dominated by added tracks degrading jet isolation.
-* ISR acceptance: source common variation of `+2.9%/-1.2%`, combining ISR multiplicity and parent-boost effects as correlated contributions.
-* Low-EMF jet energy scale, trigger efficiency, missing-transverse-momentum scale/resolution, and jet timing: retain the source's benchmark-dependent variations. Repeat the full signal selection and lifetime acceptance evaluation under each variation.
-* Finite signal-MC sample statistics. The source found FSR effects negligible.
-* Cosmic-ray normalization: empty-crossing statistics, timing-window fraction, trigger live-time ratio, and track-overlap weights.
-* Beam-halo normalization: limited unpaired-crossing statistics; negligible nominal contribution after vetoes.
+* Luminosity: 2.8%. Signal production cross-section uncertainty: approximately 10%, with benchmark-dependent asymmetric values in source Table 2.
+* Signal PDF acceptance: 2.1%; source reweights MSTW2008nlo68cl, CT10 and NNPDF2.3 and their error sets.
+* Pile-up acceptance: 10%, especially incidental tracks spoiling isolation; retain source comparisons of ET, EMF, eta, phi, tracks and timing versus pile-up.
+* JES: use the source low-EMF-specific response study with dijet balancing versus eta and EMF, not an ordinary-jet JES assumption. Retain benchmark-dependent variations from Table 2 for source reproduction.
+* Trigger, missing momentum and timing: source Table 2 variations; trigger checks separately vary ET, energy ratio and track requirements. Missing momentum and timing studies smear the relevant cut response.
+* ISR acceptance: +2.9/-1.2%; source halves/doubles the ISR-jet population and varies ISR jet pT by 5% for the parent-boost effect, adding those two correlated effects. Source FSR acceptance effects are negligible.
+* Signal MC statistics: source Table 3; propagate finite efficiency-map precision as well when reconstructed.
+* Source noncollision statistical errors and exposure/isolation corrections remain relevant. Original QCD P/Q fit, ET/eta-factorization and DeltaPhi-selection errors are retired with that estimator.
+* Retain component uncertainties, not the Table 2 total in addition to its components. Source Table 2 is the authoritative per-benchmark numerical prescription; new control-region responses require reevaluation rather than assigning A's percentage to every region.
 
 ### New-method uncertainties
 
-* ABCD control-region Poisson statistics, represented directly by the B-D likelihood terms.
-* Residual X-Y correlation/non-closure, represented by kappa with a constraint derived from blinded validation regions and closure tests. A numerical width is not specified by the source and must be frozen before unblinding A.
-* Dependence of closure on probe ET, eta, pile-up, run period, timing, and tag/probe topology; use binning or nuisance variations where a significant dependence is observed.
-* Region migration under track reconstruction and calorimeter-energy variations, propagated consistently to A-D for simulated signal and separately tested in data for QCD closure.
-* Signal contamination in B-D and non-QCD contamination in all regions, including their normalization and migration uncertainties.
-* Probe-assignment and additional-candidate-veto dependence, evaluated with alternative definitions that do not use X or Y.
+* Finite B/C/D counts, included directly as Poisson information.
+* ABCD nonclosure and extrapolation of kappa into A; selection/ranking, calorimeter-track correlations, trigger effects and stability under sideband changes. Quantify from independent validation; no fixed percentage is assumed.
+* Non-QCD contamination and its subtraction/modeling in all regions; signal leakage and acceptance migrations.
+* Correlate shared physical effects across regions. Propagate effects on both yields and the transfer relation without double counting validation statistics as a separate systematic.
 
 ### Modernization/adaptation uncertainties
 
-* None beyond the ABCD-specific additions above. Any future translation to a different run, trigger, detector configuration, or reconstruction must derive new calibrations and uncertainties rather than reuse Run 1 numerical values.
-
-Correlate nuisances only when they share a physical source. Do not reuse the source multijet uncertainty, its 6% ET-eta term, or its `1.8 +/- 0.5` correlation scale factor as an ABCD uncertainty.
+* None imposed: this remains a Run 1 analysis. A future change of run, trigger, reconstruction or calibration would require a separate acceptance and systematic reevaluation and is outside the requested scope.
 
 ## Statistical Analysis
 
-* Observables/regions entering the model: One event count in each of A-D for every tested signal mass/lifetime hypothesis. Region A is the signal region; B-D constrain QCD. Cosmic and beam-halo estimates enter all applicable regions.
-* Parameter of interest: `sigma(Phi) x BR(Phi -> pi_v pi_v)`; for the 126 GeV benchmark also report `sigma/sigma_SM`, using the source `sigma_SM = 19.0 pb`. Limits are functions of pi_v proper lifetime.
-* Background constraints: Parameterize QCD with three free control-region expectations and the ABCD relation `q_A = kappa q_B q_C/q_D`, or an algebraically equivalent positive-definite parameterization. Constrain kappa from closure studies. Include non-QCD backgrounds separately.
-* Nuisance parameters: Source signal uncertainties, finite sample/control-region statistics, kappa/non-closure, signal and non-QCD contamination, and non-collision normalizations. Use positive-definite constraints where appropriate; the source's Gaussian convolution may be retained only where it cannot imply unphysical yields.
-* Test statistic/interval method: Preserve the source profile-likelihood-ratio test statistic and frequentist CLs construction using pseudoexperiments rather than silently replacing it with asymptotic limits.
-* Expected and observed outputs: Produce observed 95% CL upper limits versus proper lifetime and excluded lifetime intervals for stated branching-ratio hypotheses, matching the source's reported output. Expected signal yields versus lifetime are required for the test, but expected limit bands are not a source-analysis deliverable; if produced as a diagnostic, label them explicitly as a new addition.
-* Source-vs-modernized treatment: Signal modeling, selection, parameter of interest, and toy-based CLs follow the source. The simultaneous A-D likelihood and its kappa nuisance replace the source's single signal-region Poisson term with an externally predicted QCD yield.
+* Source treatment (Section 7): a single signal-region event count, profile-likelihood-ratio test statistic, frequentist toy experiments and CLs upper limits at 95% CL; systematic nuisance effects with assumed Gaussian constraints. The paper reports observed limit curves. Do not relabel them as expected limits or use asymptotic formulae as a source reproduction.
+* Requested-method extension: a simultaneous product of Poisson terms for A, B, C and D, with mean lambda_R = mu*s_R(theta) + q_R + b_R(theta). Here mu scales a specified reference signal, b_R contains non-QCD contributions, and all yields are nonnegative.
+* A convenient positive QCD parameterization is q_D = d, q_B = r_X*d, q_C = r_Y*d and q_A = kappa*r_X*r_Y*d. Constrain kappa from validated auxiliary information; leaving it free alongside mu removes the useful ABCD prediction. Preserve Gaussian constraints for appropriate source effects; any positive multiplicative constraint for kappa is a new-method choice.
+* Sparse or zero control counts are treated in the likelihood, not by dividing by zero or inserting pseudocounts. If the controls fail to identify the transfer, report the lack of sensitivity.
+* Parameters of interest: sigma(gg -> Phi)*BR(Phi -> pi_v pi_v), and the corresponding ratio to sigma_SM = 19.0 pb at mH = 126 GeV, separately for each actual mass pair and lifetime. Track the reference theory uncertainty consistently when mapping mu to a cross section; do not add the same production uncertainty twice.
+* Preserve toy-based profile-likelihood CLs inference. Historical 23.5 +/- 8.0 total background and published exclusion intervals are comparison results only and must be recalculated with the new estimate.
+* Required outputs: observed 95% CL limits and the 10%/30% Higgs branching-fraction excluded lifetime intervals. Expected-limit bands may be added later but are not claimed as source outputs here.
 
 ## For Review
 
-* The source does not give an ABCD construction. This specification chooses the probe jet's `log10(E_H/E_EM)` and good-track multiplicity because they are the two source LLP discriminants, while fixing the trigger-matched tag in its pass state avoids trigger-induced loss of ABCD sidebands.
-* The source wording does not fully specify a unique tag/probe choice when more than two baseline jets are present. The specification assigns the leading-ET matched jet as tag and the leading-ET remaining baseline jet as probe, then vetoes additional nominal LLP candidates. This choice must be verified to make region A cut-by-cut equivalent to the original selection; if it is not, adopt a deterministic source-equivalent pairing rule without changing the A-D axis definitions.
-* The broad fail definitions (`X <= 1.2`, `n_track >= 1`) maximize control statistics but may mix different QCD compositions or produce substantial correlation. Near/far and track-multiplicity validation subdivisions must determine whether binning, restricted sidebands, or an enlarged kappa uncertainty is required before unblinding.
-* The numerical kappa constraint and the new ABCD QCD yield cannot be obtained from the paper. They require A-D control data and closure results and are intentionally left as measured analysis outputs rather than invented values.
-* The source does not state the exact generated lifetime of every signal sample, concrete dataset identifiers, software release, calibration tags, or trigger-chain names. Those implementation metadata must be recovered from the original analysis configuration; no modern identifiers are assumed.
-* The published count of 24 events remains the expected cut-flow target because the signal selection is intended to be unchanged. It is not an independent blind observation for this reconstruction and must not be used to optimize the new ABCD boundaries or uncertainty.
+* Proposed ABCD choices, pending control-data validation: probe h versus good-track count, full-complement sidebands, and minimum-track/maximum-h probe ranking. These preserve the original A selection but do not guarantee factorization. The optional user question about preferred axes/boundaries remains open to revision.
+* Dataset identifiers, generated lifetimes, complete efficiency-map construction and exact trigger matching/quality conventions are not supplied in the paper. Recover them from the original analysis metadata; do not fabricate modern replacements.
+* The physical treatment of zero/negative calibrated EM or hadronic energy in h is not documented in the paper. Recover its convention before populating or ordering those jets; preserve the original treatment for A and quantify any sideband sensitivity.
+* The paper's multiple-trigger wording does not enumerate cases where a trigger-matched jet fails offline candidate cuts. This specification interprets the trigger requirement as needing a matched selected candidate, consistent with the stated final jet selection. Compare against original selection code if available.
+* No collision data, control counts or simulation files were supplied beyond the paper. The specification is complete as a proposed analysis definition, but ABCD closure, contamination, uncertainties and new limits have not been measured.
