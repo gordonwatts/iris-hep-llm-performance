@@ -30,7 +30,7 @@ questions:
     copy_back:
       - datasets.yaml
       - "*.ipynb"
-  - id: data-sources-from-spec
+  - id: ntuple-leaves-from-spec
     question: |
       Use $atlas-analysis:analysis-data-sources to map calratio-abcd-spec.md
       to data-sources.md, using calratio-probe-samples.yaml for an available
