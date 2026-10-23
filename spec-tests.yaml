@@ -24,17 +24,12 @@ questions:
 
       Write data-sources.md and data-source-evidence.json in the workspace root.
 
-      If you create any jupyter notebooks copy them back to the root directory of this
-      workspace.
-    plugins:
-      - af-uchicago@usatlas-marketplace
-      - atlas@usatlas-marketplace
     copy_files:
       - .\spec\calratio-abcd-spec.md
+      - ~\servicex.yaml
     copy_back:
       - data-sources.md
       - data-source-evidence.json
-      - "*.ipynb"
   - id: dataset-ids-from-data-sources
     question: |
       Use the $atlas-analysis:find-atlas-datasets skill to select the complete
@@ -42,6 +37,9 @@ questions:
       ABCD QCD estimation. Read data-sources.md and data-source-evidence.json
       from the preceding data-source mapping step as the tier and individual
       leaf/accessor contract. Preserve its evidence scope, backups and gaps.
+      Where a tier is only proposed, search for catalog-confirmed candidates at
+      that tier and mark their analysis compatibility provisional. An unverified
+      accessor must not be reported as verified or prevent independent DID lookup.
 
       Resolve analysis-ready, complete Rucio scope:name identifiers, including
       production tags, for the required data, Standard Model backgrounds,
@@ -65,9 +63,6 @@ questions:
       data-access requirement with either a dataset row or an explicit gap.
       Explain duplicate/overlap handling and evidence limitations below the
       table. Do not claim complete coverage or verified accessors without evidence.
-    plugins:
-      - af-uchicago@usatlas-marketplace
-      - atlas@usatlas-marketplace
     # Stage the preceding run's two outputs here; see spec/README.md.
     # Questions run in isolated workspaces, so YAML order does not pass files.
     copy_files:
@@ -84,7 +79,10 @@ marketplaces:
 plugins:
   - iris-hep@iris-hep-tools
   - atlas-analysis@atlas-analysis-marketplace
-mcp_servers: []
+  - af-uchicago@usatlas-marketplace
+  - atlas@usatlas-marketplace
+mcp_servers:
+  - atlas-af
 distro: Ubuntu
 max_copy_back_files: 100
 timeout_seconds: 1800

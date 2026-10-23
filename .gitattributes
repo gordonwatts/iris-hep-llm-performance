@@ -1,0 +1,4 @@
+# Preserve the exact specification bytes hashed by the saved source-mapping run.
+spec/calratio-abcd-spec.md text eol=crlf
+spec/data-sources.md text eol=lf
+spec/data-source-evidence.json text eol=lf
