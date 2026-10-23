@@ -1,0 +1,12 @@
+interface:
+  display_name: "AnalysisBase Skill Optimizer"
+  short_description: "Benchmark and improve the AnalysisBase skill"
+  default_prompt: "Use $analysis-base-skill-optimizer to run a bounded optimization experiment and open a tested AnalysisBase skill PR."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "github"
+      description: "GitHub MCP server for branch updates and pull requests"
+      transport: "streamable_http"
+      url: "https://api.githubcopilot.com/mcp/"
