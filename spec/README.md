@@ -3,16 +3,20 @@
 `spec-tests.yaml` runs each question in an isolated workspace. Question order
 does not transfer artifacts or establish dependencies.
 
-1. `spec-from-old-analysis-modified` produces `specification.md` from the paper.
-   `calratio-abcd-spec.md` is the existing saved specification used below.
-2. `datasets-from-spec` (the existing question ID) uses `analysis-data-sources`
-   to produce the Run 3 tier/accessor contract: `data-sources.md` and
-   `data-source-evidence.json`.
-3. `dataset-ids-from-data-sources` uses that contract and the same specification
-   to produce `datasets.md`, a Markdown table of all required analysis-tier
-   Rucio DIDs and official central background recommendation evidence.
+1. `spec-from-old-analysis-modified` produces the Run 3 `specification.md`.
+   `calratio-abcd-spec.md` is the current saved specification on main.
+2. `ntuple-leaves-from-spec` uses `analysis-data-sources` to produce a tested
+   tier/accessor contract and, on success, a ServiceX smoke file.
+3. `dataset-ids-from-data-sources` uses a hash-matched specification and that
+   contract to produce the required Rucio DID manifest.
 
-The checked-in `data-sources.md` and `data-source-evidence.json` were generated
+The legacy `datasets-from-spec` discovery question from main is retained.
+The new manifest benchmark currently uses the frozen trio under
+`dataset-discovery-fixture/`, captured before main's specification was updated.
+That snapshot intentionally tests discovery against incomplete, older evidence;
+its specification must not be mixed with the current Run 3 specification.
+
+The frozen `data-sources.md` and `data-source-evidence.json` were generated
 by rerunning stage 2 on 2026-10-22 with `gpt-6.1-sol:medium`. They contain 69
 requirements (65 unverified and four backups), with five evidence records.
 No event access was verified: that run lacked ServiceX configuration and catalog
@@ -23,19 +27,22 @@ The local report stem is
 `results/spec-tests/data-source-rerun-datasets-from-spec-gpt-6-1-sol-medium`.
 Both required files were collected and passed `validate_evidence.py`; the runner
 returned exit 1 solely because the old optional `*.ipynb` copy-back pattern had
-no match. The test now collects only its two required deliverables.
+no match. That older run collected the two mapping deliverables. The newer
+`ntuple-leaves-from-spec` question also requests a genuine ServiceX smoke file.
 
-For a fresh mapping, run stage 2, then copy its two returned artifacts into this
-directory before running stage 3. Use outputs from the same run and specification; the ledger's
-specification SHA-256 must match `calratio-abcd-spec.md`. Keep the real evidence,
+For a fresh mapping, run stage 2, then replace all three files in
+`dataset-discovery-fixture/` together: the exact specification supplied to that
+run and its two returned artifacts. Before stage 3, the ledger specification
+SHA-256 must match the fixture `calratio-abcd-spec.md`. Keep the real evidence,
 including failures and unresolved fields. Do not substitute a hand-written
 successful probe or a fabricated dataset list.
 
 The suite enables the `atlas-af` MCP server from the UChicago plugin, as in
 `uchicago-mcp.yaml`. The runner needs that server configured (or discoverable in
 an enabled local plugin) on Windows and authenticated for the WSL target. Stage 2
-also copies the existing `~/servicex.yaml` configuration, as in the other
-ServiceX benchmarks. That private file is never committed or copied back.
+also copies a ServiceX configuration using the path declared in its question;
+update that machine-specific path when running on another host. That private
+file is never committed or copied back.
 A connected retry on this host stopped at preflight because `atlas-af` was not
 configured; it did not replace the generated inventory.
 
@@ -129,9 +136,9 @@ generated outputs' LF bytes, so the recorded specification hash also validates
 after a fresh checkout.
 
 ```powershell
-uvx --from git+https://github.com/gordonwatts/test-wsl2-llm.git test-wsl2-llm template run .\spec-tests.yaml datasets-from-spec
+uvx --from git+https://github.com/gordonwatts/test-wsl2-llm.git test-wsl2-llm template run .\spec-tests.yaml ntuple-leaves-from-spec
 # Copy data-sources.md and data-source-evidence.json from the returned artifacts
-# into .\spec\, then:
+# plus its exact specification into .\spec\dataset-discovery-fixture\, then:
 uvx --from git+https://github.com/gordonwatts/test-wsl2-llm.git test-wsl2-llm template run .\spec-tests.yaml dataset-ids-from-data-sources
 ```
 
