@@ -81,9 +81,9 @@ questions:
           must_have: [event_number, jet_pt]
 model: gpt-6.1-sol:medium
 marketplaces:
-  - https://github.com/iris-hep/marketplace.git@codex/run3-specification
+  - https://github.com/iris-hep/marketplace.git
   - https://github.com/usatlas/marketplace.git
-  - https://github.com/gordonwatts/atlas-analysisbase-marketplace.git@codex/analysis-data-sources
+  - https://github.com/gordonwatts/atlas-analysisbase-marketplace.git
 plugins:
   - iris-hep@iris-hep-tools
 mcp_servers:

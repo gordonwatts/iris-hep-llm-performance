@@ -52,8 +52,8 @@ and uses the IRIS-HEP specification skill, whose ATLAS default is also Run 3.
 Generate it separately with `--model gpt-6-astra:medium`, review the returned
 `specification.md`, then copy its exact bytes to `spec/calratio-abcd-spec.md`
 before running `ntuple-leaves-from-spec`. Check run, energy, triggers,
-normalization and ABCD sidebands at the handoff. The marketplace URLs currently
-pin review branches containing the tested skills.
+normalization and ABCD sidebands at the handoff. The marketplace URLs use their
+default `main` branches, which contain the specification and data-source skills.
 
 
 ## Website and performance results
