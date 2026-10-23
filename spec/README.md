@@ -150,6 +150,25 @@ manifest as dated discovery evidence and checks this correction without repeatin
 the unchanged data membership inventory. It is not a second independent full
 discovery run.
 
+Trial 5, the focused refinement, also completed with exit code 0. The corrected
+66 KB manifest preserves all 69 requirement IDs, all 13 signal pairs and all ten
+multijet slices. Each old r14622 candidate is explicitly blocked pending
+dataset/task-specific clearance, without claiming every sample is physically
+affected. Seven corrected s4679/r15540/p7266 alternatives are separately listed
+and mutually exclusive with old coverage; five are EVENTS PARTIALLY AVAILABLE.
+The two complete catalog productions still require current-default, intended
+coverage, normalization and field-compatibility checks. Corrected JZ3-JZ5 were
+not found in the scoped search; this is not proof that no replacement exists.
+No fully qualified ten-slice ensemble is claimed.
+
+Local report stems are `results/spec-tests/dataset-table-trial-4-` and
+`dataset-table-trial-5-`, each followed by
+`dataset-ids-from-data-sources-gpt-6-1-sol-medium`. The final review copy is
+`results/spec-tests/reviewed-dataset-manifest/datasets.md`, with its exact inputs
+and the original draft alongside it. The focused local template is
+`.work/dataset-production-review.yaml`; it adds the draft and a production-review
+brief to the canonical question. These generated artifacts remain uncommitted.
+
 The merge with current main preserves its revised Run 3 specification and
 `ntuple-leaves-from-spec` test. The earlier matched discovery inputs were moved
 together into `dataset-discovery-fixture/`; schema, staged paths and hashes pass,
