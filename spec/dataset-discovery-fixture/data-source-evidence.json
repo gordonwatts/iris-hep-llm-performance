@@ -1,0 +1,1908 @@
+{
+  "schema_version": 1,
+  "specification": {
+    "path": "calratio-abcd-spec.md",
+    "sha256": "448a52433f4bfcf7bc8b10ec7b264c0a036ff88717a8a253fc789cfe25e8e384"
+  },
+  "models": {
+    "steering": "Codex (exact model identifier unavailable)",
+    "workers": [],
+    "roles": "All inventory, code, migration interpretation and review performed by steering agent; no delegated worker used."
+  },
+  "requirements": [
+    {
+      "id": "event-identity",
+      "spec_ref": "Data Required / Collision data and background control samples",
+      "column": "run,event,lb,bcid",
+      "purpose": "Join, deduplicate and audit overlaps",
+      "scope": "event",
+      "type_cardinality": "uint32,uint64,uint32,uint32; 1 each",
+      "accessor_or_formula": "ServiceX EventInfo.runNumber(), eventNumber(), lumiBlock(), bcid()",
+      "units": "",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Collision event",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "event-provenance",
+      "spec_ref": "Workflow / Data Extraction",
+      "column": "sample_id,file_guid,entry,stream,production",
+      "purpose": "Persist input lineage; entry is diagnostic only",
+      "scope": "file",
+      "type_cardinality": "strings + uint64; 1/file or event",
+      "accessor_or_formula": "Rucio list-files/get-metadata; ServiceX input manifest; file GUID and production tags",
+      "units": "",
+      "source": "Rucio/AMI catalog and file metadata; exact production pending",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Collision event",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "event-quality",
+      "spec_ref": "Data Required / Collision data and background control samples",
+      "column": "lar_error,tile_error,core_flags,detector_flags",
+      "purpose": "Run 3 detector error veto with explicit masks",
+      "scope": "event",
+      "type_cardinality": "enum/uint bitmasks; 1 each",
+      "accessor_or_formula": "ServiceX EventInfo.errorState(xAOD::EventInfo::LAr/Tile), eventFlags(Core), detector status; release-matched tool wrapper required",
+      "units": "",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Collision event",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "grl",
+      "spec_ref": "Data Required / Collision data and background control samples",
+      "column": "grl_pass",
+      "purpose": "Good collision run/LB; special streams have separate quality policy",
+      "scope": "luminosity-block",
+      "type_cardinality": "bool lookup per run/LB",
+      "accessor_or_formula": "External GRL XML via GoodRunsListSelectionTool; exact XML path/version/hash pending",
+      "units": "",
+      "source": "ATLAS DQ GRL distribution; retrieve approved Run 3 XML, not supplied",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Collision event",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "pileup",
+      "spec_ref": "Data Required / Collision data and background control samples",
+      "column": "mu_actual,mu_average,npv",
+      "purpose": "Pile-up closure and reweighting",
+      "scope": "event",
+      "type_cardinality": "float,float,int; 1 each",
+      "accessor_or_formula": "ServiceX EventInfo.actualInteractionsPerCrossing(), averageInteractionsPerCrossing(); count selected vertices",
+      "units": "",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Collision event",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "pv-links",
+      "spec_ref": "Analysis Regions / Common preselection",
+      "column": "pv_type,pv_x,pv_y,pv_z,pv_track_index",
+      "purpose": "Resolve all vertex track links and validity",
+      "scope": "object",
+      "type_cardinality": "jagged vertices + jagged track indices",
+      "accessor_or_formula": "ServiceX PrimaryVertices: vertexType(), x(),y(),z(), trackParticleLinks(); links must resolve to extracted tracks",
+      "units": "mm \u2192 m: /1000 for positions",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Collision event",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "pv-track-count",
+      "spec_ref": "Analysis Regions / Common preselection",
+      "column": "pv_n_pt1",
+      "purpose": "Require a primary vertex with >=3 tracks pT>1 GeV",
+      "scope": "derived",
+      "type_cardinality": "int/vertex; bool/event",
+      "accessor_or_formula": "Count valid vertex-associated tracks with track.pt>1; do not use total nTrackParticles without pT test",
+      "units": "",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "pv-links",
+        "track-kinematics"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Collision event",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "bunch-category",
+      "spec_ref": "Data Required / Collision data and background control samples",
+      "column": "filled,empty,unpaired_isolated,random",
+      "purpose": "Partition collision and special bunches",
+      "scope": "luminosity-block",
+      "type_cardinality": "category per run/LB/BCID",
+      "accessor_or_formula": "External BunchCrossingCondData via BunchCrossingCondAlg; menu bunch groups and EventInfo.bcid()",
+      "units": "",
+      "source": "Run 3 conditions DB and trigger configuration; tags/IOV pending",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "event-identity"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Collision event",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "met",
+      "spec_ref": "Analysis Regions / Common preselection",
+      "column": "met_px,met_py,met_sumet,met_term",
+      "purpose": "Require MET<50 GeV; retain fail values for studies",
+      "scope": "event",
+      "type_cardinality": "float components + string term; 1 named final term",
+      "accessor_or_formula": "ServiceX MissingET: mpx(),mpy(),sumet(),name(); use explicit calibrated final term, not core soft term",
+      "units": "MeV \u2192 GeV: /1000",
+      "source": "PHYSLITE MET rebuild inputs or richer source; METMaker/METSystematicsTool configuration pending",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Collision event",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "met-magnitude",
+      "spec_ref": "Analysis Regions / Common preselection",
+      "column": "met",
+      "purpose": "Cut and diagnostics",
+      "scope": "derived",
+      "type_cardinality": "float/event",
+      "accessor_or_formula": "sqrt(met_px**2+met_py**2)",
+      "units": "GeV \u2192 GeV",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "met"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Collision event",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "trigger-menu",
+      "spec_ref": "Triggers",
+      "column": "smk,l1psk,hltpsk,chain_names,menu_hash",
+      "purpose": "Run/LB-dependent CalRatio OR and independent jet/random chains",
+      "scope": "luminosity-block",
+      "type_cardinality": "keys + versioned chain list",
+      "accessor_or_formula": "External TrigConf configuration access (TrigConfIO/TriggerDB); exact keys and release pending",
+      "units": "",
+      "source": "Run 3 trigger configuration DB, not inferred from Run 1 names",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Collision event",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "trigger-decisions",
+      "spec_ref": "Triggers",
+      "column": "chain_pass_raw,chain_pass_physics,l1_bits",
+      "purpose": "Keep raw and prescaled/pass-through decisions separately",
+      "scope": "event",
+      "type_cardinality": "bool per chain/stage",
+      "accessor_or_formula": "ServiceX TrigDecisionTool.isPassed(chain,condition); validated C++ helper required",
+      "units": "",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "trigger-menu"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Collision event",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "trigger-objects",
+      "spec_ref": "Triggers",
+      "column": "trig_et,eta,phi,stage,chain,roi_id",
+      "purpose": "CalRatio navigation and trigger-object response studies",
+      "scope": "object",
+      "type_cardinality": "jagged features with chain/ROI links",
+      "accessor_or_formula": "ServiceX TrigDecisionTool features navigation; Run 3 feature type/key must be discovered from actual menu",
+      "units": "MeV \u2192 GeV: /1000; rad unchanged",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "trigger-menu"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Collision event",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "trigger-match",
+      "spec_ref": "Triggers",
+      "column": "jet_chain_match,match_metric",
+      "purpose": "Eligible tag must fire CalRatio; probe may also match",
+      "scope": "object",
+      "type_cardinality": "jagged jet \u00d7 chain bool plus links",
+      "accessor_or_formula": "ServiceX Run 3 navigation/matching helper: offline jet \u2194 accepted CalRatio feature; matching metric/cut unresolved",
+      "units": "",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "trigger-objects",
+        "jet-kinematics"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Collision event",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "trigger-exposure",
+      "spec_ref": "Triggers",
+      "column": "prescale,l1_live_fraction,trigger_lumi",
+      "purpose": "Per chain OR exposure, independent controls and NCB transfer",
+      "scope": "luminosity-block",
+      "type_cardinality": "float per run/LB/chain",
+      "accessor_or_formula": "External TrigConf keys/prescale sets + COOL luminosity/live-time folders through LumiBlockComps/lumicalc; exact folders/tags pending",
+      "units": "pb^-1; seconds",
+      "source": "TriggerDB + ATLAS luminosity conditions; overlap-aware OR accounting",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "trigger-menu"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Collision event",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "trigger-efficiency",
+      "spec_ref": "Triggers",
+      "column": "eff_et_h_n,uncertainties",
+      "purpose": "Validate full chain and tag threshold; 60 GeV plateau not assumed",
+      "scope": "sample",
+      "type_cardinality": "efficiency map over ET,h,n,eta,run",
+      "accessor_or_formula": "Independent jet data tag-and-probe and signal trigger emulation; versioned Run 3 configuration required",
+      "units": "",
+      "source": "Derived control measurements + MC emulation",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "trigger-decisions",
+        "trigger-match",
+        "trigger-exposure",
+        "calratio",
+        "good-track-count"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Collision event",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "jet-index",
+      "spec_ref": "Object Definitions and Roles",
+      "column": "jet_index,original_link",
+      "purpose": "Stable ordering, tie-break and matching",
+      "scope": "object",
+      "type_cardinality": "uint/index + link; jagged jets",
+      "accessor_or_formula": "ServiceX preserve container order with original index; originalObjectLink if retained, resolve not serialize raw pointer",
+      "units": "",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Jets and tracks",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "jet-kinematics",
+      "spec_ref": "Object Definitions and Roles",
+      "column": "jet_E,pt,m,eta,phi",
+      "purpose": "All jets, ET>40, abs(eta)<2.5; matched tag ET>60",
+      "scope": "object",
+      "type_cardinality": "float vectors aligned to jet_index",
+      "accessor_or_formula": "ServiceX Jets(): e(),pt(),m(),eta(),phi(); target calorimeter jet container must be explicitly configured",
+      "units": "MeV \u2192 GeV: /1000 for E,pt,m; rad unchanged",
+      "source": "Start PHYSLITE ordinary jets as control only; nominal anti-kt R=0.4 LC topo jets and Run 3 displaced response required",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Jets and tracks",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "jet-et",
+      "spec_ref": "Object Definitions and Roles",
+      "column": "jet_et",
+      "purpose": "ET selection is not silently replaced by pT",
+      "scope": "derived",
+      "type_cardinality": "float/jet",
+      "accessor_or_formula": "Source convention unresolved: candidate E/cosh(eta), or p4.Et(); validate massive-jet definition before freezing",
+      "units": "GeV \u2192 GeV",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "jet-kinematics"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Jets and tracks",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "jet-calibration",
+      "spec_ref": "Object Definitions and Roles",
+      "column": "jet_calib_config,scale_factors",
+      "purpose": "Run 3 LC-topo displaced low-EMF response",
+      "scope": "sample",
+      "type_cardinality": "config strings + factors per jet",
+      "accessor_or_formula": "External JetCalibrationTool configuration/conditions, release and sequences; verify response in low-EMF dijet balancing",
+      "units": "",
+      "source": "Jet/LLP calibration group files and conditions; no ordinary JES equivalence claimed",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Jets and tracks",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "jet-emf",
+      "spec_ref": "Object Definitions and Roles",
+      "column": "jet_emf",
+      "purpose": "Raw input to h, retained before cuts",
+      "scope": "object",
+      "type_cardinality": "float/jet",
+      "accessor_or_formula": "ServiceX jet.getAttribute<float>(\"EMFrac\"); confirm type, energy scale and signed-energy policy",
+      "units": "",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight",
+        "api-inspection"
+      ],
+      "depends_on": [],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Jets and tracks",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "jet-sampling",
+      "spec_ref": "Object Definitions and Roles",
+      "column": "jet_sampling_E,jet_had_E,jet_em_E",
+      "purpose": "Independent calorimeter ratio definition/quality studies",
+      "scope": "object",
+      "type_cardinality": "vector<float>/jet; layer enumeration external",
+      "accessor_or_formula": "ServiceX jet.getAttribute<vector<float>>(\"EnergyPerSampling\"); EM/had layer grouping and scale release-matched",
+      "units": "MeV \u2192 GeV: /1000",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight",
+        "api-inspection"
+      ],
+      "depends_on": [],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Jets and tracks",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "calratio",
+      "spec_ref": "Object Definitions and Roles",
+      "column": "h,h_valid",
+      "purpose": "h>1.2 pass; complete h<=1.2 complement for defined ratios",
+      "scope": "derived",
+      "type_cardinality": "float + bool/jet",
+      "accessor_or_formula": "log10(EH/EEM); log10((1-EMF)/EMF) only after equivalence confirmed. Zero/negative energies: retain raw inputs and validity, no clipping/infinity substitution",
+      "units": "",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "jet-emf",
+        "jet-sampling"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Jets and tracks",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "jet-timing",
+      "spec_ref": "Object Definitions and Roles",
+      "column": "jet_time",
+      "purpose": "Energy-weighted cell time; -1<t<5 ns",
+      "scope": "object",
+      "type_cardinality": "float/jet",
+      "accessor_or_formula": "ServiceX jet.getAttribute<float>(\"Timing\"); verify weighting, time origin, valid/sentinel convention",
+      "units": "ns \u2192 ns",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight",
+        "api-inspection"
+      ],
+      "depends_on": [],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Jets and tracks",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "jet-quality-inputs",
+      "spec_ref": "Object Definitions and Roles",
+      "column": "hecfrac,quality,negative_E,fracmax,larquality,hecquality",
+      "purpose": "Recompute cleaning with low-EMF rejection removed",
+      "scope": "object",
+      "type_cardinality": "floats + sampling index/jet",
+      "accessor_or_formula": "ServiceX candidate attributes HECFrac,LArQuality,HECQuality,AverageLArQF,NegativeE,FracSamplingMax,FracSamplingMaxIndex; raw and corrected scale documented",
+      "units": "NegativeE MeV \u2192 GeV: /1000; remaining dimensionless",
+      "source": "PHYSLITE retention unverified; PHYS/custom reconstruction provisional",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Jets and tracks",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "jet-quality",
+      "spec_ref": "Object Definitions and Roles",
+      "column": "jet_good_modified",
+      "purpose": "No extra narrowness/JVT/prompt-track requirement",
+      "scope": "derived",
+      "type_cardinality": "bool/jet",
+      "accessor_or_formula": "Versioned Run 3 JetCleaningTool equivalent with explicit low-EMF terms removed; exact cut list unresolved",
+      "units": "",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "jet-quality-inputs",
+        "jet-emf",
+        "jet-timing"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Jets and tracks",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "muon-segments",
+      "spec_ref": "Backgrounds / Beam halo",
+      "column": "segment_eta,phi,x,y,z,time,station",
+      "purpose": "Endcap segment phi alignment; all reconstructed jets halo veto",
+      "scope": "object",
+      "type_cardinality": "jagged segments + jet-segment indices",
+      "accessor_or_formula": "ServiceX xAOD MuonSegment container through release-matched helper: position/direction, station/chamber and time; exact key unresolved",
+      "units": "mm \u2192 m: /1000; ns \u2192 ns; rad unchanged",
+      "source": "Richer PHYS/specialist/AOD route provisional; count alone cannot establish alignment",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Jets and tracks",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "halo-veto",
+      "spec_ref": "Analysis Regions / Common preselection",
+      "column": "jet_halo,event_halo",
+      "purpose": "Veto any reconstructed halo jet, beyond candidate jets",
+      "scope": "derived",
+      "type_cardinality": "bool/jet + bool/event",
+      "accessor_or_formula": "Run 3 halo identification with phi-aligned endcap segments and timing; recover exact alignment and quality thresholds",
+      "units": "",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "muon-segments",
+        "jet-kinematics",
+        "jet-timing"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Jets and tracks",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "track-kinematics",
+      "spec_ref": "Object Definitions and Roles",
+      "column": "trk_pt,eta,phi,theta,qOverP",
+      "purpose": "All tracks for cone and trigger-window comparisons, no PV-only thinning",
+      "scope": "object",
+      "type_cardinality": "float vectors per track",
+      "accessor_or_formula": "ServiceX InDetTrackParticles via release-matched collection helper: pt(),eta(),phi(),theta(),qOverP(); inverse-momentum fallback only with finite nonzero qOverP",
+      "units": "MeV \u2192 GeV: pt/1000; rad unchanged; qOverP MeV^-1",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Jets and tracks",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "track-hits",
+      "spec_ref": "Object Definitions and Roles",
+      "column": "trk_nPixel,trk_nSCT,summary_valid",
+      "purpose": ">=2 pixel and >=9 combined hits; not dead sensors/holes",
+      "scope": "object",
+      "type_cardinality": "uint8 + success flags/track",
+      "accessor_or_formula": "ServiceX TrackParticle.summaryValue(out,xAOD::numberOfPixelHits/numberOfSCTHits) C++ helper; failures stay invalid, never zero",
+      "units": "",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight",
+        "api-inspection"
+      ],
+      "depends_on": [],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Jets and tracks",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "good-track-count",
+      "spec_ref": "Object Definitions and Roles",
+      "column": "jet_n_good",
+      "purpose": "Count pT>1, >=2 pixel, pixel+SCT>=9 within dR<0.2; no PV association",
+      "scope": "derived",
+      "type_cardinality": "int/jet",
+      "accessor_or_formula": "Sum over all retained tracks satisfying hit and pT cuts and wrapped-phi deltaR<0.2; include all quality-valid tracks",
+      "units": "",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight",
+        "api-inspection"
+      ],
+      "depends_on": [
+        "track-kinematics",
+        "track-hits",
+        "jet-kinematics"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Jets and tracks",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "base-jets",
+      "spec_ref": "Analysis Regions",
+      "column": "jet_is_base",
+      "purpose": "ET>40, abs(eta)<2.5, modified quality, -1<t<5",
+      "scope": "derived",
+      "type_cardinality": "bool/jet",
+      "accessor_or_formula": "Conjunction of specified cuts; all object arrays share jet_index",
+      "units": "",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "jet-et",
+        "jet-quality",
+        "jet-timing"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Derived regions and analysis outputs",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "full-candidates",
+      "spec_ref": "Analysis Regions",
+      "column": "jet_is_full,n_full",
+      "purpose": "h>1.2 and n=0 on base jets; reject n_full>2",
+      "scope": "derived",
+      "type_cardinality": "bool/jet + int/event",
+      "accessor_or_formula": "base & h>1.2 & n_good==0; count over all jets",
+      "units": "",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "base-jets",
+        "calratio",
+        "good-track-count"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Derived regions and analysis outputs",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "tag-probe",
+      "spec_ref": "Object Definitions and Roles",
+      "column": "tag_index,probe_index,n_matched",
+      "purpose": "Tag highest ET eligible matched full jet; probe min n, max h, max ET, stable index",
+      "scope": "derived",
+      "type_cardinality": "two int/event + count",
+      "accessor_or_formula": "Tag must ET>60; probe all other base jets; preserve double-trigger events; invalid h blocks ordering until policy resolved",
+      "units": "",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "jet-index",
+        "full-candidates",
+        "trigger-match",
+        "jet-et"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Derived regions and analysis outputs",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "abcd-regions",
+      "spec_ref": "Analysis Regions",
+      "column": "region_A,B,C,D,common_pass",
+      "purpose": "One entry/event; full-complement sidebands",
+      "scope": "derived",
+      "type_cardinality": "four bool + preselection flags/event",
+      "accessor_or_formula": "Common GRL/DQ, PV>=3, MET<50, halo veto, tag+probe, n_full<=2. A:h>1.2,n=0; B:h>1.2,n>=1; C:h<=1.2,n=0; D:h<=1.2,n>=1",
+      "units": "",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "tag-probe",
+        "full-candidates",
+        "event-quality",
+        "grl",
+        "pv-track-count",
+        "met-magnitude",
+        "halo-veto"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Derived regions and analysis outputs",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "validation-regions",
+      "spec_ref": "Validation and Cross-checks",
+      "column": "vr_rectangles,overlap_keys",
+      "purpose": "Close away from A; freeze splits before unblinding",
+      "scope": "derived",
+      "type_cardinality": "region flags + event identities",
+      "accessor_or_formula": "In h<=1.2 split h at 0 and n at 0/1; in n>=1 split h at1.2 and n=1/>=2; same tag/probe; signal contamination and overlaps retained",
+      "units": "",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "abcd-regions",
+        "event-identity"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Derived regions and analysis outputs",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "diagnostics",
+      "spec_ref": "Histograms / 1\u20134",
+      "column": "cutflow,delta_phi,n_base,tag/probe_diagnostics",
+      "purpose": "Stage counts, h\u00d7n, ET,eta,t,MET,pile-up and trigger multiplicity",
+      "scope": "derived",
+      "type_cardinality": "event and named-object histogram fills",
+      "accessor_or_formula": "Wrapped deltaPhi in radians; counts per event; preserve high-track tails, timing sidebands and failing cuts; no nominal deltaPhi>2 cut",
+      "units": "GeV,ns,rad as inputs",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "abcd-regions",
+        "validation-regions",
+        "pileup",
+        "trigger-match"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Derived regions and analysis outputs",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "special-streams",
+      "spec_ref": "Backgrounds",
+      "column": "stream,run,lb,bcid,selection_policy",
+      "purpose": "Separate empty, unpaired-isolated, random and single-jet sources",
+      "scope": "sample",
+      "type_cardinality": "versioned manifest per role",
+      "accessor_or_formula": "Rucio list-dids/list-content + AMI dataset provenance; exact data-period/stream DIDs not available",
+      "units": "",
+      "source": "Run 3 special streams; PHYSLITE coverage unknown, no substitutes",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Noncollision and controls",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "special-exposure",
+      "spec_ref": "Backgrounds",
+      "column": "live_time,n_crossings,trigger_eff,collision_lumi",
+      "purpose": "Transfer trigger/bunch exposure into collision regions",
+      "scope": "luminosity-block",
+      "type_cardinality": "float per stream/run/LB/BCID",
+      "accessor_or_formula": "External lumicalc + bunch-group/TriggerDB live-time tables; retain zero-bias/random inclusion probabilities",
+      "units": "seconds, counts, pb^-1",
+      "source": "Run 3 conditions; source 2.9 scale not reusable",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "special-streams",
+        "trigger-exposure",
+        "bunch-category"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Noncollision and controls",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "cosmic-timing",
+      "spec_ref": "Backgrounds / Cosmic rays",
+      "column": "cosmic_t1,t2,acceptance",
+      "purpose": "Select without PV/timing; measure paired-jet timing acceptance",
+      "scope": "derived",
+      "type_cardinality": "pair floats + efficiency per region",
+      "accessor_or_formula": "Apply tag/probe pass/fail definitions to empty data without PV/time; fit/measure joint time acceptance using wide timing sidebands",
+      "units": "ns \u2192 ns",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "special-streams",
+        "jet-timing",
+        "tag-probe"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Noncollision and controls",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "incidental-tracks",
+      "spec_ref": "Backgrounds / Cosmic rays",
+      "column": "isolation_transfer_R",
+      "purpose": "Random-collision overlay correction separately in A/B/C/D",
+      "scope": "derived",
+      "type_cardinality": "probability + covariance per region",
+      "accessor_or_formula": "Overlay random collision tracks on cosmic jets with region-specific track pass/fail and ranking; never copy A correction to B/D",
+      "units": "",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "special-streams",
+        "good-track-count",
+        "cosmic-timing",
+        "special-exposure"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Noncollision and controls",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "halo-pairs",
+      "spec_ref": "Backgrounds / Beam halo",
+      "column": "synthetic_pairs,cosmic_subtraction",
+      "purpose": "Artificial pairs in unpaired data with MET cut and halo tags",
+      "scope": "derived",
+      "type_cardinality": "pair records + yields by region",
+      "accessor_or_formula": "Retain segment phi, timing, original event/bunch identity and pair recipe; subtract cosmic and account pair reuse covariance",
+      "units": "",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "special-streams",
+        "halo-veto",
+        "met",
+        "cosmic-timing",
+        "special-exposure"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Noncollision and controls",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "mixed-background",
+      "spec_ref": "Backgrounds",
+      "column": "mixed_yield_R",
+      "purpose": "Check halo+QCD, halo+cosmic and noise in sidebands",
+      "scope": "derived",
+      "type_cardinality": "yield and bound/region",
+      "accessor_or_formula": "Stream overlay and data quality/segment/time control measurements; source negligibility is not Run 3 evidence",
+      "units": "",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "halo-pairs",
+        "incidental-tracks",
+        "abcd-regions"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Noncollision and controls",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "collision-audit",
+      "spec_ref": "Backgrounds / Background audit additions",
+      "column": "nonqcd_yield_R,object_ID",
+      "purpose": "W/Z,top,photons/electrons,instrumental/noise; heavy flavor remains QCD",
+      "scope": "sample",
+      "type_cardinality": "control yields + optional e/mu/photon objects",
+      "accessor_or_formula": "ServiceX Electrons/Muons/Photons pt/eta/phi, IDs and isolation if needed; central recommended W/Z/top samples through PMG/AMI/Rucio; DQ noise conditions",
+      "units": "MeV \u2192 GeV: /1000",
+      "source": "Independent control data + optional verified Run 3 MC",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "abcd-regions"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Noncollision and controls",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "signal-manifest",
+      "spec_ref": "Data Samples / Signal generation",
+      "column": "mPhi,mLLP,DSID,generator,ctau_gen,BR",
+      "purpose": "Exactly 13 mass pairs; generated lifetime/model not guessed",
+      "scope": "sample",
+      "type_cardinality": "float parameters + provenance strings",
+      "accessor_or_formula": "External AMI GetDatasetInfo/provenance + PMG executable job options/includes, EVGEN logs and Rucio metadata; exact files/commits pending",
+      "units": "GeV,m; BR dimensionless",
+      "source": "Run 3 full detector simulation; gen/reco/derivation tags unknown",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Signal, truth and weights",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified signal production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "truth-llp",
+      "spec_ref": "Data Required / Signal and performance simulation",
+      "column": "pdgid,status,barcode,px,py,pz,E,m,prodVtx,decayVtx,children",
+      "purpose": "Two actual LLPs with decay modes and boosts; no PDG-ID guess",
+      "scope": "object",
+      "type_cardinality": "jagged particles and vertex links",
+      "accessor_or_formula": "ServiceX TruthParticles/retained LLP collection: pdgId(),status(),barcode(),px(),py(),pz(),e(),m(),prodVtx(),decayVtx(),child(i); require valid links and both LLPs",
+      "units": "MeV \u2192 GeV: /1000; mm \u2192 m: /1000",
+      "source": "PHYSLITE truth sufficiency unverified; signal-specific richer truth provisional",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "signal-manifest"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Signal, truth and weights",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified signal production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "truth-parent-isr",
+      "spec_ref": "Systematic Uncertainties / ISR",
+      "column": "parent_p4,truthjets,parton_records,ISR_label",
+      "purpose": "Parent boost and ISR population/pT variations",
+      "scope": "object",
+      "type_cardinality": "one parent + jagged truth jets/partons",
+      "accessor_or_formula": "ServiceX linked parent/children + truth jet p4 and generator process metadata; ISR classification recipe must be specified",
+      "units": "MeV \u2192 GeV: /1000",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "truth-llp"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Signal, truth and weights",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified signal production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "truth-decay-geometry",
+      "spec_ref": "Analysis Steps / 6",
+      "column": "beta_gamma,decay_r,z,proper_length",
+      "purpose": "Geometry and delayed timing acceptance",
+      "scope": "derived",
+      "type_cardinality": "float/LLP",
+      "accessor_or_formula": "beta_gamma=abs(p)/m; displacement from production to decay; proper flight from projected displacement/beta_gamma; validate physical conventions",
+      "units": "m, dimensionless boost",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "truth-llp"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Signal, truth and weights",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified signal production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "lifetime-map",
+      "spec_ref": "Analysis Steps / 6",
+      "column": "eff_map_R_boost_position,ctau_grid",
+      "purpose": "0\u201350 m decay ensemble; validate generated lifetime and barrel/endcap",
+      "scope": "derived",
+      "type_cardinality": "multidimensional efficiencies + covariance per benchmark/region",
+      "accessor_or_formula": "Rebuild Run 3 efficiency map with boost, decay geometry, kinematics/timing and region; sampling coordinate (proper/lab) and bins unresolved; retain original map method, not pure reweighting",
+      "units": "m",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "truth-decay-geometry",
+        "abcd-regions",
+        "trigger-efficiency",
+        "signal-manifest"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Signal, truth and weights",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified signal production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "gen-weights",
+      "spec_ref": "Data Required / Signal and performance simulation",
+      "column": "mc_weights,weight_names",
+      "purpose": "Nominal, PDF and generator variations; preserve signs",
+      "scope": "event",
+      "type_cardinality": "vector<float>/event + name index map",
+      "accessor_or_formula": "ServiceX EventInfo.mcEventWeights(); external TruthMetaData weightNames and generator config to identify nominal/PDF/scale indices",
+      "units": "",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Signal, truth and weights",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified signal production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "sumweights",
+      "spec_ref": "Data Required / Signal and performance simulation",
+      "column": "sumw,sumw2,nevents",
+      "purpose": "Full unskimmed denominator, per DSID/production; negatives retained",
+      "scope": "file",
+      "type_cardinality": "double,double,uint64/file plus sample sums",
+      "accessor_or_formula": "External PyROOT xAOD metadata/CutBookkeepers name,inputStream,cycle,sumOfEventWeights,sumOfEventWeightsSquared,nAcceptedEvents; AMI/Rucio complete file list and dedup",
+      "units": "",
+      "source": "Parent derivation metadata before selection; exact file GUIDs pending",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Signal, truth and weights",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified signal production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "pileup-weights",
+      "spec_ref": "Systematic Uncertainties / Pile-up",
+      "column": "prw_nominal,up,down,random_run",
+      "purpose": "Run 3 track-isolation dependence",
+      "scope": "event",
+      "type_cardinality": "float variations + uint32/event",
+      "accessor_or_formula": "ServiceX EventInfo PileupWeight_NOSYS or PileupReweightingTool; config/lumi files, units and systematic names require production verification",
+      "units": "",
+      "source": "Run 3 PRW configuration and data profile, not source 10% copied",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "pileup",
+        "grl"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Signal, truth and weights",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified signal production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "cross-sections",
+      "spec_ref": "Data Samples / Signal generation",
+      "column": "sigma_ggF,uncertainty,filter_eff,kfactor,BR",
+      "purpose": "Run 3 per mass benchmark; no 8 TeV cross sections reused",
+      "scope": "sample",
+      "type_cardinality": "floats per DSID/mass pair with version",
+      "accessor_or_formula": "External AMI/PMG cross-section DB via pyAMI and versioned PMG table; BSM model + 13.6 TeV theory prescription; exact artifact unresolved",
+      "units": "pb; efficiencies/BR dimensionless",
+      "source": "Run 3 theory production and generated decay fractions; preserve source fraction deficits if using that decay model",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Signal, truth and weights",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified signal production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "luminosity",
+      "spec_ref": "Data Samples",
+      "column": "integrated_lumi,uncertainty",
+      "purpose": "GRL and trigger-selected exposure; exact periods pending",
+      "scope": "luminosity-block",
+      "type_cardinality": "float/run/LB + correlated uncertainty",
+      "accessor_or_formula": "External LumiBlockComps/lumicalc with GRL, beam/DQ and trigger live-time selections; versioned luminosity calibration tag",
+      "units": "pb^-1",
+      "source": "Run 3 luminosity conditions; 20.3 fb^-1 and 2.8% historical only",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "grl",
+        "trigger-exposure"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Signal, truth and weights",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified signal production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "signal-yield",
+      "spec_ref": "Analysis Steps / 7",
+      "column": "s_A,B,C,D(ctau)",
+      "purpose": "Yield and leakage at every benchmark/lifetime",
+      "scope": "derived",
+      "type_cardinality": "four floats + covariance per point",
+      "accessor_or_formula": "L_pb * sigma_pb * BR * filter_eff * kfactor * sum(w_gen*w_PRW*w_trigger*region_eff)/sumw_gen; prevent double counting filter/BR and trigger-eff in map",
+      "units": "events",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "luminosity",
+        "cross-sections",
+        "sumweights",
+        "gen-weights",
+        "pileup-weights",
+        "lifetime-map"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Signal, truth and weights",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified signal production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "syst-jes",
+      "spec_ref": "Systematic Uncertainties",
+      "column": "jet_response_variations",
+      "purpose": "Low-EMF-specific response, acceptance and region migrations",
+      "scope": "derived",
+      "type_cardinality": "variation records/region/benchmark",
+      "accessor_or_formula": "Versioned JetUncertaintiesTool + dedicated displaced low-EMF balance calibration; recompute roles and regions",
+      "units": "",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "jet-calibration",
+        "jet-kinematics",
+        "calratio"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Systematics and inference",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "syst-trigger",
+      "spec_ref": "Systematic Uncertainties",
+      "column": "trigger_stage_variations",
+      "purpose": "Vary ET, energy ratio and track response separately",
+      "scope": "derived",
+      "type_cardinality": "variation records/region/benchmark",
+      "accessor_or_formula": "Run 3 trigger efficiency maps/emulator nuisance configurations, not a single shifted nominal",
+      "units": "",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "trigger-efficiency"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Systematics and inference",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "syst-met-timing",
+      "spec_ref": "Systematic Uncertainties",
+      "column": "met_time_variations",
+      "purpose": "Smear MET and timing including lost delayed decays",
+      "scope": "derived",
+      "type_cardinality": "variation records/region/benchmark",
+      "accessor_or_formula": "Run 3 METSystematicsTool and calibrated timing-resolution/offset study, correlations specified",
+      "units": "",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "met",
+        "jet-timing"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Systematics and inference",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "syst-pdf",
+      "spec_ref": "Systematic Uncertainties",
+      "column": "pdf_acceptance_variations",
+      "purpose": "Acceptance from PDF sets and variation weights",
+      "scope": "derived",
+      "type_cardinality": "variation records/region/benchmark",
+      "accessor_or_formula": "Generator LHE/TruthMetaData PDF IDs and event weights; Run 3 recommended sets; source sets historical",
+      "units": "",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "gen-weights",
+        "signal-manifest"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Systematics and inference",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "syst-isr",
+      "spec_ref": "Systematic Uncertainties",
+      "column": "isr_acceptance_variations",
+      "purpose": "Source half/double ISR population plus 5% ISR pT study as baseline sensitivity test",
+      "scope": "derived",
+      "type_cardinality": "variation records/region/benchmark",
+      "accessor_or_formula": "Truth ISR prescription; evaluate both correlated effects at Run 3, no source percentages copied",
+      "units": "",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "truth-parent-isr"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Systematics and inference",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "syst-mcstat",
+      "spec_ref": "Systematic Uncertainties",
+      "column": "mcstat_map_covariance",
+      "purpose": "Finite weighted MC and lifetime-map precision",
+      "scope": "derived",
+      "type_cardinality": "variation records/region/benchmark",
+      "accessor_or_formula": "sumw2, bootstrap/map bin covariance including inter-region/lifetime correlations",
+      "units": "",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "sumweights",
+        "lifetime-map",
+        "signal-yield"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Systematics and inference",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "syst-noncollision",
+      "spec_ref": "Systematic Uncertainties",
+      "column": "noncollision_covariance",
+      "purpose": "Finite controls, exposure, timing, isolation and pair reuse",
+      "scope": "derived",
+      "type_cardinality": "variation records/region/benchmark",
+      "accessor_or_formula": "Run 3 joint control likelihood or covariance across A/B/C/D",
+      "units": "",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "cosmic-timing",
+        "incidental-tracks",
+        "halo-pairs",
+        "special-exposure"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Systematics and inference",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "syst-closure",
+      "spec_ref": "Systematic Uncertainties",
+      "column": "kappa_constraint",
+      "purpose": "Validate extrapolation, ranking, trigger and tail factorization",
+      "scope": "derived",
+      "type_cardinality": "variation records/region/benchmark",
+      "accessor_or_formula": "Independent validation-region likelihood; justify transfer into A, preserve overlap correlations; do not fit kappa from A",
+      "units": "",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "validation-regions",
+        "diagnostics",
+        "collision-audit"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Systematics and inference",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "likelihood",
+      "spec_ref": "Statistical Analysis",
+      "column": "N_R,q_R,b_R,s_R,kappa,mu",
+      "purpose": "Four Poisson counts, signal in controls and non-QCD constraints",
+      "scope": "derived",
+      "type_cardinality": "counts, positive parameters and nuisance model",
+      "accessor_or_formula": "qD=d,qB=rX*d,qC=rY*d,qA=kappa*rX*rY*d; lambdaR=mu*sR+qR+bR. Zero counts stay Poisson; constrain kappa from validation; toy profile-likelihood CLs",
+      "units": "",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "abcd-regions",
+        "signal-yield",
+        "syst-closure",
+        "syst-noncollision",
+        "collision-audit"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Systematics and inference",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "limit-outputs",
+      "spec_ref": "Histograms / 5\u20136; Statistical Analysis",
+      "column": "acceptance_yield_ctau,limit_pb,BR_intervals",
+      "purpose": "95% observed limits and 10%/30% interpretations",
+      "scope": "derived",
+      "type_cardinality": "curves per actual benchmark",
+      "accessor_or_formula": "Toy CLs with components correlated across regions; normalize Higgs ratio to approved Run 3 reference at chosen mass, not 19 pb. Historical 24 events/Table3 are not Run 3 targets",
+      "units": "m,pb",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "unverified",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [
+        "likelihood",
+        "cross-sections",
+        "signal-yield"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "Systematics and inference",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "backup-track-count",
+      "spec_ref": "Backup evaluation",
+      "column": "jet_n_ghost_pt1",
+      "purpose": "Ghost association, loose ID quality and vertex indexing change cone/hit/no-PV definition; can change zero-track axis and ABCD correlation. Not nominal.",
+      "scope": "object",
+      "type_cardinality": "jagged float/int per jet",
+      "accessor_or_formula": "jet.getAttribute<vector<int>>(\"NumTrkPt1000\"); resolve vertex index; never treat as scalar",
+      "units": "",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "backup",
+      "probe_ids": [
+        "preflight",
+        "public-content"
+      ],
+      "depends_on": [
+        "jet-index"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "PHYSLITE-only backup candidates",
+      "backup_for": "good-track-count",
+      "changed_semantics": "Ghost association, loose ID quality and vertex indexing change cone/hit/no-PV definition; can change zero-track axis and ABCD correlation. Not nominal.",
+      "extraction_status": "unverified",
+      "remaining_validation": "Compare with nominal on matched displaced and QCD jets; redo ABCD closure and signal efficiency.",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "backup-energy-ratio",
+      "spec_ref": "Backup evaluation",
+      "column": "h_from_emf",
+      "purpose": "Possible only with scale and EH+EEM equivalence validation; does not repair signed/zero energies or displaced calibration.",
+      "scope": "object",
+      "type_cardinality": "jagged float/int per jet",
+      "accessor_or_formula": "log10((1-jet.getAttribute<float>(\"EMFrac\"))/jet.getAttribute<float>(\"EMFrac\")) only for 0<EMFrac<1",
+      "units": "",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "backup",
+      "probe_ids": [
+        "preflight",
+        "public-content"
+      ],
+      "depends_on": [
+        "jet-emf"
+      ],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "PHYSLITE-only backup candidates",
+      "backup_for": "calratio",
+      "changed_semantics": "Possible only with scale and EH+EEM equivalence validation; does not repair signed/zero energies or displaced calibration.",
+      "extraction_status": "unverified",
+      "remaining_validation": "Compare with nominal on matched displaced and QCD jets; redo ABCD closure and signal efficiency.",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "backup-pflow-jets",
+      "spec_ref": "Backup evaluation",
+      "column": "analysisjet_p4",
+      "purpose": "Prompt PFlow reconstruction and track use change displaced response and ABCD inputs; control study only, redo reconstruction efficiency and closure.",
+      "scope": "object",
+      "type_cardinality": "jagged float/int per jet",
+      "accessor_or_formula": "Jets().pt(),eta(),phi(),m() for retained AnalysisJets",
+      "units": "",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "backup",
+      "probe_ids": [
+        "preflight"
+      ],
+      "depends_on": [],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "PHYSLITE-only backup candidates",
+      "backup_for": "jet-kinematics",
+      "changed_semantics": "Prompt PFlow reconstruction and track use change displaced response and ABCD inputs; control study only, redo reconstruction efficiency and closure.",
+      "extraction_status": "unverified",
+      "remaining_validation": "Compare with nominal on matched displaced and QCD jets; redo ABCD closure and signal efficiency.",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    },
+    {
+      "id": "backup-timing",
+      "spec_ref": "Backup evaluation",
+      "column": "stored_timing",
+      "purpose": "Stored moment could serve if weighting and origin match; no cell-level recomputation/calibration when cells absent.",
+      "scope": "object",
+      "type_cardinality": "jagged float/int per jet",
+      "accessor_or_formula": "jet.getAttribute<float>(\"Timing\")",
+      "units": "",
+      "source": "PHYSLITE first; target retention unverified",
+      "status": "backup",
+      "probe_ids": [
+        "preflight",
+        "public-content"
+      ],
+      "depends_on": [],
+      "limitation": "No ServiceX delivery: no user endpoint/configuration or role-specific catalog-verified input. Confirm retention, semantics and nonempty values in target production.",
+      "group": "PHYSLITE-only backup candidates",
+      "backup_for": "jet-timing",
+      "changed_semantics": "Stored moment could serve if weighting and origin match; no cell-level recomputation/calibration when cells absent.",
+      "extraction_status": "unverified",
+      "remaining_validation": "Compare with nominal on matched displaced and QCD jets; redo ABCD closure and signal efficiency.",
+      "next_action": "Run NFiles=1 ServiceX positive control and isolated field probe on catalog-verified role-appropriate production; validate semantics and units before changing status.",
+      "backup_assessment": "No defensible PHYSLITE-only replacement demonstrated for this requirement. Retain as required gap; candidate APIs alone are insufficient."
+    }
+  ],
+  "probes": [
+    {
+      "id": "preflight",
+      "status": "blocked",
+      "transport": "servicex",
+      "sample": null,
+      "sample_role": "all",
+      "derivation": "DAOD_PHYSLITE first",
+      "production": null,
+      "backend_release": null,
+      "endpoint": null,
+      "request_id": null,
+      "request_id_reason": "No request submitted; installed client resolver found no configuration.",
+      "executor": "local query AST construction and Configuration.read(); no hosted or local xAOD executor",
+      "command": "probes/.venv/bin/python probes/positive_control.py",
+      "query": "import argparse\nimport ast\nimport json\nfrom func_adl_servicex_xaodr25 import FuncADLQueryPHYSLITE\nfrom servicex import deliver, ServiceXSpec, Sample, dataset\nfrom servicex.configuration import Configuration\n\n# Ordinary retained jets are a transport control, not the nominal displaced jets.\nquery = (FuncADLQueryPHYSLITE()\n    .Select(lambda e: {'ei': e.EventInfo('EventInfo'), 'jets': e.Jets()})\n    .Select(lambda c: {\n        'run': c.ei.runNumber(), 'event': c.ei.eventNumber(),\n        'lb': c.ei.lumiBlock(), 'bcid': c.ei.bcid(),\n        'jet_pt': c.jets.Select(lambda j: j.pt()/1000.0),\n        'jet_eta': c.jets.Select(lambda j: j.eta()),\n        'jet_phi': c.jets.Select(lambda j: j.phi()),\n    }))\n",
+      "query_state": "Constructed locally; not executed against events",
+      "error_category": "client_configuration_and_sample_coverage",
+      "error_message": "Configuration.read(): NameError: Can't find .servicex or servicex.yaml config file; no catalog-verified role-specific DID supplied.",
+      "observations": {
+        "query_constructed": true,
+        "client_configuration_found": false,
+        "events_read": 0,
+        "delivery_submitted": false
+      },
+      "affected_requirements": [
+        "event-identity",
+        "event-provenance",
+        "event-quality",
+        "grl",
+        "pileup",
+        "pv-links",
+        "pv-track-count",
+        "bunch-category",
+        "met",
+        "met-magnitude",
+        "trigger-menu",
+        "trigger-decisions",
+        "trigger-objects",
+        "trigger-match",
+        "trigger-exposure",
+        "trigger-efficiency",
+        "jet-index",
+        "jet-kinematics",
+        "jet-et",
+        "jet-calibration",
+        "jet-emf",
+        "jet-sampling",
+        "calratio",
+        "jet-timing",
+        "jet-quality-inputs",
+        "jet-quality",
+        "muon-segments",
+        "halo-veto",
+        "track-kinematics",
+        "track-hits",
+        "good-track-count",
+        "base-jets",
+        "full-candidates",
+        "tag-probe",
+        "abcd-regions",
+        "validation-regions",
+        "diagnostics",
+        "special-streams",
+        "special-exposure",
+        "cosmic-timing",
+        "incidental-tracks",
+        "halo-pairs",
+        "mixed-background",
+        "collision-audit",
+        "signal-manifest",
+        "truth-llp",
+        "truth-parent-isr",
+        "truth-decay-geometry",
+        "lifetime-map",
+        "gen-weights",
+        "sumweights",
+        "pileup-weights",
+        "cross-sections",
+        "luminosity",
+        "signal-yield",
+        "syst-jes",
+        "syst-trigger",
+        "syst-met-timing",
+        "syst-pdf",
+        "syst-isr",
+        "syst-mcstat",
+        "syst-noncollision",
+        "syst-closure",
+        "likelihood",
+        "limit-outputs",
+        "backup-track-count",
+        "backup-energy-ratio",
+        "backup-pflow-jets",
+        "backup-timing"
+      ],
+      "positive_control_id": null,
+      "repairs": [
+        "Installed missing dependencies using direct uv binary and writable cache.",
+        "Repaired diagnostic configuration class import.",
+        "Used explicit EventInfo key per installed stub."
+      ],
+      "next_action": "Configure user-owned ServiceX endpoint/credentials without sharing secrets, obtain catalog-verified PHYSLITE samples for each role, then execute NFiles=1 controls and isolated field probes."
+    },
+    {
+      "id": "api-inspection",
+      "status": "succeeded",
+      "transport": "external",
+      "tool": "rg and installed Python package source inspection",
+      "source": "func_adl_servicex_xaodr25 2.5.0.25.2.80",
+      "source_version": "2.5.0.25.2.80",
+      "observations": {
+        "EventInfo": "event_collection.py: EventInfo(self,name:str)",
+        "Jets": "event_collection.py: Jets(self,collection:Optional[str]=None,calibrate:Optional[bool]=True)",
+        "Vertices": "event_collection.py: Vertices(self,name:str)",
+        "jet_attribute": "xAOD/jet_v1.py: getAttribute type-indexed accessor; C++ signatures in inventory require Python type-index syntax/helper validation",
+        "track_summary": "xAOD/trackparticle_v1.py: summaryValue(self,value:int,information:SummaryType)->bool; out-parameter needs C++ helper"
+      },
+      "limitation": "API only; no retention, units, calibration or hosted backend validated."
+    },
+    {
+      "id": "public-content",
+      "status": "succeeded",
+      "transport": "external",
+      "tool": "web open",
+      "source": "https://atlas-physlite-content-opendata.web.cern.ch/opendata_pp_physlite_variables.html",
+      "source_version": "unversioned public page accessed 2026-10-22",
+      "observations": {
+        "AnalysisJets_fields": [
+          "EMFrac",
+          "EnergyPerSampling",
+          "Timing",
+          "GhostMuonSegmentCount",
+          "GhostTrack",
+          "NumTrkPt1000"
+        ],
+        "NumTrkPt1000": "Vertex-indexed vector<int>/jet, ghost-associated loose-ID tracks above 1 GeV; distinct from specified hit-qualified cone count.",
+        "scope": "Public Open Data inventory; not production-specific Run 3 retention evidence."
+      }
+    },
+    {
+      "id": "run3-energy-reference",
+      "status": "succeeded",
+      "transport": "external",
+      "tool": "web search official ATLAS source",
+      "source": "https://www.atlas.cern/Updates/Press-Statement/Run3-first-collisions",
+      "source_version": "2022-07-05 article, accessed 2026-10-22",
+      "observations": {
+        "Run3_collision_energy_TeV": 13.6
+      },
+      "limitation": "Does not establish selected periods, luminosity, trigger or campaign."
+    },
+    {
+      "id": "catalog-access",
+      "status": "blocked",
+      "transport": "external",
+      "tool": "available-tool metadata inspection and shutil.which(\"rucio\")",
+      "sample": null,
+      "observations": {
+        "AF_AMI_Rucio_MCP_tools_available": false,
+        "rucio_cli_available": false,
+        "provided_DIDs": 0,
+        "provided_simulation_files": 0
+      },
+      "error_category": "catalog_access_unavailable",
+      "error_message": "No AF/AMI/Rucio connector or Rucio CLI; no supplied datasets. Public references provide no verified role-specific Run 3 DIDs.",
+      "next_action": "Use authenticated AMI and Rucio on a configured ATLAS host to resolve role-specific DIDs and full parent production; do not infer absence from this blocker."
+    }
+  ],
+  "unresolved": [
+    "Run 3 years/run list, GRL and overlap-aware trigger exposure; use 13.6 TeV as proposed energy, no total luminosity assumed.",
+    "Exact data, jet-control, empty, unpaired-isolated and random-stream DIDs and parent provenance; stream derivation skims may already remove B/C/D or timing/PV sidebands.",
+    "Run 3 CalRatio chain names, stages, decision conditions, object-navigation keys, matching metric and offline efficiency plateau; >60 GeV tag threshold is provisional.",
+    "Nominal LC-topo R=0.4 reconstruction, exact ET definition, calibration and cleaning configuration; no automatic PFlow/JVT substitution.",
+    "Good-track hit semantics with Run 3 geometry and tracking, full unthinned cone coverage and no implicit PV association; preserve source numerical cuts pending validation.",
+    "Zero/negative energy h policy, sampling energy scales, invalid-value ordering and timing-origin equivalence.",
+    "Exact halo segment container and phi/quality veto; special stream trigger compatibility and independent region-specific noncollision transfers.",
+    "All 13 signal mass pairs, generated lifetimes, PDG IDs, decay fractions and generator/PDF/tune; equivalent Run 3 simulation and truth retention not found.",
+    "Run 3 cross sections including 126 GeV reference, uncertainties, filter/branching conventions, full signed sumweights and luminosity metadata.",
+    "Lifetime map bins, sampling coordinate and construction of 0\u201350 m ensemble; preserve boost/geometry/timing acceptance and validate generated lifetime.",
+    "ABCD closure, sideband extrapolation and kappa constraint, contamination and signal leakage remain measurements to perform; no numerical yields/limits supported.",
+    "Mixed-tier augmentation proposed, join unverified: parent compatibility, event uniqueness/overlap and jet association not tested."
+  ],
+  "migration": {
+    "user_override": "Run 3 request supersedes Run 1-only scope and modernization exclusion in input; source file retained unchanged.",
+    "energy_TeV": 13.6,
+    "status": "proposed",
+    "preserved": [
+      "ABCD axes h and good-track count, full complements",
+      "deterministic inclusive tag/probe ranking, <=2 full-candidate veto",
+      "noncollision methods per region",
+      "boost-dependent decay-ensemble map method",
+      "four-region Poisson likelihood and toy CLs"
+    ],
+    "historical_only": [
+      "8 TeV luminosity and theory cross sections",
+      "Run 1 trigger thresholds/plateaus and reconstruction calibrations",
+      "source background/yield numbers and P/Q correction",
+      "source uncertainty percentages and 19 pb Higgs normalization"
+    ],
+    "benchmark_pairs_GeV": [
+      [
+        100,
+        10
+      ],
+      [
+        100,
+        25
+      ],
+      [
+        126,
+        10
+      ],
+      [
+        126,
+        25
+      ],
+      [
+        126,
+        40
+      ],
+      [
+        140,
+        10
+      ],
+      [
+        140,
+        20
+      ],
+      [
+        140,
+        40
+      ],
+      [
+        300,
+        50
+      ],
+      [
+        600,
+        50
+      ],
+      [
+        600,
+        150
+      ],
+      [
+        900,
+        50
+      ],
+      [
+        900,
+        150
+      ]
+    ],
+    "source_LLP_decay_percent": {
+      "10": [
+        70.0,
+        16.4,
+        13.4
+      ],
+      "20": [
+        86.3,
+        8.0,
+        5.6
+      ],
+      "25": [
+        86.6,
+        8.1,
+        5.3
+      ],
+      "40": [
+        86.5,
+        8.5,
+        5.0
+      ],
+      "50": [
+        86.2,
+        8.8,
+        4.9
+      ],
+      "150": [
+        84.8,
+        10.2,
+        4.8
+      ]
+    },
+    "decay_order": [
+      "bb",
+      "tautau",
+      "cc"
+    ],
+    "fraction_policy": "Source deficits retained, no silent renormalization; Run 3 generator fractions must be verified."
+  },
+  "runtime": {
+    "timestamp_UTC": "2026-10-23T01:09:54.435353+00:00",
+    "python": "3.12.14 (local uv environment)",
+    "dependencies": {
+      "servicex": "3.3.1",
+      "func_adl_servicex_xaodr25": "2.5.0.25.2.80",
+      "uproot": "5.7.7",
+      "jinja2": "3.1.6",
+      "func-adl": "3.5.0"
+    },
+    "backend_release": null,
+    "endpoint": null,
+    "cache_status": "No delivery submitted; query construction only",
+    "repair_history": [
+      "System Python3 available; python command absent; dependencies initially missing.",
+      "Snap uv launcher failed transient scope startup.",
+      "Direct uv binary worked after moving cache and Python installation under writable /tmp.",
+      "Installed ServiceX, release-25 query bindings, uproot and jinja2 locally.",
+      "Configuration diagnostic initially imported nonexistent ServiceXConfig; repaired after reading installed module to Configuration.read().",
+      "Release-matched stub inspection established EventInfo(name) requires explicit key; positive control uses EventInfo(\"EventInfo\")."
+    ]
+  },
+  "source_document_checks": {
+    "specification": "Read entire supplied calratio-abcd-spec.md; hash in specification object.",
+    "paper": "https://arxiv.org/abs/1501.04020v2",
+    "paper_check": "Public abstract and v2 identity checked; detailed inventory follows supplied specification. Referenced local PDF was not present.",
+    "inaccessible_reference": "ATLAS analysis tutorial deriv_physlite page could not be accessed through web tool; no content conclusions drawn."
+  },
+  "audit": {
+    "requirement_count": 69,
+    "status_counts": {
+      "unverified": 65,
+      "backup": 4
+    },
+    "event_requirements_verified": 0,
+    "service_requests_submitted": 0,
+    "notebooks_created": 0,
+    "all_required_derived_quantities_pending_verified_inputs": true
+  }
+}
