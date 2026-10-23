@@ -39,6 +39,29 @@ ServiceX benchmarks. That private file is never committed or copied back.
 A connected retry on this host stopped at preflight because `atlas-af` was not
 configured; it did not replace the generated inventory.
 
+The runner resolves MCP definitions from the **Windows** Codex configuration
+before installing plugins in WSL. A marketplace URL in this YAML alone therefore
+does not supply the server definition. If the host has no enabled cached plugin
+defining it, add the public endpoint to the Windows `~/.codex/config.toml`:
+
+```toml
+[mcp_servers.atlas-af]
+url = "https://mcp.af.uchicago.edu/mcp"
+```
+
+Configure and sign in on the selected WSL target too:
+
+```powershell
+wsl -d Ubuntu -- bash -lc 'codex mcp add atlas-af --url https://mcp.af.uchicago.edu/mcp'
+# If it is already configured but needs a login:
+wsl -d Ubuntu -- bash -lc 'codex mcp login atlas-af'
+```
+
+Complete the browser sign-in when prompted. The runner selectively copies the
+target's stored MCP login into its isolated environment; no token belongs in
+this YAML or the returned evidence. A preflight failure before model execution
+does not evaluate the dataset skill.
+
 The `.gitattributes` entries preserve the specification's CRLF bytes and the
 generated outputs' LF bytes, so the recorded specification hash also validates
 after a fresh checkout.
