@@ -53,9 +53,18 @@ questions:
       recommendations, missing samples and tier/field incompatibilities as gaps.
       Preserve data-driven control/sideband roles and avoid duplicate coverage.
 
-      Write datasets.yaml following the skill's manifest contract and
-      dataset-selection.md with the supporting evidence and unresolved gaps.
-      Do not claim complete coverage or verified accessors without evidence.
+      Write datasets.md: a Markdown table of every dataset required by the
+      preceding data-source inventory. Include columns for sample/process and
+      analysis role; complete Rucio scope:name DID; dataset/container type;
+      run period or MC campaign; data tier; covered input requirement IDs;
+      official central recommendation and catalog evidence; and status/gaps.
+      Use one row per resolved DID, retaining separate rows for required samples
+      that could not be resolved, with "unresolved" in the DID column and a
+      concrete reason. Include all required periods, slices and signal points,
+      not just a representative sample. Reconcile every input sample role and
+      data-access requirement with either a dataset row or an explicit gap.
+      Explain duplicate/overlap handling and evidence limitations below the
+      table. Do not claim complete coverage or verified accessors without evidence.
     plugins:
       - af-uchicago@usatlas-marketplace
       - atlas@usatlas-marketplace
@@ -66,8 +75,7 @@ questions:
       - .\spec\data-sources.md
       - .\spec\data-source-evidence.json
     copy_back:
-      - datasets.yaml
-      - dataset-selection.md
+      - datasets.md
 model: gpt-6.1-sol:medium
 marketplaces:
   - https://github.com/iris-hep/marketplace.git@spec-updates
