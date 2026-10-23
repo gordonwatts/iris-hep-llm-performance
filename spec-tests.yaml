@@ -51,18 +51,33 @@ questions:
       recommendations, missing samples and tier/field incompatibilities as gaps.
       Preserve data-driven control/sideband roles and avoid duplicate coverage.
 
-      Write datasets.md: a Markdown table of every dataset required by the
-      preceding data-source inventory. Include columns for sample/process and
-      analysis role; complete Rucio scope:name DID; dataset/container type;
-      run period or MC campaign; data tier; covered input requirement IDs;
-      official central recommendation and catalog evidence; and status/gaps.
-      Use one row per resolved DID, retaining separate rows for required samples
-      that could not be resolved, with "unresolved" in the DID column and a
-      concrete reason. Include all required periods, slices and signal points,
-      not just a representative sample. Reconcile every input sample role and
-      data-access requirement with either a dataset row or an explicit gap.
-      Explain duplicate/overlap handling and evidence limitations below the
-      table. Do not claim complete coverage or verified accessors without evidence.
+      First classify sample roles as required, conditional or alternative using
+      the specification. The electroweak/top contamination audit is conditional;
+      do not expand inactive audit families into required datasets. Multijet MC
+      is for detector/performance validation, not the ABCD QCD normalization.
+      Separate physical event sources from selections on a shared parent and
+      external metadata. Derive this plan from the specification if the older
+      ledger lacks it. State assumed years and campaign mapping without treating
+      all available years as an approved analysis scope.
+
+      Write datasets.md with a compact role-to-source plan, a required-source
+      table of complete scope:name DIDs, conditional options, classified gaps,
+      and rejected candidates. Use the skill's table columns and evidence rules.
+      Keep each DID once and reference shared sources from multiple roles. Keep
+      all required slices and the 13 exact signal mass pairs; do not replace
+      completeness with a representative smoke sample. Empty containers cannot
+      count as selected inputs. Classify apparent duplicates by exact identity,
+      container/member overlap, alternative production, campaign, and generator
+      slice/decay rather than deleting similar names indiscriminately.
+
+      For each missing role explain whether it could be a selection of a known
+      source, needs retention/provenance checks, lacks a derivation or physics
+      production, is external metadata, or awaits an optional scope decision.
+      Do not assume empty/unpaired/random-trigger controls are skims of Main.
+      Consolidate unknown-year blockers instead of multiplying assumed periods.
+      Reconcile every input role and requirement ID to sources or explicit gaps.
+      Store shared evidence once; do not repeat full metadata or accessor prose.
+      Do not claim complete coverage or verified accessors without evidence.
     # Stage the preceding run's two outputs here; see spec/README.md.
     # Questions run in isolated workspaces, so YAML order does not pass files.
     copy_files:

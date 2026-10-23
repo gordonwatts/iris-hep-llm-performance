@@ -88,6 +88,42 @@ and several optional-background and field-compatibility questions. Empty
 containers and provisional candidates must not be treated as ready inputs.
 No new ServiceX field verification was performed by this discovery stage.
 
+### Audit of trial 3 and tightened selection contract
+
+The 201-row result was a discovery inventory, not a minimal required-input list.
+There were no exact DID duplicates or repeated (DSID, campaign) pairs. Its 167
+resolved identities comprised four annual Main containers, three empty delayed
+containers, and 160 MC entries (40 DSIDs across four campaigns). The MC split
+was 40 multijet validation inputs and 120 conditional contamination-audit inputs:
+84 V+jets, 12 ttbar and 24 single-top. The specification makes the latter audit
+conditional; including all of them in the main table overstates required scope.
+Campaigns and disjoint generator slices must not simply be deleted as duplicates.
+They need an explicit year/exposure mapping and filter/normalization evidence.
+
+The 34 unresolved rows also mixed different kinds of work: 13 exact signal mass
+points, 12 special-control rows expanded over four assumed years, and nine other
+scope/retention/audit/metadata entries. ABCD regions and some single-jet controls
+can potentially share a physical source, subject to trigger, skim and overlap
+checks. Empty/unpaired/random controls are not established skims of Main. A skim
+cannot recover events or fields absent from its parent. Different signal masses
+are not skim substitutes, and unsuccessful discovery does not prove a production
+is absent. GRLs, conditions, normalization and joins are dependencies rather than
+additional event datasets.
+
+The revised skill and question require a role-to-source plan before expansion,
+separate conditional families and rejected candidates, classify missing-source
+relationships, and consolidate shared unknown-year blockers. The upstream
+`analysis-data-sources` skill now carries these distinctions forward; the existing
+generated fixtures remain unchanged, testing compatibility with older ledgers.
+Shared catalog/provenance evidence and requirement groups should be written once
+rather than repeating full metadata and accessor definitions for every sample.
+
+Scientific acceptance criteria for the rerun are: preserve all 13 signal pairs
+and all 69 requirement IDs; keep inactive EWK/top families out of required inputs;
+exclude empty containers from selected coverage; distinguish selections and
+external dependencies from unresolved production; expose year/campaign assumptions;
+and retain honest field-access limitations. A shorter file alone is not success.
+
 The `.gitattributes` entries preserve the specification's CRLF bytes and the
 generated outputs' LF bytes, so the recorded specification hash also validates
 after a fresh checkout.
