@@ -62,6 +62,32 @@ target's stored MCP login into its isolated environment; no token belongs in
 this YAML or the returned evidence. A preflight failure before model execution
 does not evaluate the dataset skill.
 
+## Live dataset-table validation
+
+On 2026-10-23, the `dataset-ids-from-data-sources` question completed with
+`gpt-6.1-sol:medium` in 1,281 seconds (about 21 minutes), exit code 0. The isolated
+`atlas-af` OAuth preflight passed after completing `codex mcp login atlas-af` in
+Ubuntu. The earlier trial stopped at login preflight and did not run the model.
+
+The local result stem is
+`results/spec-tests/dataset-table-trial-3-dataset-ids-from-data-sources-gpt-6-1-sol-medium`;
+the copied deliverable has suffix `.datasets.md`. Results remain local under
+the existing ignored `results/` directory.
+
+The returned table has 201 rows: 167 unique scoped DIDs and 34 unresolved entries.
+Inspection found eight columns in every row, no wildcards/placeholders in DID
+cells, and all 69 upstream requirement IDs in the reconciliation. The output
+keeps catalog identity separate from usable production and verified accessors,
+flags empty containers and partial production, and distinguishes Central Page
+baseline membership from a uniquely established default.
+
+This is a successful discovery-workflow test, not complete analysis readiness.
+The output retains gaps for all 13 exact signal mass points, special-stream
+roles/tiers, approved year/GRL/trigger exposure, production-tag impact checks,
+and several optional-background and field-compatibility questions. Empty
+containers and provisional candidates must not be treated as ready inputs.
+No new ServiceX field verification was performed by this discovery stage.
+
 The `.gitattributes` entries preserve the specification's CRLF bytes and the
 generated outputs' LF bytes, so the recorded specification hash also validates
 after a fresh checkout.
