@@ -131,6 +131,30 @@ exclude empty containers from selected coverage; distinguish selections and
 external dependencies from unresolved production; expose year/campaign assumptions;
 and retain honest field-access limitations. A shorter file alone is not success.
 
+Trial 4 completed in 929 seconds with exit code 0. Its 47 KB manifest (versus
+404 KB previously) contains 11 unique candidate sources, all 69 requirement IDs
+and all 13 signal pairs. Inactive EWK/top inputs and the empty delayed container
+are outside the required-source table. It uses an explicitly provisional
+2022/mc23a scenario: the reduction from four campaigns to one is a scope
+assumption, not deduplication. The report verifies identical members for the
+short/full-tag aliases of each of the ten multijet containers.
+
+Scientific review found a production-status regression despite successful file
+collection: the selected r14622 MC candidates lacked the tag's muon-trigger
+warning. A fresh AMI tag lookup reports invalid status, while a newer official
+sample advisory qualifies applicability by sample size. Neither blanket rejection
+nor catalog VALID status settles dataset/task-specific impact. The skill and
+canonical question now explicitly require production-advisory checks independently
+of the central physics-sample defaults. A focused refinement run uses the trial-4
+manifest as dated discovery evidence and checks this correction without repeating
+the unchanged data membership inventory. It is not a second independent full
+discovery run.
+
+The merge with current main preserves its revised Run 3 specification and
+`ntuple-leaves-from-spec` test. The earlier matched discovery inputs were moved
+together into `dataset-discovery-fixture/`; schema, staged paths and hashes pass,
+and all 11 site suite-loading integration checks pass with four spec questions.
+
 The `.gitattributes` entries preserve the specification's CRLF bytes and the
 generated outputs' LF bytes, so the recorded specification hash also validates
 after a fresh checkout.

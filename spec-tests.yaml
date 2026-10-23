@@ -99,6 +99,11 @@ questions:
       EVNT-only identifiers are not the requested result. Record unavailable
       recommendations, missing samples and tier/field incompatibilities as gaps.
       Preserve data-driven control/sideband roles and avoid duplicate coverage.
+      Check current AMI tag descriptions and production advisories separately
+      from central DSID/generator defaults. Catalog VALID/nonempty status does
+      not clear tag/task warnings; stale indexed recommendations must not hide
+      them. Resolve per-sample applicability or retain an explicit production
+      blocker, including incompleteness of any corrected replacement.
 
       First classify sample roles as required, conditional or alternative using
       the specification. The electroweak/top contamination audit is conditional;
