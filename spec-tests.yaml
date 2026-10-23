@@ -16,9 +16,13 @@ questions:
       - specification.md
   - id: datasets-from-spec
     question: |
-      Use the $iris-hep:data-selection skill to find the datasets and derivation
-      for the analysis described in the calratio-abcd-spec.md file. The analysis will
-      Run 1 be implemented as a Run 3 analysis.
+      Use the $atlas-analysis:analysis-data-sources skill to determine the data
+      tiers and individual field/accessor requirements for the analysis described
+      in calratio-abcd-spec.md. Implement this Run 1 analysis as a Run 3 analysis,
+      preserving the ABCD background method and explicitly recording migration
+      choices and unresolved inputs.
+
+      Write data-sources.md and data-source-evidence.json in the workspace root.
 
       If you create any jupyter notebooks copy them back to the root directory of this
       workspace.
@@ -28,14 +32,50 @@ questions:
     copy_files:
       - .\spec\calratio-abcd-spec.md
     copy_back:
-      - datasets.yaml
+      - data-sources.md
+      - data-source-evidence.json
       - "*.ipynb"
+  - id: dataset-ids-from-data-sources
+    question: |
+      Use the $atlas-analysis:find-atlas-datasets skill to select the complete
+      datasets for calratio-abcd-spec.md, implemented as a Run 3 analysis with
+      ABCD QCD estimation. Read data-sources.md and data-source-evidence.json
+      from the preceding data-source mapping step as the tier and individual
+      leaf/accessor contract. Preserve its evidence scope, backups and gaps.
+
+      Resolve analysis-ready, complete Rucio scope:name identifiers, including
+      production tags, for the required data, Standard Model backgrounds,
+      signal points and special streams. Use the applicable official central
+      recommendation page's declared default samples for Standard Model
+      backgrounds when available. Cite that recommendation and verify the
+      actual requested derivation in the catalogs; bare DSIDs, wildcards and
+      EVNT-only identifiers are not the requested result. Record unavailable
+      recommendations, missing samples and tier/field incompatibilities as gaps.
+      Preserve data-driven control/sideband roles and avoid duplicate coverage.
+
+      Write datasets.yaml following the skill's manifest contract and
+      dataset-selection.md with the supporting evidence and unresolved gaps.
+      Do not claim complete coverage or verified accessors without evidence.
+    plugins:
+      - af-uchicago@usatlas-marketplace
+      - atlas@usatlas-marketplace
+    # Stage the preceding run's two outputs here; see spec/README.md.
+    # Questions run in isolated workspaces, so YAML order does not pass files.
+    copy_files:
+      - .\spec\calratio-abcd-spec.md
+      - .\spec\data-sources.md
+      - .\spec\data-source-evidence.json
+    copy_back:
+      - datasets.yaml
+      - dataset-selection.md
 model: gpt-6.1-sol:medium
 marketplaces:
   - https://github.com/iris-hep/marketplace.git@spec-updates
   - https://github.com/usatlas/marketplace.git
+  - https://github.com/gordonwatts/atlas-analysisbase-marketplace.git@codex/analysis-dataset-manifest
 plugins:
   - iris-hep@iris-hep-tools
+  - atlas-analysis@atlas-analysis-marketplace
 mcp_servers: []
 distro: Ubuntu
 max_copy_back_files: 100
