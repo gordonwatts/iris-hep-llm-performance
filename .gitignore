@@ -12,3 +12,6 @@ results/*
 
 # Local investigation output is not part of the benchmark source.
 /evaluations/issue5/
+
+# Machine-specific bulk-data location and disk characteristics.
+/data.local.toml
