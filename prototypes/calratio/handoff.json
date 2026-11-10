@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "checkpoint_utc": "2026-11-10T01:56:51.897297+00:00",
+  "issue": {
+    "url": "https://github.com/gordonwatts/iris-hep-llm-performance/issues/8",
+    "updated_at": "2026-11-10T01:26:33Z"
+  },
+  "base_commit": "9c124c3906b160d641e79081d096c30d93b6db7d",
+  "branch": "codex/calratio-abcd-feasibility",
+  "artifact_base": "<data-root>/calratio/issue8-20261109/",
+  "timebox": {
+    "limit_working_days": 2,
+    "state": "initial review checkpoint; two-day gate pending",
+    "elapsed_working_days": null,
+    "note": "Actual initial work occurred on 2026-11-09 local time. No claim two working days elapsed; no future unattended continuation scheduled."
+  },
+  "unfinished": [
+    "Calorimeter jet definition/calibration and valid E_H/E_EM construction",
+    "Reference-to-Run-3 track quality and all-track completeness after upstream thinning",
+    "Period-specific single-candidate trigger, tag-only support, matching, plateau and exposure",
+    "GRL/PV/timing/cleaning/MET/BIB common selection and independent/special-stream sources",
+    "LC-topo hosted failure cause; exact-release configuration access",
+    "Two-working-day review gate has not elapsed; this is an initial frozen checkpoint."
+  ],
+  "pr_policy": "Draft until Gordon explicitly approves; never merge as part of this task",
+  "hash_basis": "source_normalized_lf_sha256 uses LF-normalized UTF-8 source bytes; bulk_sha256 and original probe input/code hashes use raw bytes",
+  "source_normalized_lf_sha256": {
+    "prototypes/calratio/probe.py": "24f1bbc8b75f93faf7011628069042763b3d97937464cf64337b0e2f1879ad84",
+    "prototypes/calratio/queries.py": "5f46133bfaaf97758e1005e1792e0ab60c1abef7e3686a32267ffb4f9b844cd7",
+    "prototypes/calratio/checkpoint.py": "e62c003b00ea45bbf0e3287f2616c6cec77e5e95ebfdc33d9f1ebdd253a0b9cb",
+    "prototypes/calratio/test_probe.py": "31041ab52ca53def5352cd8bb9420cc2d45f7e2112920fb510479d064e2b8d32",
+    "prototypes/calratio/pyproject.toml": "33b786d6f1f92f2f0b37d83eb3a31ac63768101a3dbed08849197ad0abc0b7ee",
+    "prototypes/calratio/uv.lock": "1cf7a2147c69bdc7efca3fd955207711fa44fffac686581377c96ec95e773ab3",
+    "prototypes/calratio/requirements.json": "dfb8d9b9a87c335658548d4057af9cd2724b74525ff6523a881003b76ff28f74",
+    "prototypes/calratio/catalog-evidence.json": "58693066ca954659f45f5a2823b538458f1de86d604337254165b7d781d2cb17",
+    "prototypes/calratio/issue-snapshot.json": "c570693037a02c07bb40df355a2d5b86eb8964e8bcbd7ed0c0228c46bd164dc6",
+    "prototypes/calratio/data-source-evidence.json": "cc6545b7534758fc0b19d1cb4a05d450ed98711028f11a918c29c83bccca298c",
+    "prototypes/calratio/data-sources.md": "7e7f94004019b1e00e84ac7f14019555d3e9e8871bbe2734182415a35087b937",
+    "prototypes/calratio/README.md": "d2de346e5fcdff08dc374a9a5692aadbe2b1a5c62cbea48b74dfa76bfd6e63de",
+    "spec/calratio-abcd-spec.md": "8e54d46215b186a1897044617a1b09b3daf59ef0103c29f765aca6052e463aed",
+    "spec/calratio-probe-samples.yaml": "158e4a63fa7acb0668abedc39f32a6d7f0b84c51c1ded4cec1e018fdaab17d9f",
+    "spec/calratio-feasibility-status.md": "dcc1faf7ce8e7c5263236fc1121bf09bd1ba4df70d57abd1399bf467b9479db0"
+  },
+  "bulk_sha256": {
+    "calo-collection/attempt.json": "0dad95633346ed2f059bf0c4358c2375b8b6439e3df949a2c3b3f6335c0f79e5",
+    "calo-emfrac/attempt.json": "b7f996624736f9f55db4c3ba5bafd62e775081df14ac197cd09282e10a7aa49b",
+    "calo-sampling/attempt.json": "55a645312ecb483bf5d162aca616ce6f72656455ecf2ba61fc15dc0c96062f8a",
+    "calo-validity/attempt.json": "dffd8300ceeeab6849b4ec8ad57fb3ba235fe9e49191e1c98b4991a9d23a8812",
+    "smoke/attempt.json": "8d0caf8355022bc7ca97f27491ae4ecf5c4e4873c954bcb8d92bec8e17ba10fb",
+    "track-hits/attempt.json": "82064d444a0bcc788f576e6b33056bb62dfa2323a136c17234a156457807e07b",
+    "tracks/attempt.json": "8f95367e97d0d1f9bae969d2f34dacf7f48da4b08163002dffcbb062304489de",
+    "30eb9b07-7184-4de7-9658-6109edac19fb-diagnostics.json": "d1319b8d6be088d6c40fb0fb092a29d08ebbcf6ad34293a30cb32a1eac8e18c8",
+    "5cc8fe4b-b956-4c5b-b389-b0eaea4764b3-diagnostics.json": "24619f6915cec16897ef631eb887fc389bd2c8884d0b6b03e6e87290e73756fc",
+    "61029240-2a60-48db-9944-46e25738843d-diagnostics.json": "d7a5f8fac7a05f484b20e238050e5c4792e9e0fcc2de2d9e63cd3a9321047a82",
+    "7ad3cd38-26ee-4786-a8f1-9b6dc5f5e74c-diagnostics.json": "e790c7af48c8bc3247a27914528c6b00f957211e6403dc3eabec462ddaa6579c",
+    "85b45a39-f135-4582-84dc-5b03ac1ea5c4-diagnostics.json": "811362d18ab61378a61c558cc9715f9615c3ee770c8fd1e8d30475b3807e8b5a",
+    "bce71dad-8a8e-462a-bb69-f2d95b1af855-diagnostics.json": "e1a1a2e6d023d205cc47443d2f50e9029f59a9a1f13b8a2d9b60689446679f07",
+    "c5d37d94-f205-45bd-85f1-04f24bf66fbd-diagnostics.json": "cb39ba3fa986ab5fd29d36b2e4bbddf839bef3a876b50de3eb1bf78f12ab74a3",
+    "calo-emfrac/cache/61029240-2a60-48db-9944-46e25738843d/root___xrootd.echo.stfc.ac.uk_1094_atlas_datadisk_rucio_data23_13p6TeV_00_8d_DAOD_PHYSLITE.43636932._000167.pool.root.1": "db4e8914eb366decaf19edb203e419458fb82026e03089c046ea2866c56f2da3",
+    "calo-sampling/cache/30eb9b07-7184-4de7-9658-6109edac19fb/root___192.170.240.191_1094__root___xrootd.echo.stfc.ac.uk_1094_atlas_datadisk_rucio_data23_13p6TeV_00_8d_DAOD_PHYSLITE.43636932._000167.pool.root.1": "470b71b4f1471e721f32e46511a61a1f69bebe21218f17d1ad390dcaa621a9e0",
+    "calo-validity/cache/bce71dad-8a8e-462a-bb69-f2d95b1af855/root___192.170.240.191_1094__root___xrootd.echo.stfc.ac.uk_1094_atlas_datadisk_rucio_data23_13p6TeV_00_8d_DAOD_PHYSLITE.43636932._000167.pool.root.1": "596d9d4fe4b3b9b019e6558ef4b6d3758d53be5cd494acefb54be0d707722a17",
+    "smoke/cache/c5d37d94-f205-45bd-85f1-04f24bf66fbd/root___xrootd.echo.stfc.ac.uk_1094_atlas_datadisk_rucio_data23_13p6TeV_00_8d_DAOD_PHYSLITE.43636932._000167.pool.root.1": "db5771ef8cf1b207dcec6b2ae65b6ecd05502e52eaa9e1ac2cf0f99aaebab96e",
+    "track-hits/cache/85b45a39-f135-4582-84dc-5b03ac1ea5c4/root___xrootd.echo.stfc.ac.uk_1094_atlas_datadisk_rucio_data23_13p6TeV_00_8d_DAOD_PHYSLITE.43636932._000167.pool.root.1": "319722e283d7b0b8533e9759e1d691f748ccf8108bf57148ecfa75c5a01814df",
+    "tracks/cache/7ad3cd38-26ee-4786-a8f1-9b6dc5f5e74c/root___192.170.240.191_1094__root___xrootd.echo.stfc.ac.uk_1094_atlas_datadisk_rucio_data23_13p6TeV_00_8d_DAOD_PHYSLITE.43636932._000167.pool.root.1": "743d1ae6db14aeae40f5d6da115d0016f13ad5618fec28863a1918a4e97c046c",
+    "calratio-abcd-spec.md": "83627120fb383317028518c87ad57c7bdaf60b5b39471d667d0301c8ee160d7c",
+    "calratio-probe-samples.yaml": "2305094950339d4ef85de09ddb7349d4ab6b0542217a9c961af77b64a594d65f"
+  },
+  "skills": {
+    "analysisbase_commit": "e8e78e1c8a00b1d599888367b251851e2ee63944",
+    "iris_hep_marketplace_commit": "7f5540b7ffccab80381ace38544d00d595e0a61a",
+    "files_sha256": {
+      "analysisbase/plugins/atlas-analysis/skills/analysis-data-sources/SKILL.md": "b551f6ce3fbbc2ea4dc93af6bf183a68f6ed4c55dd95cbfd0828448f8af7ba3b",
+      "analysisbase/plugins/atlas-analysis/skills/analysis-data-sources/references/evidence-contract.md": "5583f77e1b1127112b9fd0b364966828b4308d62664b1f0b78f022dfd3d5229d",
+      "analysisbase/plugins/atlas-analysis/skills/analysis-data-sources/scripts/validate_evidence.py": "06ca3c610e284eba91e8078ba514c9f013276e9853d2ae19387e1f4b8fada2f0",
+      "analysisbase/plugins/atlas-analysis/skills/find-atlas-datasets/SKILL.md": "218a00e2b4e8ca4797e8e3baf2068bd41b7b95363eba3739ca12bec42574a285",
+      "marketplace/iris-hep/skills/servicex/SKILL.md": "a31c01fbe24b74b1a9753a864c25afadf89a76b4f2e30275eb393fb7abab7c21"
+    },
+    "historical_fixture_spec_sha256": "448a52433f4bfcf7bc8b10ec7b264c0a036ff88717a8a253fc789cfe25e8e384"
+  }
+}
