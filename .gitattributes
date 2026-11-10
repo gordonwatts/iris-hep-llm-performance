@@ -1,0 +1,4 @@
+# Preserve bytes hashed by the saved source-mapping run.
+spec/dataset-discovery-fixture/calratio-abcd-spec.md text eol=crlf
+spec/dataset-discovery-fixture/data-sources.md text eol=lf
+spec/dataset-discovery-fixture/data-source-evidence.json text eol=lf

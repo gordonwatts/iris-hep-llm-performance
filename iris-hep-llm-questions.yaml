@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=test-wsl2-llm-template.schema.json
 # These are the standard questions used to measure LLM performance on the iris-hep stack
+wsl_parent: "~/llms-test"
 prompt_template: |
   Please write a stand-alone Python file that uv can run and auto-install
   dependencies for. It must do the following:
@@ -115,7 +116,7 @@ questions:
           { var_name: mean, number: 5.949533333333333, tolerance: "2%" }
   - id: q10
     question: |
-      Plot the electron transverse momentum for electrons with p_T > 25 GeV in the first 20000 events of the rucio dataset opendata:mc20_13TeV.410471.PhPy8EG_A14_ttbar_hdamp258p75_allhad.deriv.DAOD_PHYSLITE.e6337_s3681_r13167_p6026.
+      Plot the electron transverse momentum for electrons with p_T > 25 GeV in the first 20000 events of the Rucio file mc20_13TeV:DAOD_PHYSLITE.37861619._000001.pool.root.1 (GUID 8B18F7A0FD496E40925B81A133BCF8DD), from the dataset opendata:mc20_13TeV.410471.PhPy8EG_A14_ttbar_hdamp258p75_allhad.deriv.DAOD_PHYSLITE.e6337_s3681_r13167_p6026.
     validators:
       - name: num_compare
         arguments:
@@ -133,18 +134,18 @@ questions:
           { var_name: mean, number: 95.56720793303572, tolerance: "2%" }
   - id: q12
     question: |
-      Plot the invariant mass of all muon pairs with the same charge in the opendata:mc20_13TeV.700325.Sh_2211_Zmumu_maxHTpTV2_CVetoBVeto.deriv.DAOD_PHYSLITE.e8351_s3681_r13167_p6026.
+      In events with at least two muons, plot the invariant mass of every unique same-charge muon pair in the opendata:mc20_13TeV.700325.Sh_2211_Zmumu_maxHTpTV2_CVetoBVeto.deriv.DAOD_PHYSLITE.e8351_s3681_r13167_p6026. For avg_entries_per_event, divide the number of pairs by the number of events with at least two muons, including events that contain no same-charge pair.
     validators:
       - name: num_compare
         arguments:
           {
             var_name: avg_entries_per_event,
-            number: 0.07761878213467137,
+            number: 0.07495257391371679,
             tolerance: "2%",
           }
       - name: num_compare
         arguments:
-          { var_name: mean, number: 42.759276772353566, tolerance: "2%" }
+          { var_name: mean, number: 42.5452000522, tolerance: "2%" }
   - id: q13
     question: |
       Plot the missing transverse energy for events with no jets in the opendata:mc20_13TeV.700325.Sh_2211_Zmumu_maxHTpTV2_CVetoBVeto.deriv.DAOD_PHYSLITE.e8351_s3681_r13167_p6026.
@@ -169,6 +170,10 @@ questions:
       Make a stacked histogram of the pT of the highest-pT jet in each event in
       user.zmarshal:user.zmarshal.364702_OpenData_v1_p6026_2024-04-23 and
       user.zmarshal:user.zmarshal.364703_OpenData_v1_p6026_2024-04-23 between 100 and 200 GeV.
+      For avg_entries_per_event, divide the number of histogram entries by the
+      total number of input events from both datasets before any jet or pT
+      selections, including events with no jets or with a leading jet outside
+      the plotted range.
     validators:
       - name: num_compare
         arguments:
@@ -245,6 +250,7 @@ questions:
       opendata:mc20_13TeV.700325.Sh_2211_Zmumu_maxHTpTV2_CVetoBVeto.deriv.DAOD_PHYSLITE.e8351_s3681_r13167_p6026.
       Include muons with zero precision layers and do not apply object or event cuts.
       Keep events with no muons in the event count used for avg_entries_per_event.
+    distro: atlas_al9
     validators:
       - name: num_compare
         arguments:
