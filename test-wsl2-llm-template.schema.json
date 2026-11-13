@@ -282,8 +282,8 @@
       "properties": {
         "name": {
       "type": "string",
-          "enum": ["require_string", "root_tree", "num_compare"],
-          "description": "Built-in validator name."
+          "enum": ["require_string", "root_tree", "num_compare", "figure_retrieval"],
+          "description": "Built-in validator or project figure validator registered by scripts/figure_retrieval.py."
         },
         "arguments": {
           "type": "object",

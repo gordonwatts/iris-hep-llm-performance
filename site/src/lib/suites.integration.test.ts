@@ -28,7 +28,7 @@ describe("loadSuites against the real repo specs", () => {
     ["uchicago-mcp", 5],
     ["agc-tests", 1],
     ["atlas-data-tests", 3],
-    ["atlas-metadata-queries", 6],
+    ["atlas-metadata-queries", 8],
     ["spec-tests", 4],
   ])("%s has %i questions", (id, count) => {
     const suite = suites.find((s) => s.id === id);

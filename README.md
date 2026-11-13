@@ -56,6 +56,14 @@ normalization and ABCD sidebands at the handoff. The marketplace URLs use their
 default `main` branches, which contain the specification and data-source skills.
 
 
+## Internal-note figure benchmarks
+
+Two figure-retrieval cases in `atlas-metadata-queries.yaml` use a private
+caption/reference fixture and an independent file/receipt validator. See
+[the figure benchmark contract and launcher](docs/figure-retrieval.md) for
+private staging, access-failure reporting and validation. Figure payloads and
+internal-note text stay in the configured data area, outside public Git history.
+
 ## Website and performance results
 
 Giordon's catalogue and the existing interactive performance report are built together:

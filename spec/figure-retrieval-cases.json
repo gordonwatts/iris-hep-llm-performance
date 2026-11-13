@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "cases": {
+    "q7-hdbs-internal-figures": {
+      "note_id": "ANA-HDBS-2019-03-INT1",
+      "figure_numbers": [
+        1,
+        2
+      ],
+      "caption_hint_sha256": "281e841565b8b02f726d2c89350e15ef80619ee666672d7838f95b198024052e",
+      "caption_mapping_status": "requires live verification; supplied hint is not assigned to either figure"
+    },
+    "q8-archived-calratio-figure": {
+      "note_id": "ANA-EXOT-2019-23-INT1",
+      "figure_numbers": [
+        1
+      ],
+      "caption_hint_sha256": "acdf42c0f78602827b02b06f1a9f5ec22fc633dc4229c875eaedf228aa968129",
+      "archived_pdf_sha256": "0b5180d95913eefce69e2479f48500b074004f49c34dfcb548ef3e455d41cd69",
+      "archived_pdf_page": 8,
+      "archive_identity_verified": true
+    }
+  }
+}

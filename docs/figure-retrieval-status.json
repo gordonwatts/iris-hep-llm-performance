@@ -1,0 +1,51 @@
+{
+  "checked_date": "2026-11-13",
+  "kind": "sanitized access checkpoint; not a model benchmark",
+  "cases": [
+    {
+      "case_id": "q7-hdbs-internal-figures",
+      "note_id": "ANA-HDBS-2019-03-INT1",
+      "figures": [
+        {
+          "number": 1,
+          "live_status": "blocked_access",
+          "index_status": "not tested",
+          "payload_status": "not attempted"
+        },
+        {
+          "number": 2,
+          "live_status": "blocked_access",
+          "index_status": "not tested",
+          "payload_status": "not attempted"
+        }
+      ]
+    },
+    {
+      "case_id": "q8-archived-calratio-figure",
+      "note_id": "ANA-EXOT-2019-23-INT1",
+      "figures": [
+        {
+          "number": 1,
+          "live_status": "blocked_access",
+          "index_status": "not tested",
+          "payload_status": "not attempted"
+        }
+      ]
+    }
+  ],
+  "service": {
+    "name": "atlas_search_service",
+    "status": "link_required",
+    "link_state": "rejected"
+  },
+  "modern_caption_mapping": "unverified",
+  "archived_calratio_reference": {
+    "note_id": "ANA-EXOT-2019-23-INT1",
+    "figure_number": 1,
+    "pdf_page": 8,
+    "identity_and_caption_verified_locally": true,
+    "counts_as_live_retrieval": false
+  },
+  "protected_text_payloads_credentials_or_machine_paths_in_this_file": false,
+  "issue": "https://github.com/gordonwatts/iris-hep-llm-performance/issues/11"
+}

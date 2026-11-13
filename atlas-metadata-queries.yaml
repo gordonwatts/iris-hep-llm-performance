@@ -54,6 +54,59 @@ questions:
       - name: require_string
         arguments:
           string: "modelling of L1 trigger efficiency"
+  - id: q7-hdbs-internal-figures
+    question: |
+      Retrieve figures 1 AND 2 from ANA-HDBS-2019-03-INT1 using atlas-af MCP.
+      Read the private figure-targets.json supplied by the figure benchmark
+      launcher. Search its user-supplied caption hint and verify the actual
+      figure-number/caption mapping separately for each requested figure.
+      The single hint is not an assertion that both figures have that caption.
+      Record the actual captions and document version from accessible source
+      evidence; do not infer them from the requested numbers.
+
+      Download each real figure payload. A search hit, caption, URL or filename
+      is discovery evidence only. If retrieval uses a note PDF, extract the
+      verified figure and record original PDF hash, page and crop bounding box.
+      Keep protected payloads and captions in the retained private workspace.
+      Write retrieval-evidence.json following figure-retrieval.md: one
+      result per requested figure, exact tool/query/result locators, caption
+      mapping receipts, payload paths, hashes, sizes, formats and failure stage.
+      Preserve partial success; distinguish access, index and payload failures.
+      If a required MCP tool or linked identity fails, stop affected work and
+      record blocked results for every unresolved figure. No browser fallback,
+      credential changes, signed URLs in output, substitutions or invented files.
+    validators:
+      - name: figure_retrieval
+        arguments:
+          case_id: q7-hdbs-internal-figures
+    copy_back:
+      - retrieval-evidence.json
+  - id: q8-archived-calratio-figure
+    question: |
+      Retrieve figure 1 from ANA-EXOT-2019-23-INT1 using atlas-af MCP, searching
+      by the exact private caption or its caption hint in figure-targets.json.
+      This target was identified in the existing CalRatio archive by its title
+      page and figure caption, not selected from a guessed note or public paper.
+      Verify the actual note/version and figure-number/caption mapping. Record
+      version differences explicitly; do not silently substitute another figure.
+
+      Download the actual figure payload. A metadata hit alone does not finish
+      retrieval. If using an MCP-retrieved note PDF, extract the verified figure
+      and record original PDF hash, page and crop bounding box. The archived
+      reference is separate evidence and cannot count as a live MCP retrieval.
+      Keep protected content in the retained private workspace. Write
+      retrieval-evidence.json following figure-retrieval.md, including exact
+      tool/query/result locators, caption mapping receipt, payload path/hash/size/
+      format, and a per-figure outcome that distinguishes access, index and
+      payload failures. If required MCP access fails, stop affected work and
+      record the blocked result. No browser fallback, credential changes,
+      signed URLs in output, invented files or note/figure substitutions.
+    validators:
+      - name: figure_retrieval
+        arguments:
+          case_id: q8-archived-calratio-figure
+    copy_back:
+      - retrieval-evidence.json
 model: gpt-6-luna:high
 marketplaces:
   - https://github.com/usatlas/marketplace.git
