@@ -54,6 +54,30 @@ questions:
       - name: require_string
         arguments:
           string: "modelling of L1 trigger efficiency"
+  - id: q7-hdbs-internal-figures
+    question: |
+      Download figures 1 and 2 from ANA-HDBS-2019-03-INT1 as figure-1.png and
+      figure-2.png, and quote their captions.
+    validators:
+      - name: file_size
+        arguments:
+          file: figure-1.png
+      - name: file_size
+        arguments:
+          file: figure-2.png
+    copy_back:
+      - figure-1.png
+      - figure-2.png
+  - id: q8-archived-calratio-figure
+    question: |
+      Download figure 1 from the 2 August 2021 ANA-EXOT-2019-23-INT1 note as
+      figure-1.png, and quote its caption.
+    validators:
+      - name: file_size
+        arguments:
+          file: figure-1.png
+    copy_back:
+      - figure-1.png
 model: gpt-6-luna:high
 marketplaces:
   - https://github.com/usatlas/marketplace.git

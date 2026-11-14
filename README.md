@@ -71,6 +71,13 @@ normalization and ABCD sidebands at the handoff. The marketplace URLs use their
 default `main` branches, which contain the specification and data-source skills.
 
 
+## Internal-note figure benchmarks
+
+`atlas-metadata-queries.yaml` includes two figure-download questions. The runner's
+`file_size` checks require nonempty returned files; review figure identity and
+captions separately. Keep these protected runs under the configured private data
+root by overriding `--output`; do not publish their reports or payloads.
+
 ## Website and performance results
 
 Giordon's catalogue and the existing interactive performance report are built together:
