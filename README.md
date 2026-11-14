@@ -4,6 +4,21 @@ This repo contains a few sets of benchmark questions that are used to test skill
 
 Browse the benchmark suites and available results on the [IRIS-HEP LLM Performance website](https://gordonwatts.github.io/iris-hep-llm-performance/).
 
+## License
+
+Project-owned original benchmark questions and software are offered under the
+[BSD 3-Clause License](LICENSE), copyright 2026 Gordon Watts.
+
+This grant covers material for which Gordon Watts holds the licensing rights.
+Other contributions are covered only where their rights holders have authorized
+BSD 3-Clause licensing; independently owned contributions retain their existing
+licensing status. Permission for the website and tooling contributions by other
+authors has not been confirmed, so those contributions are outside this grant.
+
+Third-party code, data, papers, protected internal-note material and dependencies
+retain their respective copyright notices, licenses and access restrictions.
+Those materials are outside this project's BSD 3-Clause license grant.
+
 ## Usage
 
 Currently the results aren't being stored here (they are too big). But the raw test files are. They can be run with the following command on a windows machine with `wsl2` installed and the distro's that are indicated. `uv` must also be installed on the windows side for this to work. `codex` should already be signed in on the distro you will be running these on.
