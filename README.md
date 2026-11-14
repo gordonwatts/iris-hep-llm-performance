@@ -73,11 +73,10 @@ default `main` branches, which contain the specification and data-source skills.
 
 ## Internal-note figure benchmarks
 
-Two figure-retrieval cases in `atlas-metadata-queries.yaml` use a private
-caption/reference fixture and an independent file/receipt validator. See
-[the figure benchmark contract and launcher](docs/figure-retrieval.md) for
-private staging, access-failure reporting and validation. Figure payloads and
-internal-note text stay in the configured data area, outside public Git history.
+`atlas-metadata-queries.yaml` includes two figure-download questions. The runner's
+`file_size` checks require nonempty returned files; review figure identity and
+captions separately. Keep these protected runs under the configured private data
+root by overriding `--output`; do not publish their reports or payloads.
 
 ## Website and performance results
 

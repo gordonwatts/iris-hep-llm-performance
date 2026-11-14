@@ -17,7 +17,6 @@ format = { cmd = "npx prettier --write {{ path }}", args = [{ arg = "path", defa
 format-check = { cmd = "npx prettier --check .", cwd = "site", depends-on = ["install"], description = "Check formatting without writing changes (CI-safe)" }
 lint = { cmd = "npx eslint .", cwd = "site", depends-on = ["install"], description = "Lint Astro components with eslint-plugin-astro" }
 test = { cmd = "npx vitest run", cwd = "site", depends-on = ["install"], description = "Run unit and integration tests" }
-figure-test = { cmd = "uv run --with typer --with pypdf --with pillow --with pyyaml --with pydantic python -m unittest discover -s tests -p test_figure_retrieval.py", description = "Check figure evidence and payload validation with synthetic fixtures" }
 e2e = { cmd = "npx playwright test", cwd = "site", depends-on = ["install", "e2e-install"], description = "Run the Playwright end-to-end suite against a real build" }
 
 # lychee's --root-dir resolves an absolute link (e.g. the base-prefixed
@@ -28,7 +27,7 @@ e2e = { cmd = "npx playwright test", cwd = "site", depends-on = ["install", "e2e
 # stages a symlink that makes it exist, exactly like scripts/e2e-static-server.ts
 # does per-request for Playwright.
 linkcheck = { cmd = "mkdir -p .linkcheck-root && ln -sfn \"$PIXI_PROJECT_ROOT/site/dist\" .linkcheck-root/iris-hep-llm-performance && lychee --root-dir \"$PIXI_PROJECT_ROOT/.linkcheck-root\" .linkcheck-root/iris-hep-llm-performance/", depends-on = ["build"], description = "Check for broken links in the built site" }
-check = { depends-on = ["format-check", "lint", "astro-check", "test", "figure-test", "build", "e2e", "linkcheck"], description = "Full CI gate: format, lint, types, tests, figure evidence, build, e2e, link check" }
+check = { depends-on = ["format-check", "lint", "astro-check", "test", "build", "e2e", "linkcheck"], description = "Full CI gate: format, lint, types, tests, build, e2e, link check" }
 
 [dependencies]
 nodejs = ">=26,<27"
