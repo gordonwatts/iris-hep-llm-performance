@@ -6,12 +6,18 @@ Browse the benchmark suites and available results on the [IRIS-HEP LLM Performan
 
 ## License
 
-Project-owned original software is licensed under the [MIT License](LICENSE),
-copyright 2026 Gordon Watts and contributors.
+Project-owned original benchmark questions and software are offered under the
+[BSD 3-Clause License](LICENSE), copyright 2026 Gordon Watts.
+
+This grant covers material for which Gordon Watts holds the licensing rights.
+Other contributions are covered only where their rights holders have authorized
+BSD 3-Clause licensing; independently owned contributions retain their existing
+licensing status. Permission for the website and tooling contributions by other
+authors has not been confirmed, so those contributions are outside this grant.
 
 Third-party code, data, papers, protected internal-note material and dependencies
 retain their respective copyright notices, licenses and access restrictions.
-Those materials are outside this project's MIT license grant.
+Those materials are outside this project's BSD 3-Clause license grant.
 
 ## Usage
 
