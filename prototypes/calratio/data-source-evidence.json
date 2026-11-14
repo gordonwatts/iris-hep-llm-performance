@@ -1,0 +1,1062 @@
+{
+  "schema_version": 1,
+  "specification": {
+    "path": "../../spec/calratio-abcd-spec.md",
+    "sha256": "83627120fb383317028518c87ad57c7bdaf60b5b39471d667d0301c8ee160d7c"
+  },
+  "models": {
+    "steering": "Codex based on GPT-6; exact deployed model identifier unavailable",
+    "workers": [],
+    "roles": "All work performed directly; no model/delegation comparison claimed."
+  },
+  "artifact_base": "<data-root>/calratio/issue8-20261109/",
+  "runtime": {
+    "servicex": "3.3.1",
+    "func-adl": "3.5.0",
+    "func-adl-servicex-xaodr25": "2.5.0.25.2.80",
+    "uproot": "5.7.7",
+    "awkward": "2.14.0",
+    "numpy": "2.5.4",
+    "typer": "0.29.0"
+  },
+  "requirements": [
+    {
+      "id": "identity",
+      "spec_ref": "Data Required / Collision data",
+      "column": "run,lb,event",
+      "purpose": "Stable joins; detect duplicated events",
+      "scope": "event; integers, one per event",
+      "units": "",
+      "source": "ServiceX EventInfo runNumber(),lumiBlock(),eventNumber()",
+      "next": "Verify exact input file and key uniqueness; never join by row position.",
+      "probe_ids": [
+        "smoke"
+      ],
+      "depends_on": [],
+      "status": "verified",
+      "limitation": "Verify exact input file and key uniqueness; never join by row position.",
+      "extraction_status": "inspected raw values"
+    },
+    {
+      "id": "jet-kinematics",
+      "spec_ref": "Object Definitions and Roles / Jets",
+      "column": "jet_pt,eta,phi,e,m",
+      "purpose": "Extraction control and aligned jet indices",
+      "scope": "object; float vectors, one per jet",
+      "units": "MeV /1000 -> GeV; eta dimensionless; phi rad",
+      "source": "ServiceX PHYSLITE Jets() -> AnalysisJets; pt(),eta(),phi(),e(),m()",
+      "next": "Resolve calorimeter-jet collection, ET definition and displaced low-EMF calibration; AnalysisJets is not automatically nominal.",
+      "probe_ids": [
+        "smoke"
+      ],
+      "depends_on": [],
+      "status": "unverified",
+      "limitation": "Resolve calorimeter-jet collection, ET definition and displaced low-EMF calibration; AnalysisJets is not automatically nominal.",
+      "extraction_status": "inspected raw values"
+    },
+    {
+      "id": "calo-components",
+      "spec_ref": "Data Required / Calorimeter jets",
+      "column": "jet_sampling",
+      "purpose": "Raw E_H and E_EM inputs",
+      "scope": "object; vector<float> sampling energies per jet",
+      "units": "MeV /1000 -> GeV",
+      "source": "ServiceX getAttribute< vector<float> >(EnergyPerSampling)",
+      "next": "Validate layer grouping, calibration scale and signed energy treatment on target calorimeter jets.",
+      "probe_ids": [
+        "calo-sampling"
+      ],
+      "depends_on": [],
+      "status": "unverified",
+      "limitation": "Validate layer grouping, calibration scale and signed energy treatment on target calorimeter jets.",
+      "extraction_status": "inspected raw values"
+    },
+    {
+      "id": "calo-validity",
+      "spec_ref": "Data Required / Invalid energy",
+      "column": "jet_has_emfrac,jet_has_timing",
+      "purpose": "Distinguish absent decoration from non-positive energies",
+      "scope": "object; presence indicator per jet",
+      "units": "",
+      "source": "ServiceX isAvailable<float>(EMFrac), isAvailable<float>(Timing)",
+      "next": "Stored decoration presence alone is not detector-quality or ratio validity; agree treatment of E_EM<=0 and E_H<=0.",
+      "probe_ids": [
+        "calo-validity"
+      ],
+      "depends_on": [],
+      "status": "unverified",
+      "limitation": "Stored decoration presence alone is not detector-quality or ratio validity; agree treatment of E_EM<=0 and E_H<=0.",
+      "extraction_status": "inspected raw values"
+    },
+    {
+      "id": "ratio-h",
+      "spec_ref": "Object Definitions and Roles / Tight candidate",
+      "column": "h",
+      "purpose": "h=log10(E_H/E_EM); strict pass h>1.2",
+      "scope": "derived; one valid value per candidate",
+      "units": "",
+      "source": "Derived only from validated energy components; not evaluated",
+      "next": "Approve energy definition and validity policy before deriving h. No epsilon clipping or invalid-to-pass conversion.",
+      "probe_ids": [
+        "calo-sampling"
+      ],
+      "depends_on": [
+        "calo-components",
+        "calo-validity"
+      ],
+      "status": "unverified",
+      "limitation": "Approve energy definition and validity policy before deriving h. No epsilon clipping or invalid-to-pass conversion.",
+      "extraction_status": "raw dependencies inspected; derived nominal quantity not evaluated"
+    },
+    {
+      "id": "track-kinematics",
+      "spec_ref": "Object Definitions and Roles / Tight candidate",
+      "column": "track_pt,eta,phi",
+      "purpose": "pT>1 GeV, wrapped DeltaR<0.2 cone, retain pile-up tracks",
+      "scope": "object; aligned float vectors per track",
+      "units": "MeV /1000 -> GeV; eta dimensionless; phi rad",
+      "source": "ServiceX TrackParticles(InDetTrackParticles) pt(),eta(),phi()",
+      "next": "Verify unthinned all-track coverage and same-event alignment; no PV-only restriction.",
+      "probe_ids": [
+        "tracks"
+      ],
+      "depends_on": [],
+      "status": "unverified",
+      "limitation": "Verify unthinned all-track coverage and same-event alignment; no PV-only restriction.",
+      "extraction_status": "inspected raw values"
+    },
+    {
+      "id": "track-quality",
+      "spec_ref": "Object Definitions and Roles / Good track",
+      "column": "track_npixel,track_nsct",
+      "purpose": "Reference >=2 pixel and >=9 pixel+SCT hits",
+      "scope": "object; uint8 hit summaries per track",
+      "units": "",
+      "source": "Proposed typed track auxdataConst<uint8_t>(numberOfPixelHits,numberOfSCTHits)",
+      "next": "Test retained summaries, available flags and saturation; physics review must approve Run 3 quality translation.",
+      "probe_ids": [
+        "track-hits"
+      ],
+      "depends_on": [],
+      "status": "unverified",
+      "limitation": "Test retained summaries, available flags and saturation; physics review must approve Run 3 quality translation.",
+      "extraction_status": "inspected raw values"
+    },
+    {
+      "id": "cone-count",
+      "spec_ref": "Object Definitions and Roles / Tight candidate",
+      "column": "n",
+      "purpose": "Integer qualifying track count; pass n=0",
+      "scope": "derived; one nonnegative integer per candidate",
+      "units": "",
+      "source": "Count same-event tracks satisfying strict pT/cone and approved hit criteria",
+      "next": "Require validated track completeness and quality; compare cone boundaries and phi wrap. NumTrkPt1000 is not nominal.",
+      "probe_ids": [
+        "tracks",
+        "track-hits"
+      ],
+      "depends_on": [
+        "track-kinematics",
+        "track-quality"
+      ],
+      "status": "unverified",
+      "limitation": "Require validated track completeness and quality; compare cone boundaries and phi wrap. NumTrkPt1000 is not nominal.",
+      "extraction_status": "raw dependencies inspected; derived nominal quantity not evaluated"
+    },
+    {
+      "id": "cleaning",
+      "spec_ref": "Object Definitions and Roles / Loose candidate",
+      "column": "jet_clean",
+      "purpose": "Good jets allowing low EMF; ET>40 GeV and abs(eta)<2.5",
+      "scope": "object; inputs and decision per jet",
+      "units": "",
+      "source": "Unresolved Run 3 dedicated low-EMF cleaning tool and retained inputs",
+      "next": "Obtain approved working point and release-matched input inventory; ordinary prompt-jet cleaning can remove signal/control tails.",
+      "probe_ids": [],
+      "depends_on": [],
+      "status": "unverified",
+      "limitation": "Obtain approved working point and release-matched input inventory; ordinary prompt-jet cleaning can remove signal/control tails.",
+      "extraction_status": "not probed; explicit blocker/next action"
+    },
+    {
+      "id": "timing",
+      "spec_ref": "Object Definitions and Roles / Timing",
+      "column": "jet_time",
+      "purpose": "Energy-weighted cell timing; strict -1<t<5 ns",
+      "scope": "object; float per jet",
+      "units": "ns",
+      "source": "Proposed jet getAttribute<float>(Timing), presence probe only",
+      "next": "Probe values and validate cell-energy weighting/reference/calibration; preserve relaxed timing in non-collision sources.",
+      "probe_ids": [
+        "calo-validity"
+      ],
+      "depends_on": [],
+      "status": "unverified",
+      "limitation": "Probe values and validate cell-energy weighting/reference/calibration; preserve relaxed timing in non-collision sources.",
+      "extraction_status": "inspected raw values"
+    },
+    {
+      "id": "trigger",
+      "spec_ref": "Triggers",
+      "column": "trigger_decision,tag_match",
+      "purpose": "Tag alone supports full path in every region; no probe trigger cut",
+      "scope": "event and object; period/chain decisions and matching",
+      "units": "",
+      "source": "Unresolved period-specific CalRatio chain, online objects, prescales/matching",
+      "next": "Choose certified periods and single-candidate chain; establish plateau and T_tag=max(60 GeV,validated threshold).",
+      "probe_ids": [],
+      "depends_on": [],
+      "status": "unverified",
+      "limitation": "Choose certified periods and single-candidate chain; establish plateau and T_tag=max(60 GeV,validated threshold).",
+      "extraction_status": "not probed; explicit blocker/next action"
+    },
+    {
+      "id": "roles",
+      "spec_ref": "Object Definitions and Roles / Tag and Probe",
+      "column": "tag_index,probe_index",
+      "purpose": "Highest ET eligible tight tag; remaining tight-first probe; stable ties",
+      "scope": "derived; one pair per accepted event",
+      "units": "",
+      "source": "Not evaluated; depends on nominal calorimeter jets, h/n, trigger and cleaning",
+      "next": "Approve inputs then implement stable original-index tie break; >=2 loose, <=2 tight globally; allow extra ordinary jets and no DeltaPhi cut.",
+      "probe_ids": [],
+      "depends_on": [
+        "jet-kinematics",
+        "ratio-h",
+        "cone-count",
+        "trigger",
+        "cleaning",
+        "timing"
+      ],
+      "status": "unverified",
+      "limitation": "Approve inputs then implement stable original-index tie break; >=2 loose, <=2 tight globally; allow extra ordinary jets and no DeltaPhi cut.",
+      "extraction_status": "not probed; explicit blocker/next action"
+    },
+    {
+      "id": "pv",
+      "spec_ref": "Analysis Regions / Common preselection",
+      "column": "pv_tracks",
+      "purpose": "Primary vertex with >=3 tracks of pT>1 GeV",
+      "scope": "event/object; vertices and track links",
+      "units": "MeV /1000 -> GeV",
+      "source": "Proposed PrimaryVertices and valid track links",
+      "next": "Inspect vertex/link retention and count after track pT cut; total vertex track count is insufficient.",
+      "probe_ids": [],
+      "depends_on": [],
+      "status": "unverified",
+      "limitation": "Inspect vertex/link retention and count after track pT cut; total vertex track count is insufficient.",
+      "extraction_status": "not probed; explicit blocker/next action"
+    },
+    {
+      "id": "met",
+      "spec_ref": "Analysis Regions / Common preselection",
+      "column": "met",
+      "purpose": "Full-event MET<50 GeV",
+      "scope": "event; vector components and magnitude",
+      "units": "MeV /1000 -> GeV",
+      "source": "Unresolved validated MET container and unusual-jet response",
+      "next": "Choose MET definition; verify terms and response to displaced energy. Do not reconstruct from selected pair.",
+      "probe_ids": [],
+      "depends_on": [],
+      "status": "unverified",
+      "limitation": "Choose MET definition; verify terms and response to displaced energy. Do not reconstruct from selected pair.",
+      "extraction_status": "not probed; explicit blocker/next action"
+    },
+    {
+      "id": "bib",
+      "spec_ref": "Analysis Regions / Common preselection",
+      "column": "bib_flags,segments",
+      "purpose": "Veto any reconstructed jet with BIB signature",
+      "scope": "event/object; flags, muon segment geometry",
+      "units": "positions/directions release dependent",
+      "source": "Unresolved full-event muon-segment/jet matching source",
+      "next": "Obtain Run 3 veto definition and segment retention; chosen tag/probe alone is insufficient.",
+      "probe_ids": [],
+      "depends_on": [],
+      "status": "unverified",
+      "limitation": "Obtain Run 3 veto definition and segment retention; chosen tag/probe alone is insufficient.",
+      "extraction_status": "not probed; explicit blocker/next action"
+    },
+    {
+      "id": "exposure",
+      "spec_ref": "Data Required / Collision data",
+      "column": "grl,bunch,dq,lumi,prescales",
+      "purpose": "Certified collision selection and effective exposure/overlaps",
+      "scope": "luminosity-block/sample/event; external and stored metadata",
+      "units": "luminosity fb^-1; live time s; prescales dimensionless",
+      "source": "External GRL, luminosity and trigger accounting; source/version unresolved",
+      "next": "Retrieve certified years, GRL, menu and luminosity-block accounting; one file cannot establish full exposure.",
+      "probe_ids": [],
+      "depends_on": [],
+      "status": "unverified",
+      "limitation": "Retrieve certified years, GRL, menu and luminosity-block accounting; one file cannot establish full exposure.",
+      "extraction_status": "not probed; explicit blocker/next action"
+    },
+    {
+      "id": "retention",
+      "spec_ref": "Workflow / Data extraction and skimming",
+      "column": "production,skim,track_thinning",
+      "purpose": "Preserve low-h and nonzero-track populations upstream and downstream",
+      "scope": "sample/file; production config and parent provenance",
+      "units": "",
+      "source": "AMI and Rucio; release-matched derivation and thinning configuration",
+      "next": "Check actual derivation event skims, track thinning and trigger coverage; uncut query cannot restore lost events.",
+      "probe_ids": [],
+      "depends_on": [],
+      "status": "unverified",
+      "limitation": "Check actual derivation event skims, track thinning and trigger coverage; uncut query cannot restore lost events.",
+      "extraction_status": "not probed; explicit blocker/next action"
+    },
+    {
+      "id": "pileup",
+      "spec_ref": "Data Required / Collision data",
+      "column": "mu,additional_jets",
+      "purpose": "Conditional closure versus pile-up and multiplicity",
+      "scope": "event/object; scalar and full loose-candidate pool",
+      "units": "",
+      "source": "Proposed EventInfo pile-up observables and uncut jet collection",
+      "next": "Probe retained mu; distinguish reconstructed jets from loose/tight candidates.",
+      "probe_ids": [],
+      "depends_on": [],
+      "status": "unverified",
+      "limitation": "Probe retained mu; distinguish reconstructed jets from loose/tight candidates.",
+      "extraction_status": "not probed; explicit blocker/next action"
+    },
+    {
+      "id": "independent-controls",
+      "spec_ref": "Data Samples / Inclusive-jet data",
+      "column": "jet_trigger_sample",
+      "purpose": "Independent trigger/response/closure validation",
+      "scope": "sample; physical source and disjoint selection/exposure",
+      "units": "",
+      "source": "No nominal dataset selected; Main may share parent events",
+      "next": "Resolve triggers, prescales, overlap and h/n retention separately from positive-control identity.",
+      "probe_ids": [],
+      "depends_on": [],
+      "status": "unverified",
+      "limitation": "Resolve triggers, prescales, overlap and h/n retention separately from positive-control identity.",
+      "extraction_status": "not probed; explicit blocker/next action"
+    },
+    {
+      "id": "noncollision",
+      "spec_ref": "Data Samples / Empty,unpaired,zero-bias",
+      "column": "bunch_samples",
+      "purpose": "Cosmic, BIB, accidental-track and overlap constraints",
+      "scope": "sample/event; physical bunch-category sources",
+      "units": "live time s; luminosity as appropriate",
+      "source": "Special streams and external bunch-pattern metadata not selected",
+      "next": "Discover catalog-confirmed empty/unpaired/zero-bias sources retaining relaxed vertex/timing and proper exposures.",
+      "probe_ids": [],
+      "depends_on": [],
+      "status": "unverified",
+      "limitation": "Discover catalog-confirmed empty/unpaired/zero-bias sources retaining relaxed vertex/timing and proper exposures.",
+      "extraction_status": "not probed; explicit blocker/next action"
+    },
+    {
+      "id": "signal-normalization",
+      "spec_ref": "Data Required / Signal simulation",
+      "column": "truth,weights,lifetimes",
+      "purpose": "All-region acceptance/leakage and lifetime interpretation",
+      "scope": "sample/file/event/object; outside bounded extraction test",
+      "units": "GeV,m,s; cross section pb",
+      "source": "No signal dataset selected; preserve exact 13 source mass pairs",
+      "next": "Later select full simulated ggF mass/lifetime/decay coverage and external normalization; no numerical limits in this prototype.",
+      "probe_ids": [],
+      "depends_on": [],
+      "status": "unverified",
+      "limitation": "Later select full simulated ggF mass/lifetime/decay coverage and external normalization; no numerical limits in this prototype.",
+      "extraction_status": "not probed; explicit blocker/next action"
+    },
+    {
+      "id": "emfrac-backup",
+      "spec_ref": "Data Required / Calorimeter jets",
+      "column": "jet_emfrac",
+      "purpose": "Exploratory stored EM fraction only",
+      "scope": "object; float per AnalysisJet",
+      "units": "",
+      "source": "ServiceX getAttribute<float>(EMFrac)",
+      "backup_for": "ratio-h",
+      "next": "Do not compute h=log10((1-f)/f) as nominal without validated energy partition, calibration and validity; PFlow is a changed object.",
+      "probe_ids": [
+        "calo-emfrac"
+      ],
+      "depends_on": [],
+      "status": "backup",
+      "limitation": "Do not compute h=log10((1-f)/f) as nominal without validated energy partition, calibration and validity; PFlow is a changed object.",
+      "extraction_status": "inspected raw values"
+    }
+  ],
+  "probes": [
+    {
+      "id": "calo-collection",
+      "status": "failed",
+      "transport": "servicex",
+      "timestamp_utc": "2026-11-10T01:44:36.576619+00:00",
+      "did": "data23_13p6TeV:data23_13p6TeV.00451094.physics_Main.deriv.DAOD_PHYSLITE.r15774_p6304_p6700_tid43636932_00",
+      "nfiles": 1,
+      "cuts": "none",
+      "request_ids": [
+        "5cc8fe4b-b956-4c5b-b389-b0eaea4764b3"
+      ],
+      "code_sha256": {
+        "probe.py": "30342c7acdecdafee2abf8100bfaf6d73a24417e05636269289ab01602de0bf0",
+        "queries.py": "5f46133bfaaf97758e1005e1792e0ab60c1abef7e3686a32267ffb4f9b844cd7",
+        "uv.lock": "1cf7a2147c69bdc7efca3fd955207711fa44fffac686581377c96ec95e773ab3"
+      },
+      "query_sha256": "fc481f8f91b6baddbab1367df74dbdc2b49c88dad287b66270a7726aa6f46a4f",
+      "specification_sha256": "83627120fb383317028518c87ad57c7bdaf60b5b39471d667d0301c8ee160d7c",
+      "sample_manifest_sha256": "2305094950339d4ef85de09ddb7349d4ab6b0542217a9c961af77b64a594d65f",
+      "software_ref": "runtime",
+      "query": "(call Select (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call Select (call MetaData (call MetaData (call EventDataset) (dict (list 'metadata_type' 'name' 'include_files' 'container_type' 'contains_collection' 'link_libraries') (list 'add_atlas_event_collection_info' 'EventInfo' (list 'xAODEventInfo/versions/EventInfo_v1.h') 'xAOD::EventInfo_v1' False (list 'xAODEventInfo')))) (dict (list 'metadata_type' 'name' 'include_files' 'container_type' 'element_type' 'contains_collection' 'link_libraries') (list 'add_atlas_event_collection_info' 'Jets' (list 'xAODJet/JetContainer.h') 'DataVector<xAOD::Jet_v1>' 'xAOD::Jet_v1' True (list 'xAODJet')))) (lambda (list e) (dict (list 'info' 'jets') (list (call (attr e 'EventInfo') 'EventInfo') (call (attr e 'Jets') 'AntiKt4LCTopoJets'))))) (dict (list 'metadata_type' 'type_string' 'method_name' 'return_type') (list 'add_method_type_info' 'xAOD::EventInfo_v1' 'runNumber' 'unsigned int'))) (dict (list 'metadata_type' 'name' 'body_includes') (list 'inject_code' 'xAODEventInfo/versions/EventInfo_v1.h' (list 'xAODEventInfo/versions/EventInfo_v1.h')))) (dict (list 'metadata_type' 'name' 'link_libraries') (list 'inject_code' 'xAODEventInfo' (list 'xAODEventInfo')))) (dict (list 'metadata_type' 'type_string' 'method_name' 'return_type') (list 'add_method_type_info' 'xAOD::EventInfo_v1' 'lumiBlock' 'unsigned int'))) (dict (list 'metadata_type' 'name' 'body_includes') (list 'inject_code' 'xAODEventInfo/versions/EventInfo_v1.h' (list 'xAODEventInfo/versions/EventInfo_v1.h')))) (dict (list 'metadata_type' 'name' 'link_libraries') (list 'inject_code' 'xAODEventInfo' (list 'xAODEventInfo')))) (dict (list 'metadata_type' 'type_string' 'method_name' 'return_type') (list 'add_method_type_info' 'xAOD::EventInfo_v1' 'eventNumber' 'uint64_t'))) (dict (list 'metadata_type' 'name' 'body_includes') (list 'inject_code' 'xAODEventInfo/versions/EventInfo_v1.h' (list 'xAODEventInfo/versions/EventInfo_v1.h')))) (dict (list 'metadata_type' 'name' 'link_libraries') (list 'inject_code' 'xAODEventInfo' (list 'xAODEventInfo')))) (dict (list 'metadata_type' 'type_string' 'method_name' 'return_type') (list 'add_method_type_info' 'xAOD::Jet_v1' 'pt' 'double'))) (dict (list 'metadata_type' 'name' 'body_includes') (list 'inject_code' 'xAODJet/versions/Jet_v1.h' (list 'xAODJet/versions/Jet_v1.h')))) (dict (list 'metadata_type' 'name' 'link_libraries') (list 'inject_code' 'xAODJet' (list 'xAODJet')))) (lambda (list c) (dict (list 'run' 'lb' 'event' 'jet_pt') (list (call (attr (attr c 'info') 'runNumber')) (call (attr (attr c 'info') 'lumiBlock')) (call (attr (attr c 'info') 'eventNumber')) (call (attr (attr c 'jets') 'Select') (lambda (list j) (/ (call (attr j 'pt')) 1000.0)))))))",
+      "query_language": "QASTLE; exact submitted selection from ServiceX status",
+      "artifact": "calo-collection/attempt.json",
+      "backend_image": "sslhep/servicex_func_adl_xaod_transformer:25.2.80",
+      "input_files": [
+        "DAOD_PHYSLITE.43636932._000167.pool.root.1"
+      ],
+      "remote_counts": {
+        "files": 1,
+        "files_completed": 0,
+        "files_failed": 1,
+        "files_remaining": 0
+      },
+      "error_category": "hosted transform failure; cause unclassified",
+      "error": "No ROOT files delivered",
+      "decisive_evidence": "Remote: 1 file failed, 0 completed. Per-file results omit worker error. Client reported No ROOT files delivered after a callback exception.",
+      "positive_control_id": "smoke",
+      "next_action": "Inspect worker error for this request before changing accessor or declaring missing content; no automatic resubmission."
+    },
+    {
+      "id": "calo-emfrac",
+      "status": "succeeded",
+      "transport": "servicex",
+      "timestamp_utc": "2026-11-10T01:41:26.931486+00:00",
+      "did": "data23_13p6TeV:data23_13p6TeV.00451094.physics_Main.deriv.DAOD_PHYSLITE.r15774_p6304_p6700_tid43636932_00",
+      "nfiles": 1,
+      "cuts": "none",
+      "request_ids": [
+        "61029240-2a60-48db-9944-46e25738843d"
+      ],
+      "code_sha256": {
+        "probe.py": "dd0d94d6837f5bf53ef42eb6778081c40865a6a8cba45f45189e182cee164756",
+        "queries.py": "44f270df1e17a874d15e3c2a7ca796c011f2b76643c2cd12444eb950658f34c3",
+        "uv.lock": "1cf7a2147c69bdc7efca3fd955207711fa44fffac686581377c96ec95e773ab3"
+      },
+      "query_sha256": "525c53bc60289c58d5ac439db11b3f29fbf950c83ffb292c7d5f9a3a237ad8fd",
+      "specification_sha256": "83627120fb383317028518c87ad57c7bdaf60b5b39471d667d0301c8ee160d7c",
+      "sample_manifest_sha256": "2305094950339d4ef85de09ddb7349d4ab6b0542217a9c961af77b64a594d65f",
+      "software_ref": "runtime",
+      "query": "(call Select (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call Select (call MetaData (call MetaData (call EventDataset) (dict (list 'metadata_type' 'name' 'include_files' 'container_type' 'contains_collection' 'link_libraries') (list 'add_atlas_event_collection_info' 'EventInfo' (list 'xAODEventInfo/versions/EventInfo_v1.h') 'xAOD::EventInfo_v1' False (list 'xAODEventInfo')))) (dict (list 'metadata_type' 'name' 'include_files' 'container_type' 'element_type' 'contains_collection' 'link_libraries') (list 'add_atlas_event_collection_info' 'Jets' (list 'xAODJet/JetContainer.h') 'DataVector<xAOD::Jet_v1>' 'xAOD::Jet_v1' True (list 'xAODJet')))) (lambda (list e) (dict (list 'info' 'jets') (list (call (attr e 'EventInfo') 'EventInfo') (call (attr e 'Jets') 'AnalysisJets'))))) (dict (list 'metadata_type' 'type_string' 'method_name' 'return_type') (list 'add_method_type_info' 'xAOD::EventInfo_v1' 'runNumber' 'unsigned int'))) (dict (list 'metadata_type' 'name' 'body_includes') (list 'inject_code' 'xAODEventInfo/versions/EventInfo_v1.h' (list 'xAODEventInfo/versions/EventInfo_v1.h')))) (dict (list 'metadata_type' 'name' 'link_libraries') (list 'inject_code' 'xAODEventInfo' (list 'xAODEventInfo')))) (dict (list 'metadata_type' 'type_string' 'method_name' 'return_type') (list 'add_method_type_info' 'xAOD::EventInfo_v1' 'lumiBlock' 'unsigned int'))) (dict (list 'metadata_type' 'name' 'body_includes') (list 'inject_code' 'xAODEventInfo/versions/EventInfo_v1.h' (list 'xAODEventInfo/versions/EventInfo_v1.h')))) (dict (list 'metadata_type' 'name' 'link_libraries') (list 'inject_code' 'xAODEventInfo' (list 'xAODEventInfo')))) (dict (list 'metadata_type' 'type_string' 'method_name' 'return_type') (list 'add_method_type_info' 'xAOD::EventInfo_v1' 'eventNumber' 'uint64_t'))) (dict (list 'metadata_type' 'name' 'body_includes') (list 'inject_code' 'xAODEventInfo/versions/EventInfo_v1.h' (list 'xAODEventInfo/versions/EventInfo_v1.h')))) (dict (list 'metadata_type' 'name' 'link_libraries') (list 'inject_code' 'xAODEventInfo' (list 'xAODEventInfo')))) (dict (list 'metadata_type' 'name' 'arguments' 'code' 'instance_object' 'method_object' 'return_type' 'return_is_collection' 'include_files') (list 'add_cpp_function' 'getAttribute_float' (list 'moment_name') (list 'auto result = obj_j->getAttribute<float>(moment_name);') 'xAOD::Jet_v1' 'obj_j' 'float' False (list)))) (lambda (list c) (dict (list 'run' 'lb' 'event' 'jet_emfrac') (list (call (attr (attr c 'info') 'runNumber')) (call (attr (attr c 'info') 'lumiBlock')) (call (attr (attr c 'info') 'eventNumber')) (call (attr (attr c 'jets') 'Select') (lambda (list j) (call (attr j 'getAttribute_float') 'EMFrac')))))))",
+      "query_language": "QASTLE; exact submitted selection from ServiceX status",
+      "artifact": "calo-emfrac/attempt.json",
+      "backend_image": "sslhep/servicex_func_adl_xaod_transformer:25.2.80",
+      "input_files": [
+        "DAOD_PHYSLITE.43636932._000167.pool.root.1"
+      ],
+      "remote_counts": {
+        "files": 1,
+        "files_completed": 1,
+        "files_failed": 0,
+        "files_remaining": 0
+      },
+      "observations": {
+        "file": "calo-emfrac/cache/61029240-2a60-48db-9944-46e25738843d/root___xrootd.echo.stfc.ac.uk_1094_atlas_datadisk_rucio_data23_13p6TeV_00_8d_DAOD_PHYSLITE.43636932._000167.pool.root.1",
+        "sha256": "db4e8914eb366decaf19edb203e419458fb82026e03089c046ea2866c56f2da3",
+        "bytes": 3651314,
+        "tree": "atlas_xaod_tree",
+        "entries": 115338,
+        "columns": {
+          "run": {
+            "type": "115338 * uint32",
+            "root_type": "uint32_t",
+            "values": 115338,
+            "finite": 115338,
+            "nonfinite": 0,
+            "min": 451094,
+            "max": 451094
+          },
+          "lb": {
+            "type": "115338 * uint32",
+            "root_type": "uint32_t",
+            "values": 115338,
+            "finite": 115338,
+            "nonfinite": 0,
+            "min": 254,
+            "max": 925
+          },
+          "event": {
+            "type": "115338 * uint64",
+            "root_type": "uint64_t",
+            "values": 115338,
+            "finite": 115338,
+            "nonfinite": 0,
+            "min": 170547383,
+            "max": 1390836479
+          },
+          "jet_emfrac": {
+            "type": "115338 * var * float32",
+            "root_type": "std::vector<float>",
+            "values": 712591,
+            "finite": 712591,
+            "nonfinite": 0,
+            "min": -0.4683857560157776,
+            "max": 1.5133386850357056,
+            "nonempty_events": 84679
+          }
+        },
+        "alignment": {
+          "jet_": true
+        },
+        "unique_event_keys": 115338,
+        "duplicate_event_keys": 0
+      },
+      "physics_equivalence": "unverified (raw storage test on positive-control sample)"
+    },
+    {
+      "id": "calo-sampling",
+      "status": "succeeded",
+      "transport": "servicex",
+      "timestamp_utc": "2026-11-10T01:41:00.566826+00:00",
+      "did": "data23_13p6TeV:data23_13p6TeV.00451094.physics_Main.deriv.DAOD_PHYSLITE.r15774_p6304_p6700_tid43636932_00",
+      "nfiles": 1,
+      "cuts": "none",
+      "request_ids": [
+        "30eb9b07-7184-4de7-9658-6109edac19fb"
+      ],
+      "code_sha256": {
+        "probe.py": "dd0d94d6837f5bf53ef42eb6778081c40865a6a8cba45f45189e182cee164756",
+        "queries.py": "44f270df1e17a874d15e3c2a7ca796c011f2b76643c2cd12444eb950658f34c3",
+        "uv.lock": "1cf7a2147c69bdc7efca3fd955207711fa44fffac686581377c96ec95e773ab3"
+      },
+      "query_sha256": "460862f49c6d1e3998030c933198315dda5065aab7b955a6af7966b7abf879e6",
+      "specification_sha256": "83627120fb383317028518c87ad57c7bdaf60b5b39471d667d0301c8ee160d7c",
+      "sample_manifest_sha256": "2305094950339d4ef85de09ddb7349d4ab6b0542217a9c961af77b64a594d65f",
+      "software_ref": "runtime",
+      "query": "(call Select (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call Select (call MetaData (call MetaData (call EventDataset) (dict (list 'metadata_type' 'name' 'include_files' 'container_type' 'contains_collection' 'link_libraries') (list 'add_atlas_event_collection_info' 'EventInfo' (list 'xAODEventInfo/versions/EventInfo_v1.h') 'xAOD::EventInfo_v1' False (list 'xAODEventInfo')))) (dict (list 'metadata_type' 'name' 'include_files' 'container_type' 'element_type' 'contains_collection' 'link_libraries') (list 'add_atlas_event_collection_info' 'Jets' (list 'xAODJet/JetContainer.h') 'DataVector<xAOD::Jet_v1>' 'xAOD::Jet_v1' True (list 'xAODJet')))) (lambda (list e) (dict (list 'info' 'jets') (list (call (attr e 'EventInfo') 'EventInfo') (call (attr e 'Jets') 'AnalysisJets'))))) (dict (list 'metadata_type' 'type_string' 'method_name' 'return_type') (list 'add_method_type_info' 'xAOD::EventInfo_v1' 'runNumber' 'unsigned int'))) (dict (list 'metadata_type' 'name' 'body_includes') (list 'inject_code' 'xAODEventInfo/versions/EventInfo_v1.h' (list 'xAODEventInfo/versions/EventInfo_v1.h')))) (dict (list 'metadata_type' 'name' 'link_libraries') (list 'inject_code' 'xAODEventInfo' (list 'xAODEventInfo')))) (dict (list 'metadata_type' 'type_string' 'method_name' 'return_type') (list 'add_method_type_info' 'xAOD::EventInfo_v1' 'lumiBlock' 'unsigned int'))) (dict (list 'metadata_type' 'name' 'body_includes') (list 'inject_code' 'xAODEventInfo/versions/EventInfo_v1.h' (list 'xAODEventInfo/versions/EventInfo_v1.h')))) (dict (list 'metadata_type' 'name' 'link_libraries') (list 'inject_code' 'xAODEventInfo' (list 'xAODEventInfo')))) (dict (list 'metadata_type' 'type_string' 'method_name' 'return_type') (list 'add_method_type_info' 'xAOD::EventInfo_v1' 'eventNumber' 'uint64_t'))) (dict (list 'metadata_type' 'name' 'body_includes') (list 'inject_code' 'xAODEventInfo/versions/EventInfo_v1.h' (list 'xAODEventInfo/versions/EventInfo_v1.h')))) (dict (list 'metadata_type' 'name' 'link_libraries') (list 'inject_code' 'xAODEventInfo' (list 'xAODEventInfo')))) (dict (list 'metadata_type' 'name' 'arguments' 'code' 'instance_object' 'method_object' 'return_type' 'return_is_collection' 'include_files') (list 'add_cpp_function' 'getAttribute_std_vector_float_' (list 'moment_name') (list 'auto result = obj_j->getAttribute<std::vector<float>>(moment_name);') 'xAOD::Jet_v1' 'obj_j' 'float' True (list)))) (lambda (list c) (dict (list 'run' 'lb' 'event' 'jet_sampling') (list (call (attr (attr c 'info') 'runNumber')) (call (attr (attr c 'info') 'lumiBlock')) (call (attr (attr c 'info') 'eventNumber')) (call (attr (attr c 'jets') 'Select') (lambda (list j) (call (attr (call (attr j 'getAttribute_std_vector_float_') 'EnergyPerSampling') 'Select') (lambda (list x) (/ x 1000.0)))))))))",
+      "query_language": "QASTLE; exact submitted selection from ServiceX status",
+      "artifact": "calo-sampling/attempt.json",
+      "backend_image": "sslhep/servicex_func_adl_xaod_transformer:25.2.80",
+      "input_files": [
+        "DAOD_PHYSLITE.43636932._000167.pool.root.1"
+      ],
+      "remote_counts": {
+        "files": 1,
+        "files_completed": 1,
+        "files_failed": 0,
+        "files_remaining": 0
+      },
+      "observations": {
+        "file": "calo-sampling/cache/30eb9b07-7184-4de7-9658-6109edac19fb/root___192.170.240.191_1094__root___xrootd.echo.stfc.ac.uk_1094_atlas_datadisk_rucio_data23_13p6TeV_00_8d_DAOD_PHYSLITE.43636932._000167.pool.root.1",
+        "sha256": "470b71b4f1471e721f32e46511a61a1f69bebe21218f17d1ad390dcaa621a9e0",
+        "bytes": 33094426,
+        "tree": "atlas_xaod_tree",
+        "entries": 115338,
+        "columns": {
+          "run": {
+            "type": "115338 * uint32",
+            "root_type": "uint32_t",
+            "values": 115338,
+            "finite": 115338,
+            "nonfinite": 0,
+            "min": 451094,
+            "max": 451094
+          },
+          "lb": {
+            "type": "115338 * uint32",
+            "root_type": "uint32_t",
+            "values": 115338,
+            "finite": 115338,
+            "nonfinite": 0,
+            "min": 254,
+            "max": 925
+          },
+          "event": {
+            "type": "115338 * uint64",
+            "root_type": "uint64_t",
+            "values": 115338,
+            "finite": 115338,
+            "nonfinite": 0,
+            "min": 170547383,
+            "max": 1390836479
+          },
+          "jet_sampling": {
+            "type": "115338 * var * var * float64",
+            "root_type": "std::vector<std::vector<double>>",
+            "values": 19952548,
+            "finite": 19952548,
+            "nonfinite": 0,
+            "min": -122.5699609375,
+            "max": 3647.8205,
+            "nonempty_events": 84679
+          }
+        },
+        "alignment": {
+          "jet_": true
+        },
+        "unique_event_keys": 115338,
+        "duplicate_event_keys": 0
+      },
+      "physics_equivalence": "unverified (raw storage test on positive-control sample)"
+    },
+    {
+      "id": "calo-validity",
+      "status": "succeeded",
+      "transport": "servicex",
+      "timestamp_utc": "2026-11-10T01:39:40.535637+00:00",
+      "did": "data23_13p6TeV:data23_13p6TeV.00451094.physics_Main.deriv.DAOD_PHYSLITE.r15774_p6304_p6700_tid43636932_00",
+      "nfiles": 1,
+      "cuts": "none",
+      "request_ids": [
+        "bce71dad-8a8e-462a-bb69-f2d95b1af855"
+      ],
+      "code_sha256": {
+        "probe.py": "dd0d94d6837f5bf53ef42eb6778081c40865a6a8cba45f45189e182cee164756",
+        "queries.py": "44f270df1e17a874d15e3c2a7ca796c011f2b76643c2cd12444eb950658f34c3",
+        "uv.lock": "1cf7a2147c69bdc7efca3fd955207711fa44fffac686581377c96ec95e773ab3"
+      },
+      "query_sha256": "f13c65c4ebe87a62386a3a17fdc427ede460163d3a31d28028f30e5b7500eb69",
+      "specification_sha256": "83627120fb383317028518c87ad57c7bdaf60b5b39471d667d0301c8ee160d7c",
+      "sample_manifest_sha256": "2305094950339d4ef85de09ddb7349d4ab6b0542217a9c961af77b64a594d65f",
+      "software_ref": "runtime",
+      "query": "(call Select (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call Select (call MetaData (call MetaData (call EventDataset) (dict (list 'metadata_type' 'name' 'include_files' 'container_type' 'contains_collection' 'link_libraries') (list 'add_atlas_event_collection_info' 'EventInfo' (list 'xAODEventInfo/versions/EventInfo_v1.h') 'xAOD::EventInfo_v1' False (list 'xAODEventInfo')))) (dict (list 'metadata_type' 'name' 'include_files' 'container_type' 'element_type' 'contains_collection' 'link_libraries') (list 'add_atlas_event_collection_info' 'Jets' (list 'xAODJet/JetContainer.h') 'DataVector<xAOD::Jet_v1>' 'xAOD::Jet_v1' True (list 'xAODJet')))) (lambda (list e) (dict (list 'info' 'jets') (list (call (attr e 'EventInfo') 'EventInfo') (call (attr e 'Jets') 'AnalysisJets'))))) (dict (list 'metadata_type' 'type_string' 'method_name' 'return_type') (list 'add_method_type_info' 'xAOD::EventInfo_v1' 'runNumber' 'unsigned int'))) (dict (list 'metadata_type' 'name' 'body_includes') (list 'inject_code' 'xAODEventInfo/versions/EventInfo_v1.h' (list 'xAODEventInfo/versions/EventInfo_v1.h')))) (dict (list 'metadata_type' 'name' 'link_libraries') (list 'inject_code' 'xAODEventInfo' (list 'xAODEventInfo')))) (dict (list 'metadata_type' 'type_string' 'method_name' 'return_type') (list 'add_method_type_info' 'xAOD::EventInfo_v1' 'lumiBlock' 'unsigned int'))) (dict (list 'metadata_type' 'name' 'body_includes') (list 'inject_code' 'xAODEventInfo/versions/EventInfo_v1.h' (list 'xAODEventInfo/versions/EventInfo_v1.h')))) (dict (list 'metadata_type' 'name' 'link_libraries') (list 'inject_code' 'xAODEventInfo' (list 'xAODEventInfo')))) (dict (list 'metadata_type' 'type_string' 'method_name' 'return_type') (list 'add_method_type_info' 'xAOD::EventInfo_v1' 'eventNumber' 'uint64_t'))) (dict (list 'metadata_type' 'name' 'body_includes') (list 'inject_code' 'xAODEventInfo/versions/EventInfo_v1.h' (list 'xAODEventInfo/versions/EventInfo_v1.h')))) (dict (list 'metadata_type' 'name' 'link_libraries') (list 'inject_code' 'xAODEventInfo' (list 'xAODEventInfo')))) (dict (list 'metadata_type' 'name' 'arguments' 'code' 'instance_object' 'method_object' 'return_type' 'return_is_collection' 'include_files') (list 'add_cpp_function' 'isAvailable_float' (list 'moment_name') (list 'auto result = obj_j->isAvailable<float>(moment_name);') 'xAOD::Jet_v1' 'obj_j' 'float' False (list)))) (dict (list 'metadata_type' 'name' 'arguments' 'code' 'instance_object' 'method_object' 'return_type' 'return_is_collection' 'include_files') (list 'add_cpp_function' 'isAvailable_float' (list 'moment_name') (list 'auto result = obj_j->isAvailable<float>(moment_name);') 'xAOD::Jet_v1' 'obj_j' 'float' False (list)))) (lambda (list c) (dict (list 'run' 'lb' 'event' 'jet_has_emfrac' 'jet_has_timing') (list (call (attr (attr c 'info') 'runNumber')) (call (attr (attr c 'info') 'lumiBlock')) (call (attr (attr c 'info') 'eventNumber')) (call (attr (attr c 'jets') 'Select') (lambda (list j) (call (attr j 'isAvailable_float') 'EMFrac'))) (call (attr (attr c 'jets') 'Select') (lambda (list j) (call (attr j 'isAvailable_float') 'Timing')))))))",
+      "query_language": "QASTLE; exact submitted selection from ServiceX status",
+      "artifact": "calo-validity/attempt.json",
+      "backend_image": "sslhep/servicex_func_adl_xaod_transformer:25.2.80",
+      "input_files": [
+        "DAOD_PHYSLITE.43636932._000167.pool.root.1"
+      ],
+      "remote_counts": {
+        "files": 1,
+        "files_completed": 1,
+        "files_failed": 0,
+        "files_remaining": 0
+      },
+      "observations": {
+        "file": "calo-validity/cache/bce71dad-8a8e-462a-bb69-f2d95b1af855/root___192.170.240.191_1094__root___xrootd.echo.stfc.ac.uk_1094_atlas_datadisk_rucio_data23_13p6TeV_00_8d_DAOD_PHYSLITE.43636932._000167.pool.root.1",
+        "sha256": "596d9d4fe4b3b9b019e6558ef4b6d3758d53be5cd494acefb54be0d707722a17",
+        "bytes": 1601186,
+        "tree": "atlas_xaod_tree",
+        "entries": 115338,
+        "columns": {
+          "run": {
+            "type": "115338 * uint32",
+            "root_type": "uint32_t",
+            "values": 115338,
+            "finite": 115338,
+            "nonfinite": 0,
+            "min": 451094,
+            "max": 451094
+          },
+          "lb": {
+            "type": "115338 * uint32",
+            "root_type": "uint32_t",
+            "values": 115338,
+            "finite": 115338,
+            "nonfinite": 0,
+            "min": 254,
+            "max": 925
+          },
+          "event": {
+            "type": "115338 * uint64",
+            "root_type": "uint64_t",
+            "values": 115338,
+            "finite": 115338,
+            "nonfinite": 0,
+            "min": 170547383,
+            "max": 1390836479
+          },
+          "jet_has_emfrac": {
+            "type": "115338 * var * float32",
+            "root_type": "std::vector<float>",
+            "values": 712591,
+            "finite": 712591,
+            "nonfinite": 0,
+            "min": 1.0,
+            "max": 1.0,
+            "nonempty_events": 84679
+          },
+          "jet_has_timing": {
+            "type": "115338 * var * float32",
+            "root_type": "std::vector<float>",
+            "values": 712591,
+            "finite": 712591,
+            "nonfinite": 0,
+            "min": 1.0,
+            "max": 1.0,
+            "nonempty_events": 84679
+          }
+        },
+        "alignment": {
+          "jet_": true
+        },
+        "unique_event_keys": 115338,
+        "duplicate_event_keys": 0
+      },
+      "physics_equivalence": "unverified (raw storage test on positive-control sample)"
+    },
+    {
+      "id": "smoke",
+      "status": "succeeded",
+      "transport": "servicex",
+      "timestamp_utc": "2026-11-10T01:37:49.872039+00:00",
+      "did": "data23_13p6TeV:data23_13p6TeV.00451094.physics_Main.deriv.DAOD_PHYSLITE.r15774_p6304_p6700_tid43636932_00",
+      "nfiles": 1,
+      "cuts": "none",
+      "request_ids": [
+        "c5d37d94-f205-45bd-85f1-04f24bf66fbd"
+      ],
+      "code_sha256": {
+        "probe.py": "dd0d94d6837f5bf53ef42eb6778081c40865a6a8cba45f45189e182cee164756",
+        "queries.py": "fe6e473519b281374a97313f9c4628f193569b8fb084eb7cbbb49f983df96612",
+        "uv.lock": "1cf7a2147c69bdc7efca3fd955207711fa44fffac686581377c96ec95e773ab3"
+      },
+      "query_sha256": "82fca77322a2eb65002e51538a5f94c38b7603ffcb08413acb621273e356a73d",
+      "specification_sha256": "83627120fb383317028518c87ad57c7bdaf60b5b39471d667d0301c8ee160d7c",
+      "sample_manifest_sha256": "2305094950339d4ef85de09ddb7349d4ab6b0542217a9c961af77b64a594d65f",
+      "software_ref": "runtime",
+      "query": "(call Select (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call Select (call MetaData (call MetaData (call EventDataset) (dict (list 'metadata_type' 'name' 'include_files' 'container_type' 'contains_collection' 'link_libraries') (list 'add_atlas_event_collection_info' 'EventInfo' (list 'xAODEventInfo/versions/EventInfo_v1.h') 'xAOD::EventInfo_v1' False (list 'xAODEventInfo')))) (dict (list 'metadata_type' 'name' 'include_files' 'container_type' 'element_type' 'contains_collection' 'link_libraries') (list 'add_atlas_event_collection_info' 'Jets' (list 'xAODJet/JetContainer.h') 'DataVector<xAOD::Jet_v1>' 'xAOD::Jet_v1' True (list 'xAODJet')))) (lambda (list e) (dict (list 'info' 'jets') (list (call (attr e 'EventInfo') 'EventInfo') (call (attr e 'Jets') 'AnalysisJets'))))) (dict (list 'metadata_type' 'type_string' 'method_name' 'return_type') (list 'add_method_type_info' 'xAOD::EventInfo_v1' 'runNumber' 'unsigned int'))) (dict (list 'metadata_type' 'name' 'body_includes') (list 'inject_code' 'xAODEventInfo/versions/EventInfo_v1.h' (list 'xAODEventInfo/versions/EventInfo_v1.h')))) (dict (list 'metadata_type' 'name' 'link_libraries') (list 'inject_code' 'xAODEventInfo' (list 'xAODEventInfo')))) (dict (list 'metadata_type' 'type_string' 'method_name' 'return_type') (list 'add_method_type_info' 'xAOD::EventInfo_v1' 'lumiBlock' 'unsigned int'))) (dict (list 'metadata_type' 'name' 'body_includes') (list 'inject_code' 'xAODEventInfo/versions/EventInfo_v1.h' (list 'xAODEventInfo/versions/EventInfo_v1.h')))) (dict (list 'metadata_type' 'name' 'link_libraries') (list 'inject_code' 'xAODEventInfo' (list 'xAODEventInfo')))) (dict (list 'metadata_type' 'type_string' 'method_name' 'return_type') (list 'add_method_type_info' 'xAOD::EventInfo_v1' 'eventNumber' 'uint64_t'))) (dict (list 'metadata_type' 'name' 'body_includes') (list 'inject_code' 'xAODEventInfo/versions/EventInfo_v1.h' (list 'xAODEventInfo/versions/EventInfo_v1.h')))) (dict (list 'metadata_type' 'name' 'link_libraries') (list 'inject_code' 'xAODEventInfo' (list 'xAODEventInfo')))) (dict (list 'metadata_type' 'type_string' 'method_name' 'return_type') (list 'add_method_type_info' 'xAOD::Jet_v1' 'pt' 'double'))) (dict (list 'metadata_type' 'name' 'body_includes') (list 'inject_code' 'xAODJet/versions/Jet_v1.h' (list 'xAODJet/versions/Jet_v1.h')))) (dict (list 'metadata_type' 'name' 'link_libraries') (list 'inject_code' 'xAODJet' (list 'xAODJet')))) (dict (list 'metadata_type' 'type_string' 'method_name' 'return_type') (list 'add_method_type_info' 'xAOD::Jet_v1' 'eta' 'double'))) (dict (list 'metadata_type' 'name' 'body_includes') (list 'inject_code' 'xAODJet/versions/Jet_v1.h' (list 'xAODJet/versions/Jet_v1.h')))) (dict (list 'metadata_type' 'name' 'link_libraries') (list 'inject_code' 'xAODJet' (list 'xAODJet')))) (dict (list 'metadata_type' 'type_string' 'method_name' 'return_type') (list 'add_method_type_info' 'xAOD::Jet_v1' 'phi' 'double'))) (dict (list 'metadata_type' 'name' 'body_includes') (list 'inject_code' 'xAODJet/versions/Jet_v1.h' (list 'xAODJet/versions/Jet_v1.h')))) (dict (list 'metadata_type' 'name' 'link_libraries') (list 'inject_code' 'xAODJet' (list 'xAODJet')))) (dict (list 'metadata_type' 'type_string' 'method_name' 'return_type') (list 'add_method_type_info' 'xAOD::Jet_v1' 'e' 'double'))) (dict (list 'metadata_type' 'name' 'body_includes') (list 'inject_code' 'xAODJet/versions/Jet_v1.h' (list 'xAODJet/versions/Jet_v1.h')))) (dict (list 'metadata_type' 'name' 'link_libraries') (list 'inject_code' 'xAODJet' (list 'xAODJet')))) (dict (list 'metadata_type' 'type_string' 'method_name' 'return_type') (list 'add_method_type_info' 'xAOD::Jet_v1' 'm' 'double'))) (dict (list 'metadata_type' 'name' 'body_includes') (list 'inject_code' 'xAODJet/versions/Jet_v1.h' (list 'xAODJet/versions/Jet_v1.h')))) (dict (list 'metadata_type' 'name' 'link_libraries') (list 'inject_code' 'xAODJet' (list 'xAODJet')))) (lambda (list c) (dict (list 'run' 'lb' 'event' 'jet_pt' 'jet_eta' 'jet_phi' 'jet_e' 'jet_m') (list (call (attr (attr c 'info') 'runNumber')) (call (attr (attr c 'info') 'lumiBlock')) (call (attr (attr c 'info') 'eventNumber')) (call (attr (attr c 'jets') 'Select') (lambda (list j) (/ (call (attr j 'pt')) 1000.0))) (call (attr (attr c 'jets') 'Select') (lambda (list j) (call (attr j 'eta')))) (call (attr (attr c 'jets') 'Select') (lambda (list j) (call (attr j 'phi')))) (call (attr (attr c 'jets') 'Select') (lambda (list j) (/ (call (attr j 'e')) 1000.0))) (call (attr (attr c 'jets') 'Select') (lambda (list j) (/ (call (attr j 'm')) 1000.0)))))))",
+      "query_language": "QASTLE; exact submitted selection from ServiceX status",
+      "artifact": "smoke/attempt.json",
+      "backend_image": "sslhep/servicex_func_adl_xaod_transformer:25.2.80",
+      "input_files": [
+        "DAOD_PHYSLITE.43636932._000167.pool.root.1"
+      ],
+      "remote_counts": {
+        "files": 1,
+        "files_completed": 1,
+        "files_failed": 0,
+        "files_remaining": 0
+      },
+      "observations": {
+        "file": "smoke/cache/c5d37d94-f205-45bd-85f1-04f24bf66fbd/root___xrootd.echo.stfc.ac.uk_1094_atlas_datadisk_rucio_data23_13p6TeV_00_8d_DAOD_PHYSLITE.43636932._000167.pool.root.1",
+        "sha256": "db5771ef8cf1b207dcec6b2ae65b6ecd05502e52eaa9e1ac2cf0f99aaebab96e",
+        "bytes": 23842335,
+        "tree": "atlas_xaod_tree",
+        "entries": 115338,
+        "columns": {
+          "run": {
+            "type": "115338 * uint32",
+            "root_type": "uint32_t",
+            "values": 115338,
+            "finite": 115338,
+            "nonfinite": 0,
+            "min": 451094,
+            "max": 451094
+          },
+          "lb": {
+            "type": "115338 * uint32",
+            "root_type": "uint32_t",
+            "values": 115338,
+            "finite": 115338,
+            "nonfinite": 0,
+            "min": 254,
+            "max": 925
+          },
+          "event": {
+            "type": "115338 * uint64",
+            "root_type": "uint64_t",
+            "values": 115338,
+            "finite": 115338,
+            "nonfinite": 0,
+            "min": 170547383,
+            "max": 1390836479
+          },
+          "jet_pt": {
+            "type": "115338 * var * float64",
+            "root_type": "std::vector<double>",
+            "values": 712591,
+            "finite": 712591,
+            "nonfinite": 0,
+            "min": 3.019279541015625,
+            "max": 1232.14525,
+            "nonempty_events": 84679
+          },
+          "jet_eta": {
+            "type": "115338 * var * float64",
+            "root_type": "std::vector<double>",
+            "values": 712591,
+            "finite": 712591,
+            "nonfinite": 0,
+            "min": -4.804958343505859,
+            "max": 4.8373703956604,
+            "nonempty_events": 84679
+          },
+          "jet_phi": {
+            "type": "115338 * var * float64",
+            "root_type": "std::vector<double>",
+            "values": 712591,
+            "finite": 712591,
+            "nonfinite": 0,
+            "min": -3.1415908336639404,
+            "max": 3.1415822505950928,
+            "nonempty_events": 84679
+          },
+          "jet_e": {
+            "type": "115338 * var * float64",
+            "root_type": "std::vector<double>",
+            "values": 712591,
+            "finite": 712591,
+            "nonfinite": 0,
+            "min": 8.944826429508273,
+            "max": 6283.872095463187,
+            "nonempty_events": 84679
+          },
+          "jet_m": {
+            "type": "115338 * var * float64",
+            "root_type": "std::vector<double>",
+            "values": 712591,
+            "finite": 712591,
+            "nonfinite": 0,
+            "min": -0.0001055503934621811,
+            "max": 163.817015625,
+            "nonempty_events": 84679
+          }
+        },
+        "alignment": {
+          "jet_": true
+        },
+        "unique_event_keys": 115338,
+        "duplicate_event_keys": 0
+      },
+      "physics_equivalence": "unverified (raw storage test on positive-control sample)"
+    },
+    {
+      "id": "track-hits",
+      "status": "succeeded",
+      "transport": "servicex",
+      "timestamp_utc": "2026-11-10T01:42:19.285178+00:00",
+      "did": "data23_13p6TeV:data23_13p6TeV.00451094.physics_Main.deriv.DAOD_PHYSLITE.r15774_p6304_p6700_tid43636932_00",
+      "nfiles": 1,
+      "cuts": "none",
+      "request_ids": [
+        "85b45a39-f135-4582-84dc-5b03ac1ea5c4"
+      ],
+      "code_sha256": {
+        "probe.py": "dd0d94d6837f5bf53ef42eb6778081c40865a6a8cba45f45189e182cee164756",
+        "queries.py": "10ed575a1d276f69307e5e81524da4866fd80ca629564db8ac0c8a11985cc66f",
+        "uv.lock": "1cf7a2147c69bdc7efca3fd955207711fa44fffac686581377c96ec95e773ab3"
+      },
+      "query_sha256": "4ee040f81c535a0a7e3bc5c077174510cb7483388524168d5a4abb6e904dfd0c",
+      "specification_sha256": "83627120fb383317028518c87ad57c7bdaf60b5b39471d667d0301c8ee160d7c",
+      "sample_manifest_sha256": "2305094950339d4ef85de09ddb7349d4ab6b0542217a9c961af77b64a594d65f",
+      "software_ref": "runtime",
+      "query": "(call Select (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call Select (call MetaData (call MetaData (call EventDataset) (dict (list 'metadata_type' 'name' 'include_files' 'container_type' 'contains_collection' 'link_libraries') (list 'add_atlas_event_collection_info' 'EventInfo' (list 'xAODEventInfo/versions/EventInfo_v1.h') 'xAOD::EventInfo_v1' False (list 'xAODEventInfo')))) (dict (list 'metadata_type' 'name' 'include_files' 'container_type' 'element_type' 'contains_collection' 'link_libraries') (list 'add_atlas_event_collection_info' 'TrackParticles' (list 'xAODTracking/TrackParticleContainer.h') 'DataVector<xAOD::TrackParticle_v1>' 'xAOD::TrackParticle_v1' True (list 'xAODTracking')))) (lambda (list e) (dict (list 'info' 'tracks') (list (call (attr e 'EventInfo') 'EventInfo') (call (attr e 'TrackParticles') 'InDetTrackParticles'))))) (dict (list 'metadata_type' 'type_string' 'method_name' 'return_type') (list 'add_method_type_info' 'xAOD::EventInfo_v1' 'runNumber' 'unsigned int'))) (dict (list 'metadata_type' 'name' 'body_includes') (list 'inject_code' 'xAODEventInfo/versions/EventInfo_v1.h' (list 'xAODEventInfo/versions/EventInfo_v1.h')))) (dict (list 'metadata_type' 'name' 'link_libraries') (list 'inject_code' 'xAODEventInfo' (list 'xAODEventInfo')))) (dict (list 'metadata_type' 'type_string' 'method_name' 'return_type') (list 'add_method_type_info' 'xAOD::EventInfo_v1' 'lumiBlock' 'unsigned int'))) (dict (list 'metadata_type' 'name' 'body_includes') (list 'inject_code' 'xAODEventInfo/versions/EventInfo_v1.h' (list 'xAODEventInfo/versions/EventInfo_v1.h')))) (dict (list 'metadata_type' 'name' 'link_libraries') (list 'inject_code' 'xAODEventInfo' (list 'xAODEventInfo')))) (dict (list 'metadata_type' 'type_string' 'method_name' 'return_type') (list 'add_method_type_info' 'xAOD::EventInfo_v1' 'eventNumber' 'uint64_t'))) (dict (list 'metadata_type' 'name' 'body_includes') (list 'inject_code' 'xAODEventInfo/versions/EventInfo_v1.h' (list 'xAODEventInfo/versions/EventInfo_v1.h')))) (dict (list 'metadata_type' 'name' 'link_libraries') (list 'inject_code' 'xAODEventInfo' (list 'xAODEventInfo')))) (dict (list 'metadata_type' 'name' 'arguments' 'code' 'instance_object' 'method_object' 'return_type' 'return_is_collection' 'include_files') (list 'add_cpp_function' 'auxdataConst_uint8_t' (list 'moment_name') (list 'auto result = obj_j->auxdataConst<uint8_t>(moment_name);') 'xAOD::Jet_v1' 'obj_j' 'uint8_t' False (list)))) (dict (list 'metadata_type' 'name' 'arguments' 'code' 'instance_object' 'method_object' 'return_type' 'return_is_collection' 'include_files') (list 'add_cpp_function' 'auxdataConst_uint8_t' (list 'moment_name') (list 'auto result = obj_j->auxdataConst<uint8_t>(moment_name);') 'xAOD::Jet_v1' 'obj_j' 'uint8_t' False (list)))) (lambda (list c) (dict (list 'run' 'lb' 'event' 'track_npixel' 'track_nsct') (list (call (attr (attr c 'info') 'runNumber')) (call (attr (attr c 'info') 'lumiBlock')) (call (attr (attr c 'info') 'eventNumber')) (call (attr (attr c 'tracks') 'Select') (lambda (list t) (call (attr t 'auxdataConst_uint8_t') 'numberOfPixelHits'))) (call (attr (attr c 'tracks') 'Select') (lambda (list t) (call (attr t 'auxdataConst_uint8_t') 'numberOfSCTHits')))))))",
+      "query_language": "QASTLE; exact submitted selection from ServiceX status",
+      "artifact": "track-hits/attempt.json",
+      "backend_image": "sslhep/servicex_func_adl_xaod_transformer:25.2.80",
+      "input_files": [
+        "DAOD_PHYSLITE.43636932._000167.pool.root.1"
+      ],
+      "remote_counts": {
+        "files": 1,
+        "files_completed": 1,
+        "files_failed": 0,
+        "files_remaining": 0
+      },
+      "observations": {
+        "file": "track-hits/cache/85b45a39-f135-4582-84dc-5b03ac1ea5c4/root___xrootd.echo.stfc.ac.uk_1094_atlas_datadisk_rucio_data23_13p6TeV_00_8d_DAOD_PHYSLITE.43636932._000167.pool.root.1",
+        "sha256": "319722e283d7b0b8533e9759e1d691f748ccf8108bf57148ecfa75c5a01814df",
+        "bytes": 2595607,
+        "tree": "atlas_xaod_tree",
+        "entries": 115338,
+        "columns": {
+          "run": {
+            "type": "115338 * uint32",
+            "root_type": "uint32_t",
+            "values": 115338,
+            "finite": 115338,
+            "nonfinite": 0,
+            "min": 451094,
+            "max": 451094
+          },
+          "lb": {
+            "type": "115338 * uint32",
+            "root_type": "uint32_t",
+            "values": 115338,
+            "finite": 115338,
+            "nonfinite": 0,
+            "min": 254,
+            "max": 925
+          },
+          "event": {
+            "type": "115338 * uint64",
+            "root_type": "uint64_t",
+            "values": 115338,
+            "finite": 115338,
+            "nonfinite": 0,
+            "min": 170547383,
+            "max": 1390836479
+          },
+          "track_npixel": {
+            "type": "115338 * var * uint8",
+            "root_type": "std::vector<uint8_t>",
+            "values": 1224316,
+            "finite": 1224316,
+            "nonfinite": 0,
+            "min": 0,
+            "max": 10,
+            "nonempty_events": 75606
+          },
+          "track_nsct": {
+            "type": "115338 * var * uint8",
+            "root_type": "std::vector<uint8_t>",
+            "values": 1224316,
+            "finite": 1224316,
+            "nonfinite": 0,
+            "min": 0,
+            "max": 18,
+            "nonempty_events": 75606
+          }
+        },
+        "alignment": {
+          "track_": true
+        },
+        "unique_event_keys": 115338,
+        "duplicate_event_keys": 0
+      },
+      "physics_equivalence": "unverified (raw storage test on positive-control sample)"
+    },
+    {
+      "id": "tracks",
+      "status": "succeeded",
+      "transport": "servicex",
+      "timestamp_utc": "2026-11-10T01:40:05.065471+00:00",
+      "did": "data23_13p6TeV:data23_13p6TeV.00451094.physics_Main.deriv.DAOD_PHYSLITE.r15774_p6304_p6700_tid43636932_00",
+      "nfiles": 1,
+      "cuts": "none",
+      "request_ids": [
+        "7ad3cd38-26ee-4786-a8f1-9b6dc5f5e74c"
+      ],
+      "code_sha256": {
+        "probe.py": "dd0d94d6837f5bf53ef42eb6778081c40865a6a8cba45f45189e182cee164756",
+        "queries.py": "44f270df1e17a874d15e3c2a7ca796c011f2b76643c2cd12444eb950658f34c3",
+        "uv.lock": "1cf7a2147c69bdc7efca3fd955207711fa44fffac686581377c96ec95e773ab3"
+      },
+      "query_sha256": "11c784c046fd4a4ff4845a44103f54b286e2804eb7d73f7fb35b88441798cb31",
+      "specification_sha256": "83627120fb383317028518c87ad57c7bdaf60b5b39471d667d0301c8ee160d7c",
+      "sample_manifest_sha256": "2305094950339d4ef85de09ddb7349d4ab6b0542217a9c961af77b64a594d65f",
+      "software_ref": "runtime",
+      "query": "(call Select (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call MetaData (call Select (call MetaData (call MetaData (call EventDataset) (dict (list 'metadata_type' 'name' 'include_files' 'container_type' 'contains_collection' 'link_libraries') (list 'add_atlas_event_collection_info' 'EventInfo' (list 'xAODEventInfo/versions/EventInfo_v1.h') 'xAOD::EventInfo_v1' False (list 'xAODEventInfo')))) (dict (list 'metadata_type' 'name' 'include_files' 'container_type' 'element_type' 'contains_collection' 'link_libraries') (list 'add_atlas_event_collection_info' 'TrackParticles' (list 'xAODTracking/TrackParticleContainer.h') 'DataVector<xAOD::TrackParticle_v1>' 'xAOD::TrackParticle_v1' True (list 'xAODTracking')))) (lambda (list e) (dict (list 'info' 'tracks') (list (call (attr e 'EventInfo') 'EventInfo') (call (attr e 'TrackParticles') 'InDetTrackParticles'))))) (dict (list 'metadata_type' 'type_string' 'method_name' 'return_type') (list 'add_method_type_info' 'xAOD::EventInfo_v1' 'runNumber' 'unsigned int'))) (dict (list 'metadata_type' 'name' 'body_includes') (list 'inject_code' 'xAODEventInfo/versions/EventInfo_v1.h' (list 'xAODEventInfo/versions/EventInfo_v1.h')))) (dict (list 'metadata_type' 'name' 'link_libraries') (list 'inject_code' 'xAODEventInfo' (list 'xAODEventInfo')))) (dict (list 'metadata_type' 'type_string' 'method_name' 'return_type') (list 'add_method_type_info' 'xAOD::EventInfo_v1' 'lumiBlock' 'unsigned int'))) (dict (list 'metadata_type' 'name' 'body_includes') (list 'inject_code' 'xAODEventInfo/versions/EventInfo_v1.h' (list 'xAODEventInfo/versions/EventInfo_v1.h')))) (dict (list 'metadata_type' 'name' 'link_libraries') (list 'inject_code' 'xAODEventInfo' (list 'xAODEventInfo')))) (dict (list 'metadata_type' 'type_string' 'method_name' 'return_type') (list 'add_method_type_info' 'xAOD::EventInfo_v1' 'eventNumber' 'uint64_t'))) (dict (list 'metadata_type' 'name' 'body_includes') (list 'inject_code' 'xAODEventInfo/versions/EventInfo_v1.h' (list 'xAODEventInfo/versions/EventInfo_v1.h')))) (dict (list 'metadata_type' 'name' 'link_libraries') (list 'inject_code' 'xAODEventInfo' (list 'xAODEventInfo')))) (dict (list 'metadata_type' 'type_string' 'method_name' 'return_type') (list 'add_method_type_info' 'xAOD::TrackParticle_v1' 'pt' 'double'))) (dict (list 'metadata_type' 'name' 'body_includes') (list 'inject_code' 'xAODTracking/versions/TrackParticle_v1.h' (list 'xAODTracking/versions/TrackParticle_v1.h')))) (dict (list 'metadata_type' 'name' 'link_libraries') (list 'inject_code' 'xAODTracking' (list 'xAODTracking')))) (dict (list 'metadata_type' 'type_string' 'method_name' 'return_type') (list 'add_method_type_info' 'xAOD::TrackParticle_v1' 'eta' 'double'))) (dict (list 'metadata_type' 'name' 'body_includes') (list 'inject_code' 'xAODTracking/versions/TrackParticle_v1.h' (list 'xAODTracking/versions/TrackParticle_v1.h')))) (dict (list 'metadata_type' 'name' 'link_libraries') (list 'inject_code' 'xAODTracking' (list 'xAODTracking')))) (dict (list 'metadata_type' 'type_string' 'method_name' 'return_type') (list 'add_method_type_info' 'xAOD::TrackParticle_v1' 'phi' 'double'))) (dict (list 'metadata_type' 'name' 'body_includes') (list 'inject_code' 'xAODTracking/versions/TrackParticle_v1.h' (list 'xAODTracking/versions/TrackParticle_v1.h')))) (dict (list 'metadata_type' 'name' 'link_libraries') (list 'inject_code' 'xAODTracking' (list 'xAODTracking')))) (lambda (list c) (dict (list 'run' 'lb' 'event' 'track_pt' 'track_eta' 'track_phi') (list (call (attr (attr c 'info') 'runNumber')) (call (attr (attr c 'info') 'lumiBlock')) (call (attr (attr c 'info') 'eventNumber')) (call (attr (attr c 'tracks') 'Select') (lambda (list t) (/ (call (attr t 'pt')) 1000.0))) (call (attr (attr c 'tracks') 'Select') (lambda (list t) (call (attr t 'eta')))) (call (attr (attr c 'tracks') 'Select') (lambda (list t) (call (attr t 'phi'))))))))",
+      "query_language": "QASTLE; exact submitted selection from ServiceX status",
+      "artifact": "tracks/attempt.json",
+      "backend_image": "sslhep/servicex_func_adl_xaod_transformer:25.2.80",
+      "input_files": [
+        "DAOD_PHYSLITE.43636932._000167.pool.root.1"
+      ],
+      "remote_counts": {
+        "files": 1,
+        "files_completed": 1,
+        "files_failed": 0,
+        "files_remaining": 0
+      },
+      "observations": {
+        "file": "tracks/cache/7ad3cd38-26ee-4786-a8f1-9b6dc5f5e74c/root___192.170.240.191_1094__root___xrootd.echo.stfc.ac.uk_1094_atlas_datadisk_rucio_data23_13p6TeV_00_8d_DAOD_PHYSLITE.43636932._000167.pool.root.1",
+        "sha256": "743d1ae6db14aeae40f5d6da115d0016f13ad5618fec28863a1918a4e97c046c",
+        "bytes": 27734858,
+        "tree": "atlas_xaod_tree",
+        "entries": 115338,
+        "columns": {
+          "run": {
+            "type": "115338 * uint32",
+            "root_type": "uint32_t",
+            "values": 115338,
+            "finite": 115338,
+            "nonfinite": 0,
+            "min": 451094,
+            "max": 451094
+          },
+          "lb": {
+            "type": "115338 * uint32",
+            "root_type": "uint32_t",
+            "values": 115338,
+            "finite": 115338,
+            "nonfinite": 0,
+            "min": 254,
+            "max": 925
+          },
+          "event": {
+            "type": "115338 * uint64",
+            "root_type": "uint64_t",
+            "values": 115338,
+            "finite": 115338,
+            "nonfinite": 0,
+            "min": 170547383,
+            "max": 1390836479
+          },
+          "track_pt": {
+            "type": "115338 * var * float64",
+            "root_type": "std::vector<double>",
+            "values": 1224316,
+            "finite": 1224316,
+            "nonfinite": 0,
+            "min": 0.5066868215608042,
+            "max": 3741078.7691039424,
+            "nonempty_events": 75606
+          },
+          "track_eta": {
+            "type": "115338 * var * float64",
+            "root_type": "std::vector<double>",
+            "values": 1224316,
+            "finite": 1224316,
+            "nonfinite": 0,
+            "min": -2.626326851598319,
+            "max": 2.6201918024258393,
+            "nonempty_events": 75606
+          },
+          "track_phi": {
+            "type": "115338 * var * float64",
+            "root_type": "std::vector<double>",
+            "values": 1224316,
+            "finite": 1224316,
+            "nonfinite": 0,
+            "min": -3.1415889263153076,
+            "max": 3.141587257385254,
+            "nonempty_events": 75606
+          }
+        },
+        "alignment": {
+          "track_": true
+        },
+        "unique_event_keys": 115338,
+        "duplicate_event_keys": 0
+      },
+      "physics_equivalence": "unverified (raw storage test on positive-control sample)"
+    }
+  ],
+  "counts": {
+    "verified": 1,
+    "unverified": 20,
+    "backup": 1
+  },
+  "cross_probe_checks": {
+    "same_event_order_as_smoke": {
+      "calo-emfrac": true,
+      "calo-sampling": true,
+      "calo-validity": true,
+      "smoke": true,
+      "track-hits": true,
+      "tracks": true
+    },
+    "same_jet_counts_as_smoke": {
+      "calo-emfrac": true,
+      "calo-sampling": true,
+      "calo-validity": true
+    },
+    "same_track_counts_hits_kinematics": true,
+    "sampling_vector_lengths": {
+      "28": 712591
+    },
+    "negative_sampling_values": 460997,
+    "emfrac_outside_0_1": 24040,
+    "limitation": "Same file/native collection order only; no cross-tier join, physical object matching, axis definition, region flags or A yield."
+  },
+  "catalog_evidence": "catalog-evidence.json",
+  "unresolved": [
+    "Calorimeter jet definition/calibration and valid E_H/E_EM construction",
+    "Reference-to-Run-3 track quality and all-track completeness after upstream thinning",
+    "Period-specific single-candidate trigger, tag-only support, matching, plateau and exposure",
+    "GRL/PV/timing/cleaning/MET/BIB common selection and independent/special-stream sources",
+    "LC-topo hosted failure cause; exact-release configuration access",
+    "Two-working-day review gate has not elapsed; this is an initial frozen checkpoint."
+  ]
+}
