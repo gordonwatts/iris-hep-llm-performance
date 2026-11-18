@@ -1,9 +1,15 @@
 import { defineConfig, devices } from "@playwright/test";
 
-// Astro's `base` means every route sits under /iris-hep-llm-performance/ —
-// baseURL carries that so tests can use page.goto("/") for the site root.
 const PORT = 4322;
+const EMPTY_RESULTS_PORT = 4323;
 const BASE_PATH = "/iris-hep-llm-performance";
+const BASE_URL = `http://localhost:${PORT}${BASE_PATH}/`;
+const EMPTY_RESULTS_URL = `http://localhost:${EMPTY_RESULTS_PORT}${BASE_PATH}/`;
+const EMPTY_RESULTS_DIST = ".generated/e2e-empty-results";
+const EMPTY_RESULTS_SPEC = "**/empty-results.spec.ts";
+// Playwright needs a foreground process. `astro preview` starts a daemon
+// and exits, which Playwright treats as the server having crashed.
+const STATIC_SERVER = "node scripts/e2e-static-server.ts";
 
 export default defineConfig({
   testDir: "./e2e",
@@ -16,25 +22,40 @@ export default defineConfig({
     // onto this path; a *leading*-slash goto("/suites/x/") would still reset
     // to the origin root regardless, per URL resolution rules — so every
     // test navigates with relative (no leading slash) paths.
-    baseURL: `http://localhost:${PORT}${BASE_PATH}/`,
+    baseURL: BASE_URL,
     trace: "on-first-retry",
   },
   projects: [
     {
       name: "chromium",
+      testIgnore: EMPTY_RESULTS_SPEC,
       use: { ...devices["Desktop Chrome"] },
     },
+    {
+      name: "chromium-empty-results",
+      testMatch: EMPTY_RESULTS_SPEC,
+      use: { ...devices["Desktop Chrome"], baseURL: EMPTY_RESULTS_URL },
+    },
   ],
-  webServer: {
-    // Runs against a real production build, not the dev server, so the e2e
-    // suite exercises exactly what gets deployed. Serves via
-    // scripts/e2e-static-server.ts rather than `astro preview`: Astro 7's
-    // preview command manages its own background daemon and the CLI process
-    // that starts it exits immediately, which Playwright treats as the
-    // server having crashed even though the daemon is still serving fine.
-    command: `npm run build && PORT=${PORT} BASE_PATH=${BASE_PATH} node scripts/e2e-static-server.ts`,
-    url: `http://localhost:${PORT}${BASE_PATH}/`,
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
-  },
+  webServer: [
+    {
+      // Playwright starts these servers in order. Build the empty fixture first
+      // so the normal build leaves the shared report and index in their usual state.
+      command: `npm run build -- --outDir ${EMPTY_RESULTS_DIST} && ${STATIC_SERVER}`,
+      env: {
+        RESULTS_DIR: "e2e/fixtures/empty-results",
+        DIST_DIR: EMPTY_RESULTS_DIST,
+        BASE_PATH,
+        PORT: String(EMPTY_RESULTS_PORT),
+      },
+      url: EMPTY_RESULTS_URL,
+      timeout: 120_000,
+    },
+    {
+      command: `npm run build && ${STATIC_SERVER}`,
+      env: { BASE_PATH, DIST_DIR: "dist", PORT: String(PORT) },
+      url: BASE_URL,
+      timeout: 120_000,
+    },
+  ],
 });

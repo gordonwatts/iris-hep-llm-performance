@@ -27,15 +27,6 @@ test("home lists every suite and each card links to a page that loads", async ({
   await expect(page.locator("h1")).toContainText("Iris Hep Llm Questions");
 });
 
-test("home shows the empty results state before any runs exist", async ({
-  page,
-}) => {
-  await page.goto("");
-  await expect(page.getByRole("status").first()).toContainText(
-    "No runs recorded yet",
-  );
-});
-
 test("a suite page lists every one of its questions and each link resolves", async ({
   page,
 }) => {
@@ -70,7 +61,10 @@ test("the models page groups suites under each model selector", async ({
 }) => {
   await page.goto("models/");
   await expect(page.locator("h1")).toContainText("Models");
-  await expect(page.getByRole("status").first()).toContainText(
-    "No runs recorded yet",
-  );
+  const modelCard = page.locator(".models__card").filter({
+    has: page.getByText("gpt-6-luna:medium", { exact: true }),
+  });
+  await expect(
+    modelCard.getByRole("link", { name: "Iris Hep Llm Questions" }),
+  ).toHaveAttribute("href", /\/suites\/iris-hep-llm-questions\/$/);
 });
