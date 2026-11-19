@@ -1,0 +1,144 @@
+{
+  "schema_version": 1,
+  "retrieved_utc": "2026-11-10",
+  "sample": {
+    "did": "data23_13p6TeV:data23_13p6TeV.00451094.physics_Main.deriv.DAOD_PHYSLITE.r15774_p6304_p6700_tid43636932_00",
+    "role": "extraction positive control only",
+    "rucio": {
+      "hidden": false,
+      "project": "data23_13p6TeV",
+      "task_id": 43636932,
+      "name": "data23_13p6TeV.00451094.physics_Main.deriv.DAOD_PHYSLITE.r15774_p6304_p6700_tid43636932_00",
+      "obsolete": false,
+      "datatype": "DAOD_PHYSLITE",
+      "scope": "data23_13p6TeV",
+      "run_number": 451094,
+      "account": "panda",
+      "purge_replicas": true,
+      "stream_name": "physics_Main",
+      "access_cnt": 1123,
+      "did_type": "DATASET",
+      "availability": "AVAILABLE",
+      "created_at": "2025-03-12T16:52:10",
+      "is_open": false,
+      "suppressed": false,
+      "events": 28086634,
+      "prod_step": "deriv",
+      "accessed_at": "2026-05-18T15:35:59",
+      "updated_at": "2026-05-18T15:36:15",
+      "monotonic": false,
+      "bytes": 166944338434,
+      "version": "r15774_p6304_p6700",
+      "closed_at": "2025-03-17T06:35:24",
+      "length": 267,
+      "campaign": "data23_13p6TeV"
+    },
+    "ami": {
+      "dataset": "data23_13p6TeV.00451094.physics_Main.deriv.DAOD_PHYSLITE.r15774_p6304_p6700",
+      "fields": {
+        "logicalDatasetName": "data23_13p6TeV.00451094.physics_Main.deriv.DAOD_PHYSLITE.r15774_p6304_p6700",
+        "nFiles": 267,
+        "totalEvents": 28086634,
+        "totalSize": 166944338434,
+        "prodsysStatus": "ALL EVENTS AVAILABLE",
+        "dataType": "DAOD_PHYSLITE",
+        "version": "r15774_p6304_p6700",
+        "amiStatus": "VALID"
+      }
+    },
+    "parents": [
+      "data23_13p6TeV.00451094.physics_Main.merge.AOD.r15774_p6304",
+      "data23_13p6TeV.00451094.physics_Main.recon.AOD.r15774"
+    ],
+    "input_file": {
+      "hidden": false,
+      "project": "data23_13p6TeV",
+      "name": "DAOD_PHYSLITE.43636932._000167.pool.root.1",
+      "obsolete": false,
+      "adler32": "305238ab",
+      "datatype": "DAOD_PHYSLITE",
+      "panda_id": 6558192787,
+      "scope": "data23_13p6TeV",
+      "run_number": 451094,
+      "account": "panda",
+      "purge_replicas": true,
+      "stream_name": "NA",
+      "access_cnt": 7,
+      "did_type": "FILE",
+      "availability": "AVAILABLE",
+      "created_at": "2025-03-17T02:46:38",
+      "suppressed": false,
+      "events": 115338,
+      "prod_step": "deriv",
+      "accessed_at": "2026-05-18T12:41:44",
+      "updated_at": "2026-05-18T12:41:44",
+      "monotonic": false,
+      "bytes": 637036359,
+      "guid": "6f81c62e1783844489294f7e03c181b7",
+      "version": "43636932_sub6798230",
+      "campaign": "data23_13p6TeV"
+    }
+  },
+  "retrieval_tools": [
+    "atlas-af.rucio_get_did(did=sample.did)",
+    "atlas-af.rucio_get_metadata(did=sample.did)",
+    "atlas-af.rucio_get_metadata(did='data23_13p6TeV:'+input_file.name)",
+    "atlas-af.ami_get_dataset_info(dataset=sample.ami.dataset)",
+    "atlas-af.ami_get_dataset_prov(dataset=sample.ami.dataset)",
+    "atlas-af.ami_get_ami_tag(tag='p6700')"
+  ],
+  "production": {
+    "tag": "p6700",
+    "release": "Athena_25.0.26",
+    "description": "data Run3 derivation p-tag for PHYS formats with 25.0.26 using CA",
+    "limitation": "Generic tag metadata does not establish exact job options, track retention, trigger acceptance or CalRatio suitability."
+  },
+  "services": {
+    "app_version": "develop",
+    "advertised_codegen": "sslhep/servicex_code_gen_atlas_xaod:v1.8.5-alpha.3"
+  },
+  "source_checks": [
+    {
+      "id": "release-source",
+      "status": "blocked",
+      "url": "https://gitlab.cern.ch/atlas/athena/-/blob/release/25.0.26/PhysicsAnalysis/DerivationFramework/DerivationFrameworkPhys/python/PHYSLITE.py",
+      "error": "Direct raw HTTP connection timed out; web raw/blob access failed. Exact production thinning/skim configuration not inspected.",
+      "next": "Retrieve tag-matched configuration and actual production job options/log; do not substitute current main."
+    },
+    {
+      "id": "current-source",
+      "status": "provisional documentation only",
+      "url": "https://atlas-sw-doxygen.web.cern.ch/atlas-sw-doxygen/atlas_main--Doxygen/docs/html/de/d42/PHYSLITE_8py_source.html",
+      "observed": "Current main uses AntiKt4EMPFlowJets for AnalysisJets and common track thinning; not a release-25.0.26 retention measurement."
+    },
+    {
+      "id": "current-thinning",
+      "status": "provisional documentation only",
+      "url": "https://atlas-sw-doxygen.web.cern.ch/atlas-sw-doxygen/atlas_main--Doxygen/docs/html/d0/d69/PhysCommonThinningConfig_8py_source.html",
+      "observed": "Current main configures TrackParticleThinningPHYS plus object-associated track tools; all-track completeness cannot be inferred from a successful track read."
+    }
+  ],
+  "repairs": [
+    {
+      "id": "ami-task-suffix",
+      "category": "catalog identifier convention",
+      "attempt": "Full Rucio dataset name not found in AMI",
+      "repair": "Removed _tid43636932_00 for AMI lookup; kept exact original DID for ServiceX.",
+      "result": "AMI identity/provenance found."
+    },
+    {
+      "id": "generic-template-type",
+      "category": "local query/API",
+      "attempt": "String template type for isAvailable/getAttribute caused AttributeError before submission.",
+      "repair": "Use cpp_float/cpp_vfloat/cpp_type from installed type_support.py.",
+      "result": "Separate raw-field probes succeeded; no failed remote field query from this repair."
+    }
+  ],
+  "scope": {
+    "nominal_suitability": "unverified",
+    "independent_controls": "unverified",
+    "special_streams": "unverified",
+    "signal": "outside bounded one-file extraction; no source selected",
+    "tier_escalation": "LC-topo hosted transform failed without per-file error detail; no demonstrated absence, so PHYS/specialist extraction deferred pending content diagnosis."
+  }
+}
